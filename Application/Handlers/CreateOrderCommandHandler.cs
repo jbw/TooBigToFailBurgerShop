@@ -3,14 +3,11 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
+using TooBigToFailBurgerShop.Application.Messages;
 using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 
 namespace TooBigToFailBurgerShop.Application.Commands
 {
-    public record CreateOrder
-    {
-        public string? UserId { get; init; }
-    }
 
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {

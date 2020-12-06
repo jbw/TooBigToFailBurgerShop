@@ -5,47 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using MassTransit;
-using MediatR;
 using Autofac;
-using TooBigToFailBurgerShop.Application.Commands;
 using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Infrastructure;
 
 namespace TooBigToFailBurgerShop
 {
-    public class MediatorModule : Autofac.Module
-    {
-        protected override void Load(ContainerBuilder builder)
-        {
-            builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
-                .AsImplementedInterfaces();
-
-            // register request / notification handlers
-            var mediatrOpenTypes = new[]
-            {
-                typeof(IRequestHandler<,>),
-                typeof(INotificationHandler<>),
-            };
-
-            foreach (var mediatrOpenType in mediatrOpenTypes)
-            {
-                var assembly = typeof(CreateOrderCommand).GetTypeInfo().Assembly;
-
-                builder
-                    .RegisterAssemblyTypes(assembly)
-                    .AsClosedTypesOf(mediatrOpenType)
-                    .AsImplementedInterfaces();
-            }
-
-            builder.Register<ServiceFactory>(ctx =>
-            {
-                var c = ctx.Resolve<IComponentContext>();
-                return t => { return c.TryResolve(t, out object o) ? o : null; };
-            });
-        }
-    }
 
     public class Startup
     {
@@ -66,8 +32,13 @@ namespace TooBigToFailBurgerShop
             services.AddOpenTracing();
             services.AddMassTransit(x =>
             {
-                x.UsingRabbitMq((context, cfg) => 
+                x.AddSaga<BurgerOrderSaga>()
+                    .InMemoryRepository();
+
+                x.UsingRabbitMq((context, cfg) =>
                 {
+                    cfg.UseInMemoryOutbox();
+
                     cfg.Host("rabbitmq", "/", h =>
                     {
                         h.Username("guest");
@@ -75,12 +46,13 @@ namespace TooBigToFailBurgerShop
                     });
 
                     cfg.ConfigureEndpoints(context);
+
                 });
             });
 
             services.AddMassTransitHostedService();
 
-            services.AddDbContext<BurgerShopContext>(options => 
+            services.AddDbContext<BurgerShopContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
 
             services.AddSwaggerGen(c =>
@@ -88,7 +60,7 @@ namespace TooBigToFailBurgerShop
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TooBigToFailBurgerShop", Version = "v1" });
             });
 
-          
+
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {
