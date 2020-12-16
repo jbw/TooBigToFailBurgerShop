@@ -5,10 +5,10 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["src/services/Ordering/Ordering.Worker/Ordering.Worker.csproj", "src/services/Ordering/Ordering.Worker/"]
-RUN dotnet restore "src/services/Ordering/Ordering.Worker/Ordering.Worker.csproj"
+COPY ["services/Ordering/Ordering.Worker/Ordering.Worker.csproj", "services/Ordering/Ordering.Worker/"]
+RUN dotnet restore "services/Ordering/Ordering.Worker/Ordering.Worker.csproj"
 COPY . .
-WORKDIR "/src/src/services/Ordering/Ordering.Worker"
+WORKDIR "src/services/Ordering/Ordering.Worker"
 RUN dotnet build "Ordering.Worker.csproj" -c Release -o /app/build
 
 FROM build AS publish
