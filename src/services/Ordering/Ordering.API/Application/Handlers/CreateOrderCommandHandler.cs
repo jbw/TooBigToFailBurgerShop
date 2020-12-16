@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Application.Messages;
@@ -22,8 +23,8 @@ namespace TooBigToFailBurgerShop.Application.Commands
 
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            await _publishEndpoint.Publish<CreateOrder>(new() { UserId = request.UserId }, cancellationToken);
-            
+            await _publishEndpoint.Publish<CreateOrder>(new { UserId = request.UserId, OrderDate = DateTime.UtcNow }, cancellationToken);
+
             return true;
         }
     }
