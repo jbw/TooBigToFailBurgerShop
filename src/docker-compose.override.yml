@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  burgers.ordering.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "6969:80"
+
+  burgers.ordering.worker:
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

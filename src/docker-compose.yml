@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+  burgers.ordering.api:
+    image: burgers.ordering.api
+    build:
+      context: .
+      dockerfile: services/Ordering/Ordering.API/Dockerfile
+    depends_on:
+      - "burgers.data"
+
+  burgers.data:
+    image: postgres
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: "burger"
+      POSTGRES_PASSWORD: "burger"
+      POSTGRES_DB: "burgers"
+
+  rabbitmq:
+    image: masstransit/rabbitmq
+    environment:
+      - "5672:5672"
+      - "15672:15672"
+
+  burgers.ordering.worker:
+    image: burgers.ordering.worker
+    build:
+      context: .
+      dockerfile: services/Ordering/Ordering.Worker/Dockerfile
+

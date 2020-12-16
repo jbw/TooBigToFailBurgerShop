@@ -6,7 +6,7 @@
     <ProjectGuid>df6e36b5-b49d-4670-94ef-d2046c215acc</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>toobigtofailburgershop</DockerServiceName>
+    <DockerServiceName>TooBigToFailBurgerShop</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
