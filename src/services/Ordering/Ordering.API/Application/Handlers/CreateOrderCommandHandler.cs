@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TooBigToFailBurgerShop.Application.Messages;
 using TooBigToFailBurgerShop.Infrastructure.Idempotency;
+using TooBigToFailBurgerShop.Ordering.Messages;
 
 namespace TooBigToFailBurgerShop.Application.Commands
 {
@@ -23,7 +23,9 @@ namespace TooBigToFailBurgerShop.Application.Commands
 
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            await _publishEndpoint.Publish<CreateOrder>(new { UserId = request.UserId, OrderDate = DateTime.UtcNow }, cancellationToken);
+            var message = new { UserId = request.UserId, OrderDate = DateTime.UtcNow };
+
+            await _publishEndpoint.Publish<SubmitBurgerOrder>(message, cancellationToken);
 
             return true;
         }

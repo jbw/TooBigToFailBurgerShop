@@ -12,21 +12,21 @@ services:
   burgers.data:
     image: postgres
     ports:
-      - "5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: "burger"
       POSTGRES_PASSWORD: "burger"
       POSTGRES_DB: "burgers"
 
   rabbitmq:
-    image: masstransit/rabbitmq
-    environment:
+    image: rabbitmq:management-alpine
+    ports:
       - "5672:5672"
       - "15672:15672"
 
-  burgers.ordering.worker:
-    image: burgers.ordering.worker
+  burgers.ordering.consumer:
+    image: burgers.ordering.consumer
     build:
       context: .
-      dockerfile: services/Ordering/Ordering.Worker/Dockerfile
+      dockerfile: services/Ordering/Ordering.Consumer/Dockerfile
 

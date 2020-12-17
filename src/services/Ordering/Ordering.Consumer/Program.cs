@@ -1,12 +1,10 @@
-using Microsoft.Extensions.DependencyInjection;
+using MassTransit;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using TooBigToFailBurgerShop.Ordering.Consumer.Application.Extensions;
 
-namespace Ordering.Worker
+namespace TooBigToFailBurgerShop.Ordering.Consumer
 {
+
     public class Program
     {
         public static void Main(string[] args)
@@ -18,7 +16,9 @@ namespace Ordering.Worker
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHostedService<Worker>();
+                    services.AddMassTransitConfiguration();
+                    services.AddMassTransitHostedService();
                 });
     }
+
 }
