@@ -7,6 +7,6 @@ services:
     ports:
       - "6969:80"
 
-  burgers.ordering.worker:
+  burgers.ordering.consumer:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
