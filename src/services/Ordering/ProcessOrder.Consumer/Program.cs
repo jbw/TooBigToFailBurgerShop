@@ -20,5 +20,5 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
                     services.AddMassTransitHostedService();
                 });
     }
-    
+
 }
