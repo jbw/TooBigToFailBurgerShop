@@ -17,7 +17,7 @@ namespace TooBigToFailBurgerShop.Ordering.Consumer
 
         public async Task Consume(ConsumeContext<SubmitBurgerOrder> context)
         {
-            var message = Create(context.Message.CorrelationId);
+            var message = Create(context.CorrelationId!.Value);
 
             await context.Publish(message);
         }

@@ -23,9 +23,9 @@ namespace TooBigToFailBurgerShop.Application.Commands
 
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            var message = new { UserId = request.UserId, OrderDate = DateTime.UtcNow };
+            var message = new { UserId = request.UserId, OrderDate = DateTime.UtcNow, RequestId = request.RequestId };
 
-            await _publishEndpoint.Publish<SubmitBurgerOrder>(message, cancellationToken);
+            await _publishEndpoint.Publish<SubmitBurgerOrder>(message, context => context.CorrelationId = request.RequestId, cancellationToken);
 
             return true;
         }
