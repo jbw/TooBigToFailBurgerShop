@@ -11,6 +11,7 @@ using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Infrastructure;
 using TooBigToFailBurgerShop.Application.State;
 using TooBigToFailBurgerShop.Ordering.Messages;
+using OpenTelemetry.Trace;
 
 namespace TooBigToFailBurgerShop
 {
@@ -31,7 +32,8 @@ namespace TooBigToFailBurgerShop
             services.AddControllers();
             services.AddApplicationInsightsTelemetry();
 
-            services.AddOpenTracing();
+            services.AddOpenTelemetryTracing(builder => builder.AddAspNetCoreInstrumentation().AddJaegerExporter());
+
             services.AddMassTransit(x =>
             {
               
