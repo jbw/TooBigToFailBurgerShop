@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" Version="7.1.0-develop.3078" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.1.0-develop.3078" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.0-develop.3078" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.0-develop.3078" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ordering.Messages\Ordering.Messages.csproj" />
+  </ItemGroup>
+
+</Project>

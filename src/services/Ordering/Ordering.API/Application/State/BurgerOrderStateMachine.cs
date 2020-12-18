@@ -4,6 +4,7 @@ namespace TooBigToFailBurgerShop.Application.State
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
+    using MassTransit.Metadata;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
@@ -63,7 +64,11 @@ namespace TooBigToFailBurgerShop.Application.State
         {
             var order = CreateProcessBurgerOrder(context.Data);
 
-            await context.GetPayload<ConsumeContext>().Send(order);
+            var payload = context.GetPayload<ConsumeContext>();
+
+            var endpoint = await payload.GetSendEndpoint(new Uri($"queue:{typeof(ProcessBurgerOrder).Name}"));
+
+            await endpoint.Send(order).ConfigureAwait(false);
 
             _logger.LogInformation("Processing: {0}", context.Data.CorrelationId);
 
@@ -82,13 +87,9 @@ namespace TooBigToFailBurgerShop.Application.State
 
         private ProcessBurgerOrder CreateProcessBurgerOrder(BurgerOrderReceived burgerOrderReceived)
         {
-            return new Process { CorrelationId = burgerOrderReceived.CorrelationId };
+            return new ProcessBurgerOrder { CorrelationId = burgerOrderReceived.CorrelationId };
         }
 
-        class Process : ProcessBurgerOrder
-        {
-            public Guid CorrelationId { get; set; }
-        }
     }
 
 }
