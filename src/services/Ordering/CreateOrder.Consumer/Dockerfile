@@ -5,17 +5,17 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["services/Ordering/ProcessOrder.Consumer/ProcessOrder.Consumer.csproj", "services/Ordering/ProcessOrder.Consumer/"]
+COPY ["services/Ordering/CreateOrder.Consumer/CreateOrder.Consumer.csproj", "services/Ordering/CreateOrder.Consumer/"]
 COPY ["services/Ordering/Ordering.Messages/Ordering.Messages.csproj", "services/Ordering/Ordering.Messages/"]
-RUN dotnet restore "services/Ordering/ProcessOrder.Consumer/ProcessOrder.Consumer.csproj"
+RUN dotnet restore "services/Ordering/CreateOrder.Consumer/CreateOrder.Consumer.csproj"
 COPY . .
-WORKDIR "/src/services/Ordering/ProcessOrder.Consumer"
-RUN dotnet build "ProcessOrder.Consumer.csproj" -c Release -o /app/build
+WORKDIR "/src/services/Ordering/CreateOrder.Consumer"
+RUN dotnet build "CreateOrder.Consumer.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ProcessOrder.Consumer.csproj" -c Release -o /app/publish
+RUN dotnet publish "CreateOrder.Consumer.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ProcessOrder.Consumer.dll"]
+ENTRYPOINT ["dotnet", "CreateOrder.Consumer.dll"]

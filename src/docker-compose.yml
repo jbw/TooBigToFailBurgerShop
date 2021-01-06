@@ -1,6 +1,13 @@
 version: '3.4'
 
 services:
+
+  burgers.webspa:
+    image: burgers.webspa
+    build:
+      context: .
+      dockerfile: web/Burgers.WebSPA/Dockerfile
+
   burgers.ordering.api:
     image: burgers.ordering.api
     build:
@@ -18,22 +25,14 @@ services:
       POSTGRES_PASSWORD: "burger"
       POSTGRES_DB: "burgers"
 
+  burgers.create.order.consumer:
+    image: burgers.create.order.consumer
+    build:
+      context: .
+      dockerfile: services/Ordering/CreateOrder.Consumer/Dockerfile
+
   rabbitmq:
     image: rabbitmq:management-alpine
     ports:
       - "5672:5672"
       - "15672:15672"
-
-  burgers.ordering.consumer:
-    image: burgers.ordering.consumer
-    build:
-      context: .
-      dockerfile: services/Ordering/Ordering.Consumer/Dockerfile
-
-
-  burgers.processorder.consumer:
-    image: buters.processorder.consumer
-    build:
-      context: .
-      dockerfile: services/Ordering/ProcessOrder.Consumer/Dockerfile
-

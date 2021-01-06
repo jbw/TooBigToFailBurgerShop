@@ -1,0 +1,40 @@
+﻿@page "/fetchdata"
+
+@using Burgers.WebSPA.Data
+@inject OrdersService OrdersService
+
+<h1>Orders</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (order == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+
+            </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+                <td>@order.Name</td>
+            </tr>
+            
+        </tbody>
+    </table>
+}
+
+@code {
+    private Order order;
+
+    protected override async Task OnInitializedAsync()
+    {
+        order = await OrdersService.CreateOrder();
+    }
+}
