@@ -7,11 +7,17 @@ services:
     ports:
       - "6969:80"
 
-  burgers.ordering.consumer:
+  burgers.create.order.consumer:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
 
-  burgers.processorder.consumer:
+  burgers.webspa:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "80"
+      - "443"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

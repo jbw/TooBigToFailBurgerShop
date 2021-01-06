@@ -4,23 +4,21 @@ namespace TooBigToFailBurgerShop.Application.State
     using Automatonymous;
     using GreenPipes;
     using MassTransit;
-    using MassTransit.Metadata;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
-    using TooBigToFailBurgerShop.Ordering.Messages;
+    using TooBigToFailBurgerShop.CreateOrder.Contracts;
+
 
     public class BurgerOrderStateMachine : MassTransitStateMachine<BurgerOrderStateInstance>
     {
         private ILogger<BurgerOrderStateMachine> _logger;
-
-        public Event<BurgerOrderReceived> EventBurgerOrderReceived { get; set; }
-        public Event<BurgerOrderCompleted> EventBurgerOrderCompleted { get; set; }
-        public Event<BurgerOrderFailed> EventBurgerOrderFailed { get; set; }
-
-        public State Received { get; private set; }
-        public State Ordered { get; private set; }
-        public State Failed { get; private set; }
+        public Event<CreateBurgerOrderReceived> EventCreateBurgerOrderReceived { get; set; }
+        public Event<CreateBurgerOrderCompleted> EventCreateBurgerOrderCompleted { get; set; }
+        public Event<CreateBurgerOrderFailed> EventCreateBurgerOrderFailed { get; set; }
+        public State BurgerOrderReceived { get; private set; }
+        public State BurgerOrdered { get; private set; }
+        public State BurgerOrderFailed { get; private set; }
 
         public BurgerOrderStateMachine(ILogger<BurgerOrderStateMachine> logger)
         {
@@ -28,68 +26,78 @@ namespace TooBigToFailBurgerShop.Application.State
 
             InstanceState(x => x.CurrentState);
 
-            // Map CorrelationId  with this state machine
-            Event(() => EventBurgerOrderReceived, x =>
+            // Maps CorrelationId with this state machine
+            Event(() => EventCreateBurgerOrderReceived, x =>
+            {
+                x.CorrelateById(m => m.Message.CorrelationId);
+            });
+
+            Event(() => EventCreateBurgerOrderCompleted, x =>
+            {
+                x.CorrelateById(m => m.Message.CorrelationId);
+            });
+
+            Event(() => EventCreateBurgerOrderFailed, x =>
             {
                 x.CorrelateById(m => m.Message.CorrelationId);
             });
 
             Initially(
-                When(EventBurgerOrderReceived)
+                When(EventCreateBurgerOrderReceived)
                     .Then(Initialize)
-                    .ThenAsync(InitiateOrderProcessing)
-                    .TransitionTo(Received),
-                When(EventBurgerOrderFailed)
-                    .Then(OrderFailed)
-                    .TransitionTo(Failed));
+                    .ThenAsync(InitiateCreateBurgerOrder)
+                    .RequestStarted()
+                    .TransitionTo(BurgerOrderReceived));
 
-            During(Received,
-                When(EventBurgerOrderCompleted)
+            During(BurgerOrderReceived,
+                When(EventCreateBurgerOrderCompleted)
                     .Then(Order)
-                    .TransitionTo(Ordered));
+                    .TransitionTo(BurgerOrdered),
+                When(EventCreateBurgerOrderFailed)
+                    .Then(OrderFailed)
+                    .TransitionTo(BurgerOrderFailed));
 
         }
 
-        private void OrderFailed(BehaviorContext<BurgerOrderStateInstance, BurgerOrderFailed> context)
+
+        private void OrderFailed(BehaviorContext<BurgerOrderStateInstance, CreateBurgerOrderFailed> context)
         {
             _logger.LogInformation("Order failed: {0}", context.Data.CorrelationId);
         }
 
-        private void Order(BehaviorContext<BurgerOrderStateInstance, BurgerOrderCompleted> context)
+        private void Order(BehaviorContext<BurgerOrderStateInstance, CreateBurgerOrderCompleted> context)
         {
-            _logger.LogInformation("Order: {0}", context.Data.CorrelationId);
+            _logger.LogInformation("Order created: {0}", context.Data.CorrelationId);
         }
 
-        private async Task InitiateOrderProcessing(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
+        private async Task InitiateCreateBurgerOrder(BehaviorContext<BurgerOrderStateInstance, CreateBurgerOrderReceived> context)
         {
             var order = CreateProcessBurgerOrder(context.Data);
 
             var payload = context.GetPayload<ConsumeContext>();
 
-            var endpoint = await payload.GetSendEndpoint(new Uri($"queue:{typeof(ProcessBurgerOrder).Name}"));
+            var endpoint = await payload.GetSendEndpoint(new Uri($"queue:{typeof(CreateBurgerOrder).Name}"));
 
             await endpoint.Send(order).ConfigureAwait(false);
 
-            _logger.LogInformation("Processing: {0}", context.Data.CorrelationId);
-
+            _logger.LogInformation("Creating burger order: {0}", context.Data.CorrelationId);
         }
 
-        private void Initialize(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
+        private void Initialize(BehaviorContext<BurgerOrderStateInstance, CreateBurgerOrderReceived> context)
         {
             _logger.LogInformation("Initializing: {0}", context.Data.CorrelationId);
 
             InitializeInstance(context.Instance, context.Data);
         }
-        private void InitializeInstance(BurgerOrderStateInstance instance, BurgerOrderReceived burgerOrderReceived)
+
+        private void InitializeInstance(BurgerOrderStateInstance instance, CreateBurgerOrderReceived burgerOrderReceived)
         {
             instance.CorrelationId = burgerOrderReceived.CorrelationId;
         }
 
-        private ProcessBurgerOrder CreateProcessBurgerOrder(BurgerOrderReceived burgerOrderReceived)
+        private CreateBurgerOrder CreateProcessBurgerOrder(CreateBurgerOrderReceived burgerOrderReceived)
         {
-            return new ProcessBurgerOrder { CorrelationId = burgerOrderReceived.CorrelationId };
+            return new CreateBurgerOrder { CorrelationId = burgerOrderReceived.CorrelationId };
         }
-
     }
-
 }
