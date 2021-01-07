@@ -32,7 +32,7 @@ namespace TooBigToFailBurgerShop
             builder.Register<ServiceFactory>(ctx =>
             {
                 var c = ctx.Resolve<IComponentContext>();
-                return t => { return c.TryResolve(t, out object o) ? o : null; };
+                return t => c.Resolve(t);
             });
         }
     }

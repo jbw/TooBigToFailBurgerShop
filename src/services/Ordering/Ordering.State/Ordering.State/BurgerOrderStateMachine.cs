@@ -1,5 +1,5 @@
 ﻿
-namespace TooBigToFailBurgerShop.Application.State
+namespace TooBigToFailBurgerShop.Ordering.State
 {
     using Automatonymous;
     using GreenPipes;
@@ -7,18 +7,17 @@ namespace TooBigToFailBurgerShop.Application.State
     using Microsoft.Extensions.Logging;
     using System;
     using System.Threading.Tasks;
-    using TooBigToFailBurgerShop.CreateOrder.Contracts;
-
+    using TooBigToFailBurgerShop.Ordering.Contracts;
 
     public class BurgerOrderStateMachine : MassTransitStateMachine<BurgerOrderStateInstance>
     {
-        private ILogger<BurgerOrderStateMachine> _logger;
-        public Event<CreateBurgerOrderReceived> EventCreateBurgerOrderReceived { get; set; }
-        public Event<CreateBurgerOrderCompleted> EventCreateBurgerOrderCompleted { get; set; }
-        public Event<CreateBurgerOrderFailed> EventCreateBurgerOrderFailed { get; set; }
-        public State BurgerOrderReceived { get; private set; }
-        public State BurgerOrdered { get; private set; }
-        public State BurgerOrderFailed { get; private set; }
+        private readonly ILogger<BurgerOrderStateMachine> _logger;
+        public Event<CreateBurgerOrderReceived>? EventCreateBurgerOrderReceived { get; set; }
+        public Event<CreateBurgerOrderCompleted>? EventCreateBurgerOrderCompleted { get; set; }
+        public Event<CreateBurgerOrderFailed>? EventCreateBurgerOrderFailed { get; set; }
+        public State? BurgerOrderReceived { get; private set; }
+        public State? BurgerOrdered { get; private set; }
+        public State? BurgerOrderFailed { get; private set; }
 
         public BurgerOrderStateMachine(ILogger<BurgerOrderStateMachine> logger)
         {
@@ -90,12 +89,12 @@ namespace TooBigToFailBurgerShop.Application.State
             InitializeInstance(context.Instance, context.Data);
         }
 
-        private void InitializeInstance(BurgerOrderStateInstance instance, CreateBurgerOrderReceived burgerOrderReceived)
+        private static void InitializeInstance(BurgerOrderStateInstance instance, CreateBurgerOrderReceived burgerOrderReceived)
         {
             instance.CorrelationId = burgerOrderReceived.CorrelationId;
         }
 
-        private CreateBurgerOrder CreateProcessBurgerOrder(CreateBurgerOrderReceived burgerOrderReceived)
+        private static CreateBurgerOrder CreateProcessBurgerOrder(CreateBurgerOrderReceived burgerOrderReceived)
         {
             return new CreateBurgerOrder { CorrelationId = burgerOrderReceived.CorrelationId };
         }

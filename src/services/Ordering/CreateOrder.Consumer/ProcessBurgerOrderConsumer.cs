@@ -5,14 +5,14 @@ using MassTransit.Courier.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using TooBigToFailBurgerShop.CreateOrder.Contracts;
 using TooBigToFailBurgerShop.Ordering.Activities;
+using TooBigToFailBurgerShop.Ordering.Contracts;
 
 namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 {
     public class CreateBurgerOrderConsumer : IConsumer<CreateBurgerOrder>
     {
-        private ILogger<CreateBurgerOrderConsumer> _logger;
+        private readonly ILogger<CreateBurgerOrderConsumer> _logger;
 
         public CreateBurgerOrderConsumer(ILogger<CreateBurgerOrderConsumer> logger)
         {
@@ -31,7 +31,7 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 
         }
 
-        private RoutingSlip CreateRoutingSlip(ConsumeContext<CreateBurgerOrder> context, Guid trackingId)
+        private static RoutingSlip CreateRoutingSlip(ConsumeContext<CreateBurgerOrder> context, Guid trackingId)
         {
             var builder = new RoutingSlipBuilder(trackingId);
 

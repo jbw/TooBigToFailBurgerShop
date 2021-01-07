@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ordering.Messages\Ordering.Messages.csproj" />
+    <ProjectReference Include="..\Ordering.Messages\Ordering.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
