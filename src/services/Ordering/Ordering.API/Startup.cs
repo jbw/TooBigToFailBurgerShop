@@ -37,12 +37,6 @@ namespace TooBigToFailBurgerShop
             services.AddMassTransit(x =>
             {
 
-                //x.AddSagaStateMachine<BurgerOrderStateMachine, BurgerOrderStateInstance>()
-                //    .InMemoryRepository();
-
-                //x.AddSagaStateMachine<RequestStateMachine, RequestState>(typeof(RequestSagaDefinition))
-                //    .InMemoryRepository();
-
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseInMemoryOutbox();

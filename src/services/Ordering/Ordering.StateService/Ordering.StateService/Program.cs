@@ -1,12 +1,16 @@
-﻿using System;
+﻿using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Ordering.StateService;
 
-namespace Ordering.StateService
-{
-    class Program
+
+await Host.CreateDefaultBuilder(args)
+    .ConfigureServices((hostContext, services) =>
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-        }
-    }
-}
+        services.AddMassTransitHostedService();
+        services.AddMassTransitConfiguration();
+        services.AddHostedService<MyHostedService>();
+    })
+    .Build()
+    .RunAsync();
+
