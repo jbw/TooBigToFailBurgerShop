@@ -56,6 +56,15 @@ namespace TooBigToFailBurgerShop.Ordering.State
                     .Then(OrderFailed)
                     .TransitionTo(BurgerOrderFailed));
 
+            During(BurgerOrdered,
+                When(EventCreateBurgerOrderCompleted)
+                    .RequestCompleted()
+                );
+
+            During(BurgerOrdered,
+                When(EventCreateBurgerOrderFailed)
+                    .RequestCompleted()
+                );
         }
 
 
