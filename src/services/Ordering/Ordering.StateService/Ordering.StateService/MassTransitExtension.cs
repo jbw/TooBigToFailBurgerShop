@@ -27,6 +27,9 @@ namespace Ordering.StateService
                     });
 
                     cfg.ConfigureEndpoints(context);
+
+                    cfg.UseInMemoryOutbox();
+
                 });
             });
         }
