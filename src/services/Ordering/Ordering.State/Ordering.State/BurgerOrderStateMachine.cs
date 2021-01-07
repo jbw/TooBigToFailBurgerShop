@@ -45,14 +45,12 @@ namespace TooBigToFailBurgerShop.Ordering.State
                 When(EventCreateBurgerOrderReceived)
                     .Then(Initialize)
                     .ThenAsync(InitiateCreateBurgerOrder)
-        
                     .TransitionTo(BurgerOrderReceived));
 
             During(BurgerOrderReceived,
                 When(EventCreateBurgerOrderCompleted)
                     .Then(Order)
                     .TransitionTo(BurgerOrdered)
-           
                     .Finalize(),
                 When(EventCreateBurgerOrderFailed)
                     .Then(OrderFailed)
@@ -60,9 +58,9 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
             During(BurgerOrdered,
                 Ignore(EventCreateBurgerOrderReceived));
-                 
 
             SetCompletedWhenFinalized();
+
         }
 
 
