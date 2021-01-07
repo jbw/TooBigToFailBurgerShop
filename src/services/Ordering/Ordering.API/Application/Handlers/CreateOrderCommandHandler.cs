@@ -23,7 +23,7 @@ namespace TooBigToFailBurgerShop.Application.Commands
 
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("CreateOrderCommandHandler", request.RequestId);
+            _logger.LogInformation("Ordering.API, CreateOrderCommandHandler", request.RequestId);
 
             var message = new
             {
