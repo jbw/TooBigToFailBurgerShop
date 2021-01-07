@@ -1,7 +1,7 @@
 ﻿using Automatonymous;
 using System;
 
-namespace TooBigToFailBurgerShop
+namespace TooBigToFailBurgerShop.Ordering.State
 {
     public class BurgerOrderStateInstance : SagaStateMachineInstance
     {

@@ -9,10 +9,8 @@ using MassTransit;
 using Autofac;
 using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Infrastructure;
-using TooBigToFailBurgerShop.Application.State;
 using OpenTelemetry.Trace;
-using Automatonymous.Requests;
-using TooBigToFailBurgerShop.RequestSaga;
+
 
 namespace TooBigToFailBurgerShop
 {
@@ -39,16 +37,8 @@ namespace TooBigToFailBurgerShop
             services.AddMassTransit(x =>
             {
 
-                x.AddSagaStateMachine<BurgerOrderStateMachine, BurgerOrderStateInstance>()
-                    .InMemoryRepository();
-
-                x.AddSagaStateMachine<RequestStateMachine, RequestState>(typeof(RequestSagaDefinition))
-                    .InMemoryRepository();
-
-
                 x.UsingRabbitMq((context, cfg) =>
                 {
-
                     cfg.UseInMemoryOutbox();
 
                     cfg.Host("rabbitmq", "/", h =>

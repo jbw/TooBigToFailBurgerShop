@@ -1,7 +1,7 @@
 ﻿using System;
 using MassTransit;
 
-namespace TooBigToFailBurgerShop.CreateOrder.Contracts
+namespace TooBigToFailBurgerShop.Ordering.Contracts
 {
     public record CreateBurgerOrder : CorrelatedBy<Guid>
     {
