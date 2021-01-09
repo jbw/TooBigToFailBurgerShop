@@ -3,7 +3,7 @@ using MassTransit;
 
 namespace TooBigToFailBurgerShop.Ordering.Contracts
 {
-    public record CreateBurgerOrder : CorrelatedBy<Guid>
+    public record SubmitBurgerOrder : CorrelatedBy<Guid>
     {
         public Guid CorrelationId { get; set; }
     }

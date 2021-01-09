@@ -1,22 +1,21 @@
-﻿using Automatonymous.Requests;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
-using TooBigToFailBurgerShop.Ordering.State;
+using TooBigToFailBurgerShop.Ordering.Activities;
+using TooBigToFailBurgerShop.ProcessOrder.Consumer;
+using TooBigToFailBurgerShop.ProcessOrder.Consumer.Infrastructure;
 
-namespace Ordering.StateService
+namespace TooBigToFailBurgerShop.ProcessOrder.Application.Extensions
 {
-    public static class MassTransitExtension
+    public static class MassTransit
     {
+   
         public static void AddMassTransitConfiguration(this IServiceCollection services)
         {
             services.AddMassTransit(x =>
             {
+                x.AddConsumer<ProcessBurgerOrderConsumer>(typeof(ProcessBurgerOrderConsumerDefinition));
 
-                x.AddSagaStateMachine<BurgerOrderStateMachine, BurgerOrderStateInstance>()
-                    .InMemoryRepository();
-
-                x.AddSagaStateMachine<RequestStateMachine, RequestState>(typeof(RequestSagaDefinition))
-                    .InMemoryRepository();
+                x.AddActivitiesFromNamespaceContaining<ProcessBurgerOrderActivity>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -27,11 +26,9 @@ namespace Ordering.StateService
                     });
 
                     cfg.ConfigureEndpoints(context);
-
-                    cfg.UseInMemoryOutbox();
-
                 });
             });
-        }   
+        }
     }
+
 }

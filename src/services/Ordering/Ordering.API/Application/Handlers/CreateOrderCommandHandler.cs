@@ -33,7 +33,7 @@ namespace TooBigToFailBurgerShop.Application.Commands
                 CorrelationId = request.RequestId
             };
 
-            await _publishEndpoint.Publish<CreateBurgerOrderReceived>(message, cancellationToken);
+            await _publishEndpoint.Publish<SubmitBurgerOrder>(message, cancellationToken);
 
             return true;
         }

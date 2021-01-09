@@ -1,4 +1,4 @@
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.Extensions.Hosting;
 using TooBigToFailBurgerShop.ProcessOrder.Application.Extensions;
 
@@ -11,3 +11,5 @@ await Host.CreateDefaultBuilder(args)
     })
     .Build()
     .RunAsync();
+
+

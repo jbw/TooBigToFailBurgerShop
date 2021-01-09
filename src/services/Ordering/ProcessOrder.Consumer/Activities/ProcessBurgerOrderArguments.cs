@@ -2,7 +2,7 @@
 
 namespace TooBigToFailBurgerShop.Ordering.Activities
 {
-    public interface CreateBurgerOrderArguments
+    public interface ProcessBurgerOrderArguments
     {
         Guid CorrelationId { get; }
     }
