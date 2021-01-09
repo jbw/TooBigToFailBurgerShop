@@ -5,16 +5,16 @@ using TooBigToFailBurgerShop.Ordering.Contracts;
 
 namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 {
-    public class CreateBurgerOrderConsumer : IConsumer<CreateBurgerOrder>
+    public class SubmitBurgerOrderConsumer : IConsumer<SubmitBurgerOrder>
     {
-        private readonly ILogger<CreateBurgerOrderConsumer> _logger;
+        private readonly ILogger<SubmitBurgerOrderConsumer> _logger;
 
-        public CreateBurgerOrderConsumer(ILogger<CreateBurgerOrderConsumer> logger)
+        public SubmitBurgerOrderConsumer(ILogger<SubmitBurgerOrderConsumer> logger)
         {
             _logger = logger;
         }
 
-        public async Task Consume(ConsumeContext<CreateBurgerOrder> context)
+        public async Task Consume(ConsumeContext<SubmitBurgerOrder> context)
         {
             _logger.LogInformation($"CreateBurgerOrderConsumer {context.Message.CorrelationId}");
 

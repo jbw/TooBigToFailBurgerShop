@@ -5,7 +5,7 @@ using MassTransit.Definition;
 
 namespace TooBigToFailBurgerShop.ProcessOrder.Consumer.Infrastructure
 {
-    public class CreateBurgerOrderConsumerDefinition : ConsumerDefinition<CreateBurgerOrderConsumer>
+    public class CreateBurgerOrderConsumerDefinition : ConsumerDefinition<SubmitBurgerOrderConsumer>
     {
         public CreateBurgerOrderConsumerDefinition()
         {
@@ -16,7 +16,7 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer.Infrastructure
         }
 
         protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
-            IConsumerConfigurator<CreateBurgerOrderConsumer> consumerConfigurator)
+            IConsumerConfigurator<SubmitBurgerOrderConsumer> consumerConfigurator)
         {
             // configure message retry with millisecond intervals
             endpointConfigurator.UseMessageRetry(r => r.Intervals(100, 200, 500, 800, 1000));

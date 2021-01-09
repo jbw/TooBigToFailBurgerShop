@@ -13,9 +13,9 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 
     public class ProcessBurgerOrderConsumer : IConsumer<ProcessBurgerOrder>
     {
-        private readonly ILogger<CreateBurgerOrderConsumer> _logger;
+        private readonly ILogger<SubmitBurgerOrderConsumer> _logger;
 
-        public ProcessBurgerOrderConsumer(ILogger<CreateBurgerOrderConsumer> logger)
+        public ProcessBurgerOrderConsumer(ILogger<SubmitBurgerOrderConsumer> logger)
         {
             _logger = logger;
         }
@@ -44,8 +44,12 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 
             builder.AddActivity(activityName, executeAddress);
 
+            // Completed
             builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Completed, x => x.Send<BurgerOrderProcessed>(new { context.Message.CorrelationId }));
 
+            // Faulted
+            builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.ActivityFaulted, x => x.Send<BurgerOrderFaulted>(new { context.Message.CorrelationId }));
+            
             return builder.Build();
 
         }

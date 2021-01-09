@@ -17,12 +17,8 @@ namespace TooBigToFailBurgerShop.Ordering.State
         public Event<BurgerOrderFaulted>? BurgerOrderFaulted { get; set; }
 
         public State? WaitingForProcessing { get; private set; }
-
-        public State? BurgerOrderFailed { get; private set; }
-
-        public State? BurgOrderProcessed { get; private set; }
-
-        public State? BurgOrderFailed { get; private set; }
+        public State? Faulted { get; private set; }
+        public State? Processed { get; private set; }
 
 
         public BurgerOrderStateMachine(ILogger<BurgerOrderStateMachine> logger)
@@ -58,11 +54,11 @@ namespace TooBigToFailBurgerShop.Ordering.State
             During(WaitingForProcessing,
                 When(BurgerOrderProcessed)
                     .Then(LogOrderProcessed)
-                    .TransitionTo(BurgOrderProcessed)
+                    .TransitionTo(Processed)
                     .Finalize(),
                 When(BurgerOrderFaulted)
                     .Then(LogOrderFaulted)
-                    .TransitionTo(BurgerOrderFailed));
+                    .TransitionTo(Faulted));
 
 
             SetCompletedWhenFinalized();
