@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
+using TooBigToFailBurgerShop.Ordering.Activities;
 using TooBigToFailBurgerShop.ProcessOrder.Consumer;
 using TooBigToFailBurgerShop.ProcessOrder.Consumer.Infrastructure;
 
@@ -12,7 +13,9 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Application.Extensions
         {
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<SubmitBurgerOrderConsumer>(typeof(CreateBurgerOrderConsumerDefinition));
+                x.AddConsumer<ProcessBurgerOrderConsumer>(typeof(ProcessBurgerOrderConsumerDefinition));
+
+                x.AddActivitiesFromNamespaceContaining<ProcessBurgerOrderActivity>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {

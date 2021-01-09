@@ -13,9 +13,9 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 
     public class ProcessBurgerOrderConsumer : IConsumer<ProcessBurgerOrder>
     {
-        private readonly ILogger<SubmitBurgerOrderConsumer> _logger;
+        private readonly ILogger<ProcessBurgerOrderConsumer> _logger;
 
-        public ProcessBurgerOrderConsumer(ILogger<SubmitBurgerOrderConsumer> logger)
+        public ProcessBurgerOrderConsumer(ILogger<ProcessBurgerOrderConsumer> logger)
         {
             _logger = logger;
         }

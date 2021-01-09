@@ -37,9 +37,16 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-  ordering.stateservice:
+  burgers.ordering.state.service:
     image: ordering.stateservice
     build:
       context: .
       dockerfile: services/Ordering/Ordering.StateService/Ordering.StateService/Dockerfile
+
+
+  burgers.process.order.consumer:
+    image: ${DOCKER_REGISTRY-}processorderconsumer
+    build:
+      context: .
+      dockerfile: services/Ordering/ProcessOrder.Consumer/Dockerfile
 

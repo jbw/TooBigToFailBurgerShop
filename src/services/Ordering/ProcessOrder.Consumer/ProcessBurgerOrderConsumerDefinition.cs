@@ -5,9 +5,9 @@ using MassTransit.Definition;
 
 namespace TooBigToFailBurgerShop.ProcessOrder.Consumer.Infrastructure
 {
-    public class CreateBurgerOrderConsumerDefinition : ConsumerDefinition<SubmitBurgerOrderConsumer>
+    public class ProcessBurgerOrderConsumerDefinition : ConsumerDefinition<ProcessBurgerOrderConsumer>
     {
-        public CreateBurgerOrderConsumerDefinition()
+        public ProcessBurgerOrderConsumerDefinition()
         {
 
             // limit the number of messages consumed concurrently
@@ -16,7 +16,7 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer.Infrastructure
         }
 
         protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
-            IConsumerConfigurator<SubmitBurgerOrderConsumer> consumerConfigurator)
+            IConsumerConfigurator<ProcessBurgerOrderConsumer> consumerConfigurator)
         {
             // configure message retry with millisecond intervals
             endpointConfigurator.UseMessageRetry(r => r.Intervals(100, 200, 500, 800, 1000));
