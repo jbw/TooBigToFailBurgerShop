@@ -7,4 +7,9 @@ namespace TooBigToFailBurgerShop.Ordering.Contracts
     {
         public Guid CorrelationId { get; set; }
     }
+
+    public record ProcessBurgerOrder : CorrelatedBy<Guid>
+    {
+        public Guid CorrelationId { get; set; }
+    }
 }

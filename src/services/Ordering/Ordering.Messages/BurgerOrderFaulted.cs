@@ -3,5 +3,5 @@ using System;
 
 namespace TooBigToFailBurgerShop.Ordering.Contracts
 {
-    public interface CreateBurgerOrderReceived : CorrelatedBy<Guid> { }
+    public interface BurgerOrderFaulted : CorrelatedBy<Guid> { }
 }

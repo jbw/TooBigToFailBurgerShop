@@ -1,6 +1,6 @@
 ﻿namespace TooBigToFailBurgerShop.Ordering.Activities
 {
-    public interface CreateBurgerOrderLog
+    public interface ProcessBurgerOrderLog
     {
       
     }

@@ -10,18 +10,19 @@ using TooBigToFailBurgerShop.Ordering.Contracts;
 
 namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 {
-    public class CreateBurgerOrderConsumer : IConsumer<CreateBurgerOrder>
+
+    public class ProcessBurgerOrderConsumer : IConsumer<ProcessBurgerOrder>
     {
         private readonly ILogger<CreateBurgerOrderConsumer> _logger;
 
-        public CreateBurgerOrderConsumer(ILogger<CreateBurgerOrderConsumer> logger)
+        public ProcessBurgerOrderConsumer(ILogger<CreateBurgerOrderConsumer> logger)
         {
             _logger = logger;
         }
 
-        public async Task Consume(ConsumeContext<CreateBurgerOrder> context)
+        public async Task Consume(ConsumeContext<ProcessBurgerOrder> context)
         {
-            _logger.LogInformation($"CreateBurgerOrderConsumer {context.Message.CorrelationId}");
+            _logger.LogInformation($"ProcessBurgerOrderConsumer {context.Message.CorrelationId}");
             // Use unique ID and decouple tracking ID from any other IDs (e.g. Order Id) from the routing slip.
             // E.g we might execute a routing slip multiple times so we would want a new ID to track with. 
             var trackingId = NewId.NextGuid();
@@ -31,19 +32,19 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 
         }
 
-        private static RoutingSlip CreateRoutingSlip(ConsumeContext<CreateBurgerOrder> context, Guid trackingId)
+        private static RoutingSlip CreateRoutingSlip(ConsumeContext<ProcessBurgerOrder> context, Guid trackingId)
         {
             var builder = new RoutingSlipBuilder(trackingId);
 
             builder.AddVariable("CorrelationId", context.CorrelationId);
 
-            var queueName = $"{typeof(CreateBurgerOrderActivity).Name.Replace("Activity", "")}_execute";
-            var activityName = "CreateBurgerOrderActivity";
+            var queueName = $"{typeof(ProcessBurgerOrderActivity).Name.Replace("Activity", "")}_execute";
+            var activityName = "ProcessBurgerOrderActivity";
             var executeAddress = new Uri($"queue:{queueName}");
 
             builder.AddActivity(activityName, executeAddress);
 
-            builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Completed, x => x.Send<CreateBurgerOrderCompleted>(new { context.Message.CorrelationId }));
+            builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Completed, x => x.Send<BurgerOrderProcessed>(new { context.Message.CorrelationId }));
 
             return builder.Build();
 

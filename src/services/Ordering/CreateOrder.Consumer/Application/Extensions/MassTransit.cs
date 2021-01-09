@@ -14,8 +14,9 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Application.Extensions
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<CreateBurgerOrderConsumer>(typeof(CreateBurgerOrderConsumerDefinition));
+                x.AddConsumer<ProcessBurgerOrderConsumer>(typeof(ProcessBurgerOrderConsumerDefinition));
 
-                x.AddActivitiesFromNamespaceContaining<CreateBurgerOrderActivity>();
+                x.AddActivitiesFromNamespaceContaining<ProcessBurgerOrderActivity>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {

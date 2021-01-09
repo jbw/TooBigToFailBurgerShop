@@ -5,6 +5,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.CreateBurgerOrderCompleted")]
-[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.CreateBurgerOrderFailed")]
-[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.CreateBurgerOrderReceived")]
+[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.BurgerOrderProcessed")]
+[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.BurgerOrderFaulted")]
+[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.BurgerOrderReceived")]
