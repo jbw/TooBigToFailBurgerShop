@@ -1,6 +1,5 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Hosting;
-using System;
 using TooBigToFailBurgerShop.ProcessOrder.Application.Extensions;
 
 
