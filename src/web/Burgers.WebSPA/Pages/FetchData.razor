@@ -5,36 +5,13 @@
 
 <h1>Orders</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
-
-@if (order == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-
-            </tr>
-        </thead>
-        <tbody>
-          
-            <tr>
-                <td>@order.Name</td>
-            </tr>
-            
-        </tbody>
-    </table>
-}
+<button class="btn btn-primary" @onclick="CreateOrder">Create Order</button>
 
 @code {
     private Order order;
 
-    protected override async Task OnInitializedAsync()
+    async Task CreateOrder()
     {
-        order = await OrdersService.CreateOrder();
+        await OrdersService.CreateOrder();
     }
 }
