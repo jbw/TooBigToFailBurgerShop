@@ -12,6 +12,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Burgers.WebSPA.Data;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
+using OpenTelemetry;
 
 namespace Burgers.WebSPA
 {
@@ -35,8 +38,25 @@ namespace Burgers.WebSPA
             services.AddHttpClient<OrdersService>(client =>
             {
                 // TODO config drive this
-                client.BaseAddress = new Uri("http://localhost:6969");
+                client.BaseAddress = new Uri("http://burgers.ordering.api");
+
             });
+
+            services.AddOpenTelemetryTracing(builder =>
+            {
+
+                builder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddJaegerExporter(options =>
+                    {
+                        options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
+                        options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
+                    });
+            });
+
+    
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

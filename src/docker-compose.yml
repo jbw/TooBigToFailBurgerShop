@@ -2,6 +2,36 @@ version: '3.4'
 
 services:
 
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - "5673:5672"
+      - "5775:5775" 
+      - "6831:6831" 
+      - "6832:6832" 
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    environment:
+        COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  burgers.data:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "burger"
+      POSTGRES_PASSWORD: "burger"
+      POSTGRES_DB: "burgers"
+  
   burgers.webspa:
     image: burgers.webspa
     build:
@@ -16,33 +46,17 @@ services:
     depends_on:
       - "burgers.data"
 
-  burgers.data:
-    image: postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: "burger"
-      POSTGRES_PASSWORD: "burger"
-      POSTGRES_DB: "burgers"
-
   burgers.create.order.consumer:
     image: burgers.create.order.consumer
     build:
       context: .
       dockerfile: services/Ordering/CreateOrder.Consumer/Dockerfile
 
-  rabbitmq:
-    image: rabbitmq:management-alpine
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
   burgers.ordering.state.service:
     image: ordering.stateservice
     build:
       context: .
       dockerfile: services/Ordering/Ordering.StateService/Ordering.StateService/Dockerfile
-
 
   burgers.process.order.consumer:
     image: ${DOCKER_REGISTRY-}processorderconsumer

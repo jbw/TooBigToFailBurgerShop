@@ -10,7 +10,8 @@ using Autofac;
 using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Infrastructure;
 using OpenTelemetry.Trace;
-
+using OpenTelemetry.Resources;
+using OpenTelemetry;
 
 namespace TooBigToFailBurgerShop
 {
@@ -30,9 +31,6 @@ namespace TooBigToFailBurgerShop
         {
 
             services.AddControllers();
-            services.AddApplicationInsightsTelemetry();
-
-            services.AddOpenTelemetryTracing(builder => builder.AddAspNetCoreInstrumentation().AddJaegerExporter());
 
             services.AddMassTransit(x =>
             {
@@ -57,13 +55,27 @@ namespace TooBigToFailBurgerShop
             services.AddDbContext<BurgerShopContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
 
+            services.AddOpenTelemetryTracing(builder =>
+            {
+
+                builder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddJaegerExporter(options =>
+                    {
+                        options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
+                        options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
+                    });
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TooBigToFailBurgerShop", Version = "v1" });
             });
 
-
         }
+
         public void ConfigureContainer(ContainerBuilder builder)
         {
             // Register your own things directly with Autofac here. Don't
