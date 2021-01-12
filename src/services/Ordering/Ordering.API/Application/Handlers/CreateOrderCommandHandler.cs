@@ -9,7 +9,6 @@ using TooBigToFailBurgerShop.Ordering.Contracts;
 
 namespace TooBigToFailBurgerShop.Application.Commands
 {
-
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
         private readonly IPublishEndpoint _publishEndpoint;
@@ -21,6 +20,12 @@ namespace TooBigToFailBurgerShop.Application.Commands
             _logger = logger;
         }
 
+        /// <summary>
+        /// Handles a request to create an Order. 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Ordering.API, CreateOrderCommandHandler", request.RequestId);
