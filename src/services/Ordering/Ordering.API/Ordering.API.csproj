@@ -35,6 +35,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Npgsql" Version="5.0.1.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.0.0-rc1.1" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.0.0-rc1.1" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc1.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc1.1" />
@@ -43,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\OpenTelementry.ActivitySource.Instrumentation.Example\OpenTelementry.ActivitySource.Instrumentation.Example\OpenTelementry.Instrumentation.Example.csproj" />
     <ProjectReference Include="..\Ordering.Messages\Ordering.Contracts.csproj" />
   </ItemGroup>
 
