@@ -17,8 +17,6 @@ namespace Burgers.WebSPA.Data
 
         public async Task CreateOrder()
         {
-            //var activity = Activity.Current;
-
             _httpClient.DefaultRequestHeaders.Remove("x-requestid");
             _httpClient.DefaultRequestHeaders.Add("x-requestid", Guid.NewGuid().ToString());
 
