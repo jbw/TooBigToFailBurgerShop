@@ -1,5 +1,3 @@
-using System;
-
 namespace Burgers.WebSPA.Data
 {
     public class Order

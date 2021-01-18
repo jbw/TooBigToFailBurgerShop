@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Application.Commands;
@@ -30,6 +31,9 @@ namespace TooBigToFailBurgerShop.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateOrderAsync([FromBody]CreateOrderCommand createOrderCommand, [FromHeader(Name = "x-requestid")] string requestId)
         {
+
+            _logger.LogInformation("CreateOrderAsync: {requestId}", requestId);
+
             var hasRequestGuid = Guid.TryParse(requestId, out Guid requestIdGuid) && requestIdGuid != Guid.Empty;
 
             if(!hasRequestGuid)

@@ -23,9 +23,11 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
         public async Task Consume(ConsumeContext<ProcessBurgerOrder> context)
         {
             _logger.LogInformation($"ProcessBurgerOrderConsumer {context.Message.CorrelationId}");
+
             // Use unique ID and decouple tracking ID from any other IDs (e.g. Order Id) from the routing slip.
             // E.g we might execute a routing slip multiple times so we would want a new ID to track with. 
             var trackingId = NewId.NextGuid();
+
             var routingSlip = CreateRoutingSlip(context, trackingId);
 
             await context.Execute(routingSlip).ConfigureAwait(false);

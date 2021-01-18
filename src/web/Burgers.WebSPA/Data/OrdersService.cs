@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -20,12 +20,10 @@ namespace Burgers.WebSPA.Data
             _httpClient.DefaultRequestHeaders.Remove("x-requestid");
             _httpClient.DefaultRequestHeaders.Add("x-requestid", Guid.NewGuid().ToString());
 
-            var jsonContent = JsonSerializer.Serialize(new { UserId = "jbw" });
- 
-            var body = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+            var body = new StringContent("{}", System.Text.Encoding.UTF8, "application/json");
 
             await _httpClient.PutAsync("/Orders/createorder", body);
-            
+
         }
     }
 

@@ -30,12 +30,15 @@ namespace TooBigToFailBurgerShop.Application.Commands
         {
             _logger.LogInformation("Ordering.API, CreateOrderCommandHandler", request.RequestId);
 
+            // TODO: RequestId could be used as OrderId and CorrelationId?
             var message = new
             {
-                UserId = request.UserId,
                 OrderDate = DateTime.UtcNow,
                 RequestId = request.RequestId,
-                CorrelationId = request.RequestId
+                OrderId = InVar.Id,
+                CorrelationId = InVar.Id,
+
+
             };
 
             await _publishEndpoint.Publish<SubmitBurgerOrder>(message, cancellationToken);

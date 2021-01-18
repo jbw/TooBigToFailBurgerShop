@@ -30,17 +30,17 @@ namespace TooBigToFailBurgerShop.Ordering.State
             // Maps CorrelationId with this state machine
             Event(() => BurgerOrderReceived, x =>
             {
-                x.CorrelateById(m => m.Message.CorrelationId);
+                x.CorrelateById(m => m.Message.OrderId);
             });
 
             Event(() => BurgerOrderProcessed, x =>
             {
-                x.CorrelateById(m => m.Message.CorrelationId);
+                x.CorrelateById(m => m.Message.OrderId);
             });
 
             Event(() => BurgerOrderFaulted, x =>
             {
-                x.CorrelateById(m => m.Message.CorrelationId);
+                x.CorrelateById(m => m.Message.OrderId);
             });
 
 
@@ -48,7 +48,7 @@ namespace TooBigToFailBurgerShop.Ordering.State
                 When(BurgerOrderReceived)
                     .Then(Initialize)
                     .Then(LogOrderReceived)
-                    .ThenAsync(InitiateOrderForProcessing)
+                    .ThenAsync(SendOrderForProcessing)
                     .TransitionTo(WaitingForProcessing));
 
             During(WaitingForProcessing,
@@ -65,7 +65,7 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         }
 
-        private async Task InitiateOrderForProcessing(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
+        private async Task SendOrderForProcessing(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
         {
             _logger.LogInformation("Initiating order for processing: {0}", context.Data.CorrelationId);
 
@@ -95,8 +95,15 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         private static ProcessBurgerOrder CreateProcessBurgerOrder(BurgerOrderReceived burgerOrder)
         {
-            return new ProcessBurgerOrder { CorrelationId = burgerOrder.CorrelationId };
+            return new ProcessBurgerOrder
+            {
+                CorrelationId = burgerOrder.CorrelationId,
+                OrderId = burgerOrder.OrderId,
+                OrderDate = burgerOrder.OrderDate,
+                RequestId = burgerOrder.RequestId
+            };
         }
+
         private void LogOrderReceived(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
         {
             _logger.LogInformation("Order recieved: {0}", context.Data.CorrelationId);
