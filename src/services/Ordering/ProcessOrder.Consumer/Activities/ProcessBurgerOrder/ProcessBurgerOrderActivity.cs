@@ -15,13 +15,15 @@ namespace TooBigToFailBurgerShop.Ordering.Activities
 
         public Task<CompensationResult> Compensate(CompensateContext<ProcessBurgerOrderLog> context)
         {
-            _logger.LogInformation($"ProcessBurgerOrderActivity {context.CorrelationId}");
+            _logger.LogInformation($"ProcessBurgerOrderActivity compensated {context.Message.TrackingNumber}");
 
             return Task.FromResult(context.Compensated());
         }
 
         public Task<ExecutionResult> Execute(ExecuteContext<ProcessBurgerOrderArguments> context)
         {
+            _logger.LogInformation($"ProcessBurgerOrderActivity executed {context.Message.TrackingNumber}");
+
             return Task.FromResult(context.Completed<ProcessBurgerOrderLog>( new { }));
         }
     }

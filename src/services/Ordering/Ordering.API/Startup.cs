@@ -55,19 +55,22 @@ namespace TooBigToFailBurgerShop
             services.AddDbContext<BurgerShopContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
 
+           
             services.AddOpenTelemetryTracing(builder =>
             {
 
-                builder
+                builder                 
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
+                    .AddConsoleExporter()
                     .AddJaegerExporter(options =>
                     {
                         options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
                         options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
                     });
             });
+
 
             services.AddSwaggerGen(c =>
             {

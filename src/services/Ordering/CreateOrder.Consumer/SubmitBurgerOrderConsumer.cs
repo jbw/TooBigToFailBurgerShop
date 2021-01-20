@@ -16,8 +16,10 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
 
         public async Task Consume(ConsumeContext<SubmitBurgerOrder> context)
         {
-            
-            _logger.LogInformation($"CreateBurgerOrderConsumer {context.CorrelationId}");
+
+            _logger.LogInformation($"CreateBurgerOrderConsumer {context.MessageId}");
+
+            // TODO persist the order so it can be processed further down the line.
 
             // Just republish the exact message for now.
             await context.Publish<BurgerOrderReceived>(context.Message).ConfigureAwait(false);

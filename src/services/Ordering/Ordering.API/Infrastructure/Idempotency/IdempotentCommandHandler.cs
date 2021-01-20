@@ -2,9 +2,8 @@
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
-using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 
-namespace TooBigToFailBurgerShop.Application.Commands
+namespace TooBigToFailBurgerShop.Infrastructure.Idempotency
 {
     public class IdempotentCommandHandler<T, R> : IRequestHandler<IdempotentCommand<T, R>, R> where T : IRequest<R>
     {
@@ -12,7 +11,7 @@ namespace TooBigToFailBurgerShop.Application.Commands
         private readonly IRequestManager _requestManager;
         private readonly ILogger<IdempotentCommandHandler<T, R>> _logger;
 
-        public IdempotentCommandHandler(IMediator mediator, IRequestManager requestManager, ILogger<IdempotentCommandHandler<T,R>> logger)
+        public IdempotentCommandHandler(IMediator mediator, IRequestManager requestManager, ILogger<IdempotentCommandHandler<T, R>> logger)
         {
             _mediator = mediator;
             _requestManager = requestManager;
@@ -21,8 +20,9 @@ namespace TooBigToFailBurgerShop.Application.Commands
 
         public async Task<R> Handle(IdempotentCommand<T, R> request, CancellationToken cancellationToken)
         {
-            // Check not a duplicate request
+            // TODO Check request not a duplicated and return default(R) 
 
+            // Send the embedded command to mediator to run the actual requested command
             var result = await _mediator.Send(request.Command, cancellationToken);
 
             return result;
@@ -31,7 +31,7 @@ namespace TooBigToFailBurgerShop.Application.Commands
 
         protected virtual bool CreateResultForDuplicateRequest()
         {
-            return true;                // Ignore duplicate requests for creating order.
+            return true; // Ignore duplicate requests for creating order.
         }
     }
 }

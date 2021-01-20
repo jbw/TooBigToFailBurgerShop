@@ -2,16 +2,18 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-public class MyHostedService : IHostedService
+namespace Ordering.StateService
 {
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public class MyHostedService : IHostedService
     {
-        await Task.Delay(100, cancellationToken);
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            await Task.Delay(100, cancellationToken);
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await Task.CompletedTask;
+        }
     }
-
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-
-    }
-
 }

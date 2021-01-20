@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System;
 
-namespace TooBigToFailBurgerShop.Application.Commands
+namespace TooBigToFailBurgerShop.Infrastructure.Idempotency
 {
     public class IdempotentCommand<T, R> : IRequest<R> where T : IRequest<R>
     {

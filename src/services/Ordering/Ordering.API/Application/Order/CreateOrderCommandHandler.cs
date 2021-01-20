@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Ordering.Contracts;
 
-namespace TooBigToFailBurgerShop.Application.Commands
+namespace TooBigToFailBurgerShop.Application.Commands.Order
 {
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
@@ -28,19 +28,17 @@ namespace TooBigToFailBurgerShop.Application.Commands
         /// <returns></returns>
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Ordering.API, CreateOrderCommandHandler", request.RequestId);
+            _logger.LogInformation("Ordering.API, CreateOrderCommandHandler");
 
-            // TODO: RequestId could be used as OrderId and CorrelationId?
             var message = new
             {
                 OrderDate = DateTime.UtcNow,
-                RequestId = request.RequestId,
                 OrderId = InVar.Id,
-                CorrelationId = InVar.Id,
-
+                __CorrelationId = InVar.Id,
 
             };
 
+            // Submit the burger order as a message and we're done. 
             await _publishEndpoint.Publish<SubmitBurgerOrder>(message, cancellationToken);
 
             return true;
