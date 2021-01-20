@@ -67,7 +67,7 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         private async Task SendOrderForProcessing(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
         {
-            _logger.LogInformation("Initiating order for processing: {0}", context.Data.CorrelationId);
+            _logger.LogInformation("Initiating order for processing: {0}", context.Data.OrderId);
 
             var order = CreateProcessBurgerOrder(context.Data);
 
@@ -83,7 +83,7 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         private void Initialize(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
         {
-            _logger.LogInformation("Initializing: {0}", context.Data.CorrelationId);
+            _logger.LogInformation("Initializing: {0}", context.Data.OrderId);
 
             InitializeInstance(context.Instance, context.Data);
         }
@@ -91,6 +91,7 @@ namespace TooBigToFailBurgerShop.Ordering.State
         private static void InitializeInstance(BurgerOrderStateInstance instance, BurgerOrderReceived burgerOrderReceived)
         {
             instance.CorrelationId = burgerOrderReceived.CorrelationId;
+            instance.BurgerOrderId = burgerOrderReceived.OrderId;
         }
 
         private static ProcessBurgerOrder CreateProcessBurgerOrder(BurgerOrderReceived burgerOrder)
@@ -100,23 +101,22 @@ namespace TooBigToFailBurgerShop.Ordering.State
                 CorrelationId = burgerOrder.CorrelationId,
                 OrderId = burgerOrder.OrderId,
                 OrderDate = burgerOrder.OrderDate,
-                RequestId = burgerOrder.RequestId
             };
         }
 
         private void LogOrderReceived(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
         {
-            _logger.LogInformation("Order recieved: {0}", context.Data.CorrelationId);
+            _logger.LogInformation("Order recieved: {0}", context.Data.OrderId);
         }
 
         private void LogOrderFaulted(BehaviorContext<BurgerOrderStateInstance, BurgerOrderFaulted> context)
         {
-            _logger.LogInformation("Order faulted: {0}", context.Data.CorrelationId);
+            _logger.LogInformation("Order faulted: {0}", context.Data.OrderId);
         }
 
         private void LogOrderProcessed(BehaviorContext<BurgerOrderStateInstance, BurgerOrderProcessed> context)
         {
-            _logger.LogInformation("Order processed: {0}", context.Data.CorrelationId);
+            _logger.LogInformation("Order processed: {0}", context.Data.OrderId);
         }
     }
 }

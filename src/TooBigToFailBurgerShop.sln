@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.State", "services\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.StateService", "services\Ordering\Ordering.StateService\Ordering.StateService\Ordering.StateService.csproj", "{C331A008-33E0-4164-BE3A-205ED0D64CB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessOrder.Consumer", "services\Ordering\ProcessOrder.Consumer\ProcessOrder.Consumer.csproj", "{A936F0F0-AA9D-4A11-8488-81B33338ECC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessOrder.Consumer", "services\Ordering\ProcessOrder.Consumer\ProcessOrder.Consumer.csproj", "{A936F0F0-AA9D-4A11-8488-81B33338ECC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

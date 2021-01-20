@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
-using TooBigToFailBurgerShop.Application.Commands;
-
+using TooBigToFailBurgerShop.Application.Commands.Order;
+using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 
 namespace TooBigToFailBurgerShop.Controllers
 {
@@ -41,10 +40,8 @@ namespace TooBigToFailBurgerShop.Controllers
                 return BadRequest();
             }
 
-            // Use requestId until we have something more fitting
-            createOrderCommand.RequestId = requestIdGuid;
-
             var requestCreateOrder = new IdempotentCommand<CreateOrderCommand, bool>(createOrderCommand, requestIdGuid);
+
             var result = await _mediator.Send(requestCreateOrder);
 
             if (!result) return BadRequest();

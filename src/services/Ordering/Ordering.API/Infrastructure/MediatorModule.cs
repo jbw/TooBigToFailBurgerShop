@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using MediatR;
 using Autofac;
-using TooBigToFailBurgerShop.Application.Commands;
+using TooBigToFailBurgerShop.Application.Commands.Order;
 
 namespace TooBigToFailBurgerShop
 {

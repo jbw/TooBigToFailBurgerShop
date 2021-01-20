@@ -44,7 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\OpenTelementry.ActivitySource.Instrumentation.Example\OpenTelementry.ActivitySource.Instrumentation.Example\OpenTelementry.Instrumentation.Example.csproj" />
     <ProjectReference Include="..\Ordering.Messages\Ordering.Contracts.csproj" />
   </ItemGroup>
 
