@@ -34,7 +34,7 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
             {
                 OrderDate = DateTime.UtcNow,
                 OrderId = InVar.Id,
-                __CorrelationId = InVar.Id,
+                CorrelationId = InVar.Id,
 
             };
 
