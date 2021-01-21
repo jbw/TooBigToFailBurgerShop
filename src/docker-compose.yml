@@ -2,11 +2,18 @@ version: '3.4'
 
 services:
 
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+        - "6541:80"
+    environment:
+        PGADMIN_DEFAULT_EMAIL: burger@burger.com
+        PGADMIN_DEFAULT_PASSWORD: burger
+
   jaeger:
     image: jaegertracing/all-in-one
     ports:
       - "16686:16686"
-
     environment:
         COLLECTOR_ZIPKIN_HTTP_PORT: 9411
 

@@ -60,9 +60,6 @@ namespace TooBigToFailBurgerShop.Ordering.State
                     .Then(LogOrderFaulted)
                     .TransitionTo(Faulted));
 
-
-            SetCompletedWhenFinalized();
-
         }
 
         private async Task SendOrderForProcessing(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
@@ -84,13 +81,12 @@ namespace TooBigToFailBurgerShop.Ordering.State
         private void Initialize(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
         {
             _logger.LogInformation("Initializing: {0}", context.Data.OrderId);
-
+           
             InitializeInstance(context.Instance, context.Data);
         }
 
         private static void InitializeInstance(BurgerOrderStateInstance instance, BurgerOrderReceived burgerOrderReceived)
         {
-            instance.CorrelationId = burgerOrderReceived.CorrelationId;
             instance.BurgerOrderId = burgerOrderReceived.OrderId;
         }
 
