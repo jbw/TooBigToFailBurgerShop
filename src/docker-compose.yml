@@ -20,11 +20,10 @@ services:
   rabbitmq:
     image: rabbitmq:management-alpine
     ports:
-      - "5672:5672"
       - "15672:15672"
 
   burgers.data:
-    image: postgres
+    image: postgres:alpine
     ports:
       - "5432:5432"
     environment:
@@ -59,7 +58,7 @@ services:
       dockerfile: services/Ordering/Ordering.StateService/Ordering.StateService/Dockerfile
 
   burgers.process.order.consumer:
-    image: ${DOCKER_REGISTRY-}processorderconsumer
+    image: burgers.process.order.consumer
     build:
       context: .
       dockerfile: services/Ordering/ProcessOrder.Consumer/Dockerfile
