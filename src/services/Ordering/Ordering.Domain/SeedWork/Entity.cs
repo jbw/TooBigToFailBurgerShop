@@ -4,6 +4,6 @@
     {
         protected Entity(TKey id) => Id = id;
 
-        public TKey Id { get; }
+        public TKey Id { get; set; }
     }
 }
