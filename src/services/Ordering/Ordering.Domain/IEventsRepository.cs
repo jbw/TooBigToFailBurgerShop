@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace TooBigToFailBurgerShop.Ordering.Domain
+namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 {
     public interface IEventsRepository<TType, TKey> where TType : class, IAggregateRoot<TKey>
     {

@@ -1,4 +1,4 @@
-﻿namespace TooBigToFailBurgerShop.Ordering.Domain
+﻿namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 {
     public abstract class Entity<TKey> : IEntity<TKey>
     {

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TooBigToFailBurgerShop.Ordering.Domain.Core;
 
-namespace TooBigToFailBurgerShop.Ordering.Domain
+namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
 {
     public class EventsRepository<TType, TKey> : IEventsRepository<TType, TKey> where TType : class, IAggregateRoot<TKey>
     {

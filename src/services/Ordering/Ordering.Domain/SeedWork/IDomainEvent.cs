@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TooBigToFailBurgerShop.Ordering.Domain
+namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 {
     public interface IDomainEvent<out TKey>
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace TooBigToFailBurgerShop.Ordering.Domain
+namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 {
     public abstract class AggregateRoot<TType, TKey> : Entity<TKey>, IAggregateRoot<TKey> where TType : class, IAggregateRoot<TKey>
     {

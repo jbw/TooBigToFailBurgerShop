@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TooBigToFailBurgerShop.Ordering.Domain
+namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 {
     public interface IAggregateRoot<out TKey> : IEntity<TKey>
     {

@@ -1,4 +1,4 @@
-﻿namespace TooBigToFailBurgerShop.Ordering.Domain
+﻿namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 {
     public interface IEntity<out TKey>
     {

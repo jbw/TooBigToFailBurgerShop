@@ -1,4 +1,5 @@
 ﻿using System;
+using TooBigToFailBurgerShop.Ordering.Domain.Core;
 
 namespace TooBigToFailBurgerShop.Ordering.Domain
 {
