@@ -1,7 +1,8 @@
 ﻿using System;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
+using TooBigToFailBurgerShop.Ordering.Domain.Events;
 
-namespace TooBigToFailBurgerShop.Ordering.Domain
+namespace TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel
 {
     public class Order : AggregateRoot<Order, Guid>
     {
