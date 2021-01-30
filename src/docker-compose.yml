@@ -21,6 +21,9 @@ services:
     image: rabbitmq:management-alpine
     ports:
       - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
 
   burgers.data:
     image: postgres:alpine
