@@ -1,11 +1,11 @@
 ﻿using Marten;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
 {
+
     public class EventsRepository<TType, TKey> : IEventsRepository<TType, TKey> where TType : class, IAggregateRoot<TKey>
     {
         private readonly IDocumentStore _store;
@@ -19,8 +19,11 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
         {
             using var session = _store.OpenSession();
 
-            Ordering.Domain.Events.OrderCreated e = (Domain.Events.OrderCreated)aggregateRoot.Events.First();
-            session.Events.Append(e.AggregateId, e);
+            var aggregateRootId = aggregateRoot.Id.ToString();
+            var aggregateVersion = aggregateRoot.Version;
+            var events = aggregateRoot.Events;
+
+            session.Events.Append(aggregateRootId, aggregateRoot, events);
 
             await session.SaveChangesAsync();
         }
@@ -29,5 +32,10 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class EventSerializer
+    {
+
     }
 }

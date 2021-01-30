@@ -10,8 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ordering.Domain.Abstractions\Ordering.Domain.csproj" />
-    <ProjectReference Include="..\Ordering.Domain\Ordering.Domain.Core.csproj" />
+    <ProjectReference Include="..\Ordering.Domain.Core\Ordering.Domain.Core.csproj" />
   </ItemGroup>
 
 </Project>
