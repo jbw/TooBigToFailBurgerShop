@@ -19,11 +19,15 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
         {
             using var session = _store.OpenSession();
 
-            var aggregateRootId = aggregateRoot.Id.ToString();
+            var aggregateRootId = Guid.Parse(aggregateRoot.Id.ToString());
             var aggregateVersion = aggregateRoot.Version;
             var events = aggregateRoot.Events;
 
-            session.Events.Append(aggregateRootId, aggregateRoot, events);
+            foreach (var @event in events)
+            {
+
+                session.Events.Append(aggregateRootId, aggregateRoot, @event);
+            }
 
             await session.SaveChangesAsync();
         }
