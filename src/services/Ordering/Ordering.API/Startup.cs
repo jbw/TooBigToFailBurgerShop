@@ -12,6 +12,14 @@ using TooBigToFailBurgerShop.Infrastructure;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry;
+using TooBigToFailBurgerShop.Ordering.Domain;
+using System;
+using TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ;
+using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
+using TooBigToFailBurgerShop.Ordering.Persistence.Web.EntityFramework;
+using TooBigToFailBurgerShop.Ordering.Domain.Core;
+using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
+using GreenPipes;
 
 namespace TooBigToFailBurgerShop
 {
@@ -32,9 +40,11 @@ namespace TooBigToFailBurgerShop
 
             services.AddControllers();
 
+            services.AddMartenEventsInfrastructure<Order>(Configuration.GetConnectionString("BurgerShopEventsConnectionString"));
+
             services.AddMassTransit(x =>
             {
-
+              
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseInMemoryOutbox();
@@ -44,22 +54,23 @@ namespace TooBigToFailBurgerShop
                         h.Username("guest");
                         h.Password("guest");
                     });
-
+                   
                     cfg.ConfigureEndpoints(context);
 
                 });
             });
 
+            services.AddRabbitMqInfrastructure();
             services.AddMassTransitHostedService();
 
             services.AddDbContext<BurgerShopContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
 
-           
+
             services.AddOpenTelemetryTracing(builder =>
             {
 
-                builder                 
+                builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
@@ -85,7 +96,15 @@ namespace TooBigToFailBurgerShop
             // call builder.Populate(), that happens in AutofacServiceProviderFactory
             // for you.
             builder.RegisterType<RequestManager>().AsImplementedInterfaces();
+
+            builder.RegisterType<EventProducer<Order, Guid>>().AsImplementedInterfaces();
+            builder.RegisterType<EventsRepository<Order>>().AsImplementedInterfaces();
+            builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
+
+            builder.RegisterType<OrdersRepository>().AsImplementedInterfaces();
+
             builder.RegisterModule(new MediatorModule());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
