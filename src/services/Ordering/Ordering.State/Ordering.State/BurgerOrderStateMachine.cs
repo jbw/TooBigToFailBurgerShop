@@ -8,11 +8,12 @@ namespace TooBigToFailBurgerShop.Ordering.State
     using System;
     using System.Threading.Tasks;
     using TooBigToFailBurgerShop.Ordering.Contracts;
+    using TooBigToFailBurgerShop.Ordering.Domain.Events;
 
     public class BurgerOrderStateMachine : MassTransitStateMachine<BurgerOrderStateInstance>
     {
         private readonly ILogger<BurgerOrderStateMachine> _logger;
-        public Event<BurgerOrderReceived>? BurgerOrderReceived { get; set; }
+        public Event<OrderCreated>? NewOrder { get; set; }
         public Event<BurgerOrderProcessed>? BurgerOrderProcessed { get; set; }
         public Event<BurgerOrderFaulted>? BurgerOrderFaulted { get; set; }
 
@@ -28,9 +29,9 @@ namespace TooBigToFailBurgerShop.Ordering.State
             InstanceState(x => x.CurrentState);
 
             // Maps CorrelationId with this state machine
-            Event(() => BurgerOrderReceived, x =>
+            Event(() => NewOrder, x =>
             {
-                x.CorrelateById(m => m.Message.OrderId);
+                x.CorrelateById(m => m.Message.AggregateId);
             });
 
             Event(() => BurgerOrderProcessed, x =>
@@ -45,7 +46,7 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
 
             Initially(
-                When(BurgerOrderReceived)
+                When(NewOrder)
                     .Then(Initialize)
                     .Then(LogOrderReceived)
                     .ThenAsync(SendOrderForProcessing)
@@ -62,9 +63,9 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         }
 
-        private async Task SendOrderForProcessing(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
+        private async Task SendOrderForProcessing(BehaviorContext<BurgerOrderStateInstance, OrderCreated> context)
         {
-            _logger.LogInformation("Initiating order for processing: {0}", context.Data.OrderId);
+            _logger.LogInformation("Initiating order for processing: {0}", context.Data.AggregateId);
 
             var order = CreateProcessBurgerOrder(context.Data);
 
@@ -78,31 +79,31 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         }
 
-        private void Initialize(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
+        private void Initialize(BehaviorContext<BurgerOrderStateInstance, OrderCreated> context)
         {
-            _logger.LogInformation("Initializing: {0}", context.Data.OrderId);
+            _logger.LogInformation("Initializing: {0}", context.Data.AggregateId);
            
             InitializeInstance(context.Instance, context.Data);
         }
 
-        private static void InitializeInstance(BurgerOrderStateInstance instance, BurgerOrderReceived burgerOrderReceived)
+        private static void InitializeInstance(BurgerOrderStateInstance instance, OrderCreated burgerOrderReceived)
         {
-            instance.BurgerOrderId = burgerOrderReceived.OrderId;
+            instance.BurgerOrderId = burgerOrderReceived.AggregateId;
         }
 
-        private static ProcessBurgerOrder CreateProcessBurgerOrder(BurgerOrderReceived burgerOrder)
+        private static ProcessBurgerOrder CreateProcessBurgerOrder(OrderCreated burgerOrder)
         {
             return new ProcessBurgerOrder
             {
-                CorrelationId = burgerOrder.CorrelationId,
-                OrderId = burgerOrder.OrderId,
-                OrderDate = burgerOrder.OrderDate,
+                CorrelationId = burgerOrder.AggregateId,
+                OrderId = burgerOrder.AggregateId,
+                OrderDate = burgerOrder.Timestamp,
             };
         }
 
-        private void LogOrderReceived(BehaviorContext<BurgerOrderStateInstance, BurgerOrderReceived> context)
+        private void LogOrderReceived(BehaviorContext<BurgerOrderStateInstance, OrderCreated> context)
         {
-            _logger.LogInformation("Order recieved: {0}", context.Data.OrderId);
+            _logger.LogInformation("Order recieved: {0}", context.Data.AggregateId);
         }
 
         private void LogOrderFaulted(BehaviorContext<BurgerOrderStateInstance, BurgerOrderFaulted> context)

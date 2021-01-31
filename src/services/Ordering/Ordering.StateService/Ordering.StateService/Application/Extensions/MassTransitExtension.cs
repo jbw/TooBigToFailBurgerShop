@@ -1,9 +1,11 @@
 ﻿using Automatonymous.Requests;
+using GreenPipes;
 using MassTransit;
 using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Reflection;
 using TooBigToFailBurgerShop.Ordering.State;
 
@@ -15,27 +17,6 @@ namespace Ordering.StateService
         {
             services.AddMassTransit(x =>
             {
-                x.AddSagaStateMachine<BurgerOrderStateMachine, BurgerOrderStateInstance>()
-                    .EntityFrameworkRepository(r =>
-                    {
-                        r.LockStatementProvider = new PostgresLockStatementProvider();
-                        r.ExistingDbContext<BurgerOrderStateDbContext>();
-
-                        r.AddDbContext<DbContext, BurgerOrderStateDbContext>((provider, builder) =>
-                        {
-                            var connectionString = configuration.GetConnectionString("BurgerOrderStateConnectionString");
-
-                            builder.UseNpgsql(connectionString, m =>
-                            {
-                                m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
-                                m.MigrationsHistoryTable($"__{nameof(BurgerOrderStateDbContext)}");
-                            });
-                        });
-
-                    });
-
-                x.AddSagaStateMachine<RequestStateMachine, RequestState>(typeof(RequestSagaDefinition))
-                    .InMemoryRepository();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -45,11 +26,46 @@ namespace Ordering.StateService
                         h.Password("guest");
                     });
 
-                    cfg.ConfigureEndpoints(context);
+                    // Configure the outbox
+                    cfg.UseScheduledRedelivery(r => r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30)));
+                    cfg.UseMessageRetry(r => r.Immediate(5));
 
                     cfg.UseInMemoryOutbox();
+                    
+                    cfg.ConfigureEndpoints(context);
 
                 });
+
+
+                x.AddSagaStateMachine<BurgerOrderStateMachine, BurgerOrderStateInstance>(cfg =>
+                {
+                    // Configure the outbox
+                    cfg.UseScheduledRedelivery(r => r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30)));
+                    cfg.UseMessageRetry(r => r.Immediate(5));
+                    cfg.UseInMemoryOutbox();
+
+                })
+                .EntityFrameworkRepository(r =>
+                {
+                    r.LockStatementProvider = new PostgresLockStatementProvider();
+                    r.ExistingDbContext<BurgerOrderStateDbContext>();
+
+                    r.AddDbContext<DbContext, BurgerOrderStateDbContext>((provider, builder) =>
+                    {
+                        var connectionString = configuration.GetConnectionString("BurgerOrderStateConnectionString");
+
+                        builder.UseNpgsql(connectionString, m =>
+                        {
+                            m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
+                            m.MigrationsHistoryTable($"__{nameof(BurgerOrderStateDbContext)}");
+                        });
+                    });
+
+                });
+
+                x.AddSagaStateMachine<RequestStateMachine, RequestState>(typeof(RequestSagaDefinition))
+                    .InMemoryRepository();
+
             });
         }
     }

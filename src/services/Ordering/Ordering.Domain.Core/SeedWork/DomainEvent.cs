@@ -4,11 +4,16 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 {
     public abstract class DomainEvent<TType, TKey> : IDomainEvent<TKey> where TType : IAggregateRoot<TKey>
     {
-        public long AggregateVersion { get; }
+        public long AggregateVersion { get; set; }
 
-        public TKey AggregateId { get; }
+        public TKey AggregateId { get; set; }
 
-        public DateTime Timestamp { get; }
+        public DateTime Timestamp { get; set; }
+
+        public DomainEvent()
+        {
+
+        }
 
         public DomainEvent(TType aggregateRoot)
         {

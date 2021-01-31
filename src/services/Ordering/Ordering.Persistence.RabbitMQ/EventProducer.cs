@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.EventBus;
+using TooBigToFailBurgerShop.Ordering.Domain.Events;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ
 {
@@ -30,16 +31,19 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ
             if (!aggregateRoot.Events.Any())
                 return;
 
+            // limitation: not generic for other message types yet. 
             foreach (var @event in aggregateRoot.Events)
             {
-                var data = System.Text.Json.JsonSerializer.Serialize(@event);
 
-                // Configure endpoint
-                await _publishEndpoint.Publish<Envelope>(new
+                var message = new 
                 {
-                    Key = @event.AggregateId,
-                    Value = data,
-                });
+                    AggregateId = @event.AggregateId,
+                    Timestamp = DateTime.UtcNow,
+                    AggregateVersion = @event.AggregateVersion
+                };
+
+                await _publishEndpoint.Publish<OrderCreated>(message);
+
             }
         }
     }
