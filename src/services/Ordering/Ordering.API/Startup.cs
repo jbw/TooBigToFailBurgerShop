@@ -7,19 +7,17 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MassTransit;
 using Autofac;
-using TooBigToFailBurgerShop.Infrastructure.Idempotency;
-using TooBigToFailBurgerShop.Infrastructure;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry;
-using TooBigToFailBurgerShop.Ordering.Domain;
 using System;
 using TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ;
 using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
 using TooBigToFailBurgerShop.Ordering.Persistence.Web.EntityFramework;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
-using GreenPipes;
+using TooBigToFailBurgerShop.Ordering.Infrastructure;
+using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 
 namespace TooBigToFailBurgerShop
 {
@@ -40,11 +38,14 @@ namespace TooBigToFailBurgerShop
 
             services.AddControllers();
 
+            services.AddDbContext<BurgerShopContext>(contextOptions =>
+                contextOptions.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
+
             services.AddMartenEventsInfrastructure<Order>(Configuration.GetConnectionString("BurgerShopEventsConnectionString"));
+            services.AddEntityFrameworkOrderRepository<BurgerShopContext, Order>();
 
             services.AddMassTransit(x =>
             {
-              
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseInMemoryOutbox();
@@ -54,18 +55,13 @@ namespace TooBigToFailBurgerShop
                         h.Username("guest");
                         h.Password("guest");
                     });
-                   
-                    cfg.ConfigureEndpoints(context);
 
+                    cfg.ConfigureEndpoints(context);
                 });
             });
 
             services.AddRabbitMqInfrastructure();
             services.AddMassTransitHostedService();
-
-            services.AddDbContext<BurgerShopContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
-
 
             services.AddOpenTelemetryTracing(builder =>
             {
@@ -100,8 +96,6 @@ namespace TooBigToFailBurgerShop
             builder.RegisterType<EventProducer<Order, Guid>>().AsImplementedInterfaces();
             builder.RegisterType<EventsRepository<Order>>().AsImplementedInterfaces();
             builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
-
-            builder.RegisterType<OrdersRepository>().AsImplementedInterfaces();
 
             builder.RegisterModule(new MediatorModule());
 
