@@ -36,9 +36,4 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
             throw new NotImplementedException();
         }
     }
-
-    public class EventSerializer
-    {
-
-    }
 }
