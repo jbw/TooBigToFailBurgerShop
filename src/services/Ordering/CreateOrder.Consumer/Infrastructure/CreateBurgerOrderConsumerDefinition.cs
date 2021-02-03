@@ -2,8 +2,9 @@
 using MassTransit;
 using MassTransit.ConsumeConfigurators;
 using MassTransit.Definition;
+using TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer;
 
-namespace TooBigToFailBurgerShop.ProcessOrder.Consumer.Infrastructure
+namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Infrastructure
 {
     public class CreateBurgerOrderConsumerDefinition : ConsumerDefinition<CreateBurgerOrderConsumer>
     {

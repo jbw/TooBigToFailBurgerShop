@@ -7,7 +7,7 @@ using TooBigToFailBurgerShop.Ordering.Domain;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
 
-namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
+namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 {
     public class CreateBurgerOrderConsumer : IConsumer<CreateBurgerOrder>
     {
