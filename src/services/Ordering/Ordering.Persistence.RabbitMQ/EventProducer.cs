@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.EventBus;
-using TooBigToFailBurgerShop.Ordering.Domain.Events;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ
 {
@@ -36,7 +35,6 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ
 
             _logger.LogInformation("publishing " + aggregateRoot.Events.Count + " events for {AggregateId} ...", aggregateRoot.Id);
 
-            // limitation: not generic for other message types yet. 
             foreach (var @event in aggregateRoot.Events)
             {
                 var eventType = @event.GetType();
