@@ -1,56 +1,74 @@
-using MassTransit;
+using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Autofac;
+using Microsoft.EntityFrameworkCore;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
+using MassTransit;
 using TooBigToFailBurgerShop.ProcessOrder.Application.Extensions;
 using TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
-using System;
 using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
-using TooBigToFailBurgerShop.Ordering.Domain;
 using TooBigToFailBurgerShop.Ordering.Persistence.Web.EntityFramework;
 using Autofac.Extensions.DependencyInjection;
-using Autofac;
+using System.Threading.Tasks;
+using TooBigToFailBurgerShop.Ordering.Infrastructure;
 
-Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-
-await Host.CreateDefaultBuilder(args)
-    .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-    .ConfigureServices((hostContext, services) =>
+namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
+{
+    public static class Program
     {
-        var configuration = hostContext.Configuration;
-
-        services.AddMassTransitConfiguration();
-        services.AddMassTransitHostedService();
-
-        services.AddOpenTelemetryTracing(builder =>
+        public static async Task Main(string[] args)
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
 
-            builder
-                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(configuration.GetValue<string>("Jaeger:ServiceName")))
-                .AddAspNetCoreInstrumentation()
-                .AddJaegerExporter(options =>
+            var host = CreateHostBuilder(args).Build();
+            await host.RunAsync();
+        }
+
+        private static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureServices((hostContext, services) =>
                 {
-                    options.AgentHost = configuration.GetValue<string>("Jaeger:Host");
-                    options.AgentPort = configuration.GetValue<int>("Jaeger:Port");
+                    var configuration = hostContext.Configuration;
+
+                    services.AddMassTransitConfiguration();
+                    services.AddMassTransitHostedService();
+
+                    services.AddOpenTelemetryTracing(builder =>
+                    {
+
+                        builder
+                            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(configuration.GetValue<string>("Jaeger:ServiceName")))
+                            .AddAspNetCoreInstrumentation()
+                            .AddJaegerExporter(options =>
+                            {
+                                options.AgentHost = configuration.GetValue<string>("Jaeger:Host");
+                                options.AgentPort = configuration.GetValue<int>("Jaeger:Port");
+                            });
+                    });
+
+                    services.AddDbContext<BurgerShopContext>(contextOptions =>
+                        contextOptions.UseNpgsql(configuration.GetConnectionString("BurgerShopConnectionString")));
+
+                    services.AddMartenEventsInfrastructure<Order>(configuration.GetConnectionString("BurgerShopEventsConnectionString"));
+                    services.AddEntityFrameworkOrderRepository<BurgerShopContext, Order>();
+                    services.AddRabbitMqInfrastructure();
+
+                })
+                .ConfigureContainer<ContainerBuilder>(builder =>
+                {
+                    builder.RegisterType<EventProducer<Order, Guid>>().AsImplementedInterfaces();
+                    builder.RegisterType<EventsRepository<Order>>().AsImplementedInterfaces();
+                    builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
                 });
-        });
-
-        services.AddMartenEventsInfrastructure<Order>(configuration.GetConnectionString("BurgerShopEventsConnectionString"));
-        services.AddRabbitMqInfrastructure();
-
-    })
-    .ConfigureContainer<ContainerBuilder>( builder =>
-    {
-        builder.RegisterType<EventProducer<Order, Guid>>().AsImplementedInterfaces();
-        builder.RegisterType<EventsRepository<Order>>().AsImplementedInterfaces();
-        builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
-        builder.RegisterType<OrdersRepository>().AsImplementedInterfaces();
-    })
-    .Build()
-    .RunAsync();
+        }
+    }
+}
