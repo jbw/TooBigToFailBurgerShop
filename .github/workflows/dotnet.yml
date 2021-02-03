@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: cd src && dotnet restore
+      run: cd src && dotnet restore TooBigToFailBurgerShop.sln
     - name: Build
-      run: cd src && dotnet build --no-restore
+      run: cd src && dotnet build TooBigToFailBurgerShop.sln --no-restore
 #     - name: Test
 #       run: dotnet test --no-build --verbosity normal
