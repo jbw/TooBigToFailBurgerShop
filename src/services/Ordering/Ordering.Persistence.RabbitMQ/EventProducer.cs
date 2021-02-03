@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,10 +18,12 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ
     public class EventProducer<TType, TKey> : IEventProducer<TType, TKey> where TType : IAggregateRoot<TKey>
     {
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly ILogger<EventProducer<TType, TKey>> _logger;
 
-        public EventProducer(IPublishEndpoint publishEndpoint)
+        public EventProducer(IPublishEndpoint publishEndpoint, ILogger<EventProducer<TType, TKey>> logger)
         {
             _publishEndpoint = publishEndpoint;
+            _logger = logger;
         }
 
         public async Task DispatchAsync(TType aggregateRoot)
@@ -31,18 +34,15 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ
             if (!aggregateRoot.Events.Any())
                 return;
 
+            _logger.LogInformation("publishing " + aggregateRoot.Events.Count + " events for {AggregateId} ...", aggregateRoot.Id);
+
             // limitation: not generic for other message types yet. 
             foreach (var @event in aggregateRoot.Events)
             {
+                var eventType = @event.GetType();
+                var message = Convert.ChangeType(@event, eventType);
 
-                var message = new 
-                {
-                    AggregateId = @event.AggregateId,
-                    Timestamp = DateTime.UtcNow,
-                    AggregateVersion = @event.AggregateVersion
-                };
-
-                await _publishEndpoint.Publish<OrderCreated>(message);
+                await _publishEndpoint.Publish(message);
 
             }
         }
