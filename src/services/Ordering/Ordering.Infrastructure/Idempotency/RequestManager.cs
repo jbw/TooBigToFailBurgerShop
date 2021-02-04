@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using TooBigToFailBurgerShop.Ordering.Infrastructure;
 
 namespace TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency
 {

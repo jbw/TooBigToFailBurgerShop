@@ -13,14 +13,20 @@ using OpenTelemetry;
 using System;
 using TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ;
 using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
-using TooBigToFailBurgerShop.Ordering.Persistence.Web.EntityFramework;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
 using TooBigToFailBurgerShop.Ordering.Infrastructure;
 using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
+using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 
 namespace TooBigToFailBurgerShop
 {
+    public class OrderRepositorySettings
+    {
+        public string? OrdersCollectionName { get; set; }
+        public string? ConnectionString { get; set; }
+        public string? DatabaseName { get; set; }
+    }
 
     public class Startup
     {
@@ -42,7 +48,17 @@ namespace TooBigToFailBurgerShop
                 contextOptions.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
 
             services.AddMartenEventsInfrastructure<Order>(Configuration.GetConnectionString("BurgerShopEventsConnectionString"));
-            services.AddEntityFrameworkOrderRepository<BurgerShopContext, Order>();
+
+            services.Configure<OrderRepositorySettings>(Configuration.GetSection(typeof(OrderRepositorySettings).Name));
+
+            services.AddMongoOrderRepository(cfg =>
+            {
+                var options = Configuration.GetSection(typeof(OrderRepositorySettings).Name).Get<OrderRepositorySettings>();
+
+                cfg.DatabaseName = options.DatabaseName;
+                cfg.CollectionName = options.OrdersCollectionName;
+                cfg.ConnectionString = options.ConnectionString;
+            });
 
             services.AddMassTransit(x =>
             {
@@ -77,7 +93,6 @@ namespace TooBigToFailBurgerShop
                         options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
                     });
             });
-
 
             services.AddSwaggerGen(c =>
             {

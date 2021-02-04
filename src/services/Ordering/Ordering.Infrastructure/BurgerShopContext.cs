@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Logging;
-using TooBigToFailBurgerShop.Ordering.Infrastructure.EntityConfigurations;
 
 namespace TooBigToFailBurgerShop.Ordering.Infrastructure
 {
@@ -18,7 +16,7 @@ namespace TooBigToFailBurgerShop.Ordering.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new BurgerOrderEntityTypeConfiguration());
+           
         }
     }
 

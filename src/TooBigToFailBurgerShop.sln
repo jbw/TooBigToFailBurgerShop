@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.Marten
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Domain", "services\Ordering\Ordering.Domain\Ordering.Domain.csproj", "{4609ECDF-F471-4151-974B-F1A1D60538F8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.Web.EntityFramework", "services\Ordering\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Web.EntityFramework.csproj", "{6037334E-1919-4828-8485-F4B1FE1F0D3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.Mongo", "services\Ordering\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Mongo.csproj", "{6037334E-1919-4828-8485-F4B1FE1F0D3A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.RabbitMQ", "services\Ordering\Ordering.Persistence.RabbitMQ\Ordering.Persistence.RabbitMQ.csproj", "{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}"
 EndProject

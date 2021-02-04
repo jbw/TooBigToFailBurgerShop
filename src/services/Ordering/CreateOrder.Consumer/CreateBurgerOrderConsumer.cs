@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Logging;
+using Ordering.Domain.Core;
 using System;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Contracts;
@@ -26,6 +27,11 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
         {
 
             _logger.LogInformation($"CreateBurgerOrderConsumer {context.MessageId}");
+
+            if(await _orderRepository.ExistsAsync(context.Message.OrderId))
+            {
+                throw new ValidationException("Unable to create Customer", new ValidationError(nameof(CreateBurgerOrder), $"Id '{context.Message.OrderId}' already exists"));
+            }
 
             var orderAggregate = new Order(context.Message.OrderId);
 

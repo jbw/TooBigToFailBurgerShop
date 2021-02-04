@@ -1,20 +1,29 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using TooBigToFailBurgerShop.Ordering.Domain;
 
-namespace TooBigToFailBurgerShop.Ordering.Persistence.Web.EntityFramework
+namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
-    public class AddEntityFrameworkOrderingPeristanceConfigurator
-    {
 
-    }
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddEntityFrameworkOrderRepository<TContext, TType>(this IServiceCollection services) where TContext : DbContext where TType : class
+        public static IServiceCollection AddMongoOrderRepository(this IServiceCollection services, Action<MongoOptions> configure)
         {
+            var options = new MongoOptions();
 
-            services.AddSingleton<IOrdersRepository, OrdersRepository<TContext, TType>>();
+            configure(options);
+
+            services.AddMongoOrderRepository(options);
+
+            return services;
+        }
+
+        public static IServiceCollection AddMongoOrderRepository(this IServiceCollection services, MongoOptions options)
+        {
+            services.AddSingleton<IOrdersRepository>(ctx =>
+            {
+                return new OrdersRepository(options.ConnectionString, options.DatabaseName, options.CollectionName);
+            });
 
             return services;
         }

@@ -1,24 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MongoDB.Driver;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Domain;
-using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
 
-namespace TooBigToFailBurgerShop.Ordering.Persistence.Web.EntityFramework
+namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
-    public class OrdersRepository<TContext, TType> : IOrdersRepository where TContext : DbContext where TType : class
-    {
-        private TContext _context;
 
-        public OrdersRepository(TContext context)
+    public class OrdersRepository : IOrdersRepository
+    {
+        private readonly IMongoDatabase _mongoDatabase;
+
+        private readonly IMongoCollection<OrderId> _orderIdCollection;
+
+        public OrdersRepository(string connectionString, string databaseName, string collectionName)
         {
-            _context = context;
+            var client = new MongoClient(connectionString);
+            _mongoDatabase = client.GetDatabase(databaseName);
+            _orderIdCollection = _mongoDatabase.GetCollection<OrderId>(collectionName);
         }
 
-        public async Task CreateAsync(Guid orderId)
+        public async Task CreateAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
-            await _context.AddAsync(new Order(orderId));
-            await _context.SaveChangesAsync();
+            var update = Builders<OrderId>.Update
+                 .Set(a => a.Id, orderId);
+
+            await _orderIdCollection.UpdateOneAsync(
+                c => c.Id == orderId, update, options: new UpdateOptions() { IsUpsert = true }, cancellationToken);
+        }
+
+        public async Task<bool> ExistsAsync(Guid orderId, CancellationToken cancellationToken = default)
+        {
+            var search = await _orderIdCollection.FindAsync(x => x.Id.Equals(orderId), cancellationToken: cancellationToken);
+            return await search.AnyAsync(cancellationToken);
         }
     }
 }

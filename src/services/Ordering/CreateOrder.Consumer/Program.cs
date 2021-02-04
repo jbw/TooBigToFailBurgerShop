@@ -14,13 +14,20 @@ using TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
 using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
-using TooBigToFailBurgerShop.Ordering.Persistence.Web.EntityFramework;
 using Autofac.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Infrastructure;
+using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 
 namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 {
+    public class OrderRepositorySettings
+    {
+        public string? OrdersCollectionName { get; set; }
+        public string? ConnectionString { get; set; }
+        public string? DatabaseName { get; set; }
+    }
+
     public static class Program
     {
         public static async Task Main(string[] args)
@@ -59,7 +66,16 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                         contextOptions.UseNpgsql(configuration.GetConnectionString("BurgerShopConnectionString")));
 
                     services.AddMartenEventsInfrastructure<Order>(configuration.GetConnectionString("BurgerShopEventsConnectionString"));
-                    services.AddEntityFrameworkOrderRepository<BurgerShopContext, Order>();
+                    
+                    services.AddMongoOrderRepository(cfg =>
+                    {
+                        var options = configuration.GetSection(typeof(OrderRepositorySettings).Name).Get<OrderRepositorySettings>();
+
+                        cfg.DatabaseName = options.DatabaseName;
+                        cfg.CollectionName = options.OrdersCollectionName;
+                        cfg.ConnectionString = options.ConnectionString;
+                    });
+
                     services.AddRabbitMqInfrastructure();
 
                 })
