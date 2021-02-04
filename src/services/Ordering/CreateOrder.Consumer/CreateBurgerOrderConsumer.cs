@@ -30,7 +30,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 
             if(await _orderRepository.ExistsAsync(context.Message.OrderId))
             {
-                throw new ValidationException("Unable to create Customer", new ValidationError(nameof(CreateBurgerOrder), $"Id '{context.Message.OrderId}' already exists"));
+                throw new ValidationException("Unable to create Order", new ValidationError(nameof(CreateBurgerOrder), $"Id '{context.Message.OrderId}' already exists"));
             }
 
             var orderAggregate = new Order(context.Message.OrderId);
