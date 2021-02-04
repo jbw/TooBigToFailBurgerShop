@@ -21,13 +21,6 @@ using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 
 namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 {
-    public class OrderRepositorySettings
-    {
-        public string? OrdersCollectionName { get; set; }
-        public string? ConnectionString { get; set; }
-        public string? DatabaseName { get; set; }
-    }
-
     public static class Program
     {
         public static async Task Main(string[] args)
@@ -69,7 +62,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     
                     services.AddMongoOrderRepository(cfg =>
                     {
-                        var options = configuration.GetSection(typeof(OrderRepositorySettings).Name).Get<OrderRepositorySettings>();
+                        var options = configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
 
                         cfg.DatabaseName = options.DatabaseName;
                         cfg.CollectionName = options.OrdersCollectionName;

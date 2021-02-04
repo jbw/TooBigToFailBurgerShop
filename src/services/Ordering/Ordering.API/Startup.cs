@@ -21,12 +21,6 @@ using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 
 namespace TooBigToFailBurgerShop
 {
-    public class OrderRepositorySettings
-    {
-        public string? OrdersCollectionName { get; set; }
-        public string? ConnectionString { get; set; }
-        public string? DatabaseName { get; set; }
-    }
 
     public class Startup
     {
@@ -49,11 +43,11 @@ namespace TooBigToFailBurgerShop
 
             services.AddMartenEventsInfrastructure<Order>(Configuration.GetConnectionString("BurgerShopEventsConnectionString"));
 
-            services.Configure<OrderRepositorySettings>(Configuration.GetSection(typeof(OrderRepositorySettings).Name));
+            services.Configure<OrderIdRepositorySettings>(Configuration.GetSection(typeof(OrderIdRepositorySettings).Name));
 
             services.AddMongoOrderRepository(cfg =>
             {
-                var options = Configuration.GetSection(typeof(OrderRepositorySettings).Name).Get<OrderRepositorySettings>();
+                var options = Configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
 
                 cfg.DatabaseName = options.DatabaseName;
                 cfg.CollectionName = options.OrdersCollectionName;
