@@ -26,3 +26,6 @@ jobs:
 
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v1.5
+      
+    - name: Snyk
+      uses: snyk/actions@0.3.0
