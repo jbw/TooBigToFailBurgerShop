@@ -58,6 +58,11 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     services.AddDbContext<BurgerShopContext>(contextOptions =>
                         contextOptions.UseNpgsql(configuration.GetConnectionString("BurgerShopConnectionString")));
 
+                    services.AddEventProducer(cfg =>
+                    {
+                        cfg.AddProducer<Order, Guid>();
+                    });
+
                     services.AddEventStore(cfg =>
                     {
                         var connectionString = configuration.GetConnectionString("BurgerShopEventsConnectionString");
@@ -73,10 +78,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                         cfg.ConnectionString = options.ConnectionString;
                     });
 
-                    services.AddEventProducer(cfg =>
-                    {
-                        cfg.AddEventProducer<Order, Guid>();
-                    });
+           
 
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>

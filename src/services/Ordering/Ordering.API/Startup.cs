@@ -60,7 +60,7 @@ namespace TooBigToFailBurgerShop
 
             services.AddEventProducer(cfg =>
             {
-                cfg.AddEventProducer<Order, Guid>();
+                cfg.AddProducer<Order, Guid>();
             });
 
             services.AddMassTransit(x =>

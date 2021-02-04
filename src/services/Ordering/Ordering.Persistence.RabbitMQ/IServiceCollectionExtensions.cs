@@ -14,7 +14,5 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MassTransit
 
             return services;
         }
-
-      
     }
 }

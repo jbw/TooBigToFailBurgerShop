@@ -1,5 +1,7 @@
 ﻿using Marten;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using TooBigToFailBurgerShop.Ordering.Domain.Core;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
 {
@@ -12,15 +14,16 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
             _services = services;
         }
 
-        public void AddEventStore<TType>(string connectionString) where TType : class
+        public void AddEventStore<TType>(string connectionString) where TType : class, IAggregateRoot<Guid>
         {
-
             _services.AddMarten(cfg =>
             {
                 cfg.Connection(connectionString);
                 cfg.AutoCreateSchemaObjects = AutoCreate.All;
                 cfg.Events.InlineProjections.AggregateStreamsWith<TType>();
             });
+
+            _services.AddSingleton<IEventsRepository<TType, Guid>, EventsRepository<TType>>();
         }
     }
 }
