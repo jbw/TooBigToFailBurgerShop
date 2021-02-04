@@ -10,7 +10,7 @@ using OpenTelemetry.Trace;
 using System.Diagnostics;
 using MassTransit;
 using TooBigToFailBurgerShop.ProcessOrder.Application.Extensions;
-using TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ;
+using TooBigToFailBurgerShop.Ordering.Persistence.MassTransit;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
 using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
@@ -58,9 +58,13 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     services.AddDbContext<BurgerShopContext>(contextOptions =>
                         contextOptions.UseNpgsql(configuration.GetConnectionString("BurgerShopConnectionString")));
 
-                    services.AddMartenEventsInfrastructure<Order>(configuration.GetConnectionString("BurgerShopEventsConnectionString"));
-                    
-                    services.AddMongoOrderRepository(cfg =>
+                    services.AddEventStore(cfg =>
+                    {
+                        var connectionString = configuration.GetConnectionString("BurgerShopEventsConnectionString");
+                        cfg.AddEventStore<Order>(connectionString);
+                    });
+
+                    services.AddOrderRepository(cfg =>
                     {
                         var options = configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
 
@@ -69,13 +73,14 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                         cfg.ConnectionString = options.ConnectionString;
                     });
 
-                    services.AddRabbitMqInfrastructure();
+                    services.AddEventProducer(cfg =>
+                    {
+                        cfg.AddEventProducer<Order, Guid>();
+                    });
 
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
-                    builder.RegisterType<EventProducer<Order, Guid>>().AsImplementedInterfaces();
-                    builder.RegisterType<EventsRepository<Order>>().AsImplementedInterfaces();
                     builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
                 });
         }

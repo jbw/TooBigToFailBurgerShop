@@ -49,7 +49,7 @@
     <ProjectReference Include="..\Ordering.Infrastructure\Ordering.Infrastructure.csproj" />
     <ProjectReference Include="..\Ordering.Messages\Ordering.Contracts.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.MartenDb\Ordering.Persistence.MartenDb.csproj" />
-    <ProjectReference Include="..\Ordering.Persistence.RabbitMQ\Ordering.Persistence.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Ordering.Persistence.RabbitMQ\Ordering.Persistence.MassTransit.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Mongo.csproj" />
   </ItemGroup>
 

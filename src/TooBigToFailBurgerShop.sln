@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Domain", "services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.Mongo", "services\Ordering\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Mongo.csproj", "{6037334E-1919-4828-8485-F4B1FE1F0D3A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.RabbitMQ", "services\Ordering\Ordering.Persistence.RabbitMQ\Ordering.Persistence.RabbitMQ.csproj", "{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.MassTransit", "services\Ordering\Ordering.Persistence.RabbitMQ\Ordering.Persistence.MassTransit.csproj", "{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "services\Ordering\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{20047E49-6828-4A48-A03A-AC2D5AD8E101}"
 EndProject

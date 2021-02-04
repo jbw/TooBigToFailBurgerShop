@@ -4,10 +4,9 @@ using TooBigToFailBurgerShop.Ordering.Domain;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
-
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddMongoOrderRepository(this IServiceCollection services, Action<MongoOptions> configure)
+        public static IServiceCollection AddOrderRepository(this IServiceCollection services, Action<MongoOptions> configure)
         {
             var options = new MongoOptions();
 

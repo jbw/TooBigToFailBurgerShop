@@ -11,13 +11,13 @@ using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry;
 using System;
-using TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ;
 using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
 using TooBigToFailBurgerShop.Ordering.Infrastructure;
 using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
+using TooBigToFailBurgerShop.Ordering.Persistence.MassTransit;
 
 namespace TooBigToFailBurgerShop
 {
@@ -41,17 +41,26 @@ namespace TooBigToFailBurgerShop
             services.AddDbContext<BurgerShopContext>(contextOptions =>
                 contextOptions.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
 
-            services.AddMartenEventsInfrastructure<Order>(Configuration.GetConnectionString("BurgerShopEventsConnectionString"));
+            services.AddEventStore(cfg =>
+            {
+                var connectionString = Configuration.GetConnectionString("BurgerShopEventsConnectionString");
+                cfg.AddEventStore<Order>(connectionString);
+            });
 
             services.Configure<OrderIdRepositorySettings>(Configuration.GetSection(typeof(OrderIdRepositorySettings).Name));
 
-            services.AddMongoOrderRepository(cfg =>
+            services.AddOrderRepository(cfg =>
             {
                 var options = Configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
 
                 cfg.DatabaseName = options.DatabaseName;
                 cfg.CollectionName = options.OrdersCollectionName;
                 cfg.ConnectionString = options.ConnectionString;
+            });
+
+            services.AddEventProducer(cfg =>
+            {
+                cfg.AddEventProducer<Order, Guid>();
             });
 
             services.AddMassTransit(x =>
@@ -70,7 +79,7 @@ namespace TooBigToFailBurgerShop
                 });
             });
 
-            services.AddRabbitMqInfrastructure();
+
             services.AddMassTransitHostedService();
 
             services.AddOpenTelemetryTracing(builder =>
@@ -101,9 +110,6 @@ namespace TooBigToFailBurgerShop
             // call builder.Populate(), that happens in AutofacServiceProviderFactory
             // for you.
             builder.RegisterType<RequestManager>().AsImplementedInterfaces();
-
-            builder.RegisterType<EventProducer<Order, Guid>>().AsImplementedInterfaces();
-            builder.RegisterType<EventsRepository<Order>>().AsImplementedInterfaces();
             builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
 
             builder.RegisterModule(new MediatorModule());

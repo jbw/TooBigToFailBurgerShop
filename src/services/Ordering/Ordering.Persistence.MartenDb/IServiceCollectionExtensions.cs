@@ -1,20 +1,17 @@
-﻿using Marten;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
 {
+
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddMartenEventsInfrastructure<TType>(this IServiceCollection services, string connectionString) where TType : class
+        public static IServiceCollection AddEventStore(this IServiceCollection services, Action<EventStoreBuilder> builder)
         {
-            services.AddMarten(cfg =>
-            {
-                cfg.Connection(connectionString);
-                cfg.AutoCreateSchemaObjects = AutoCreate.All;
-                cfg.Events.InlineProjections.AggregateStreamsWith<TType>();
-            });
+            var eventStoreBuilder = new EventStoreBuilder(services);
+            builder(eventStoreBuilder);
 
             return services;
-        }
+        } 
     }
 }

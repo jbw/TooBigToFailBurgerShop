@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.EventBus;
 
-namespace TooBigToFailBurgerShop.Ordering.Persistence.RabbitMQ
+namespace TooBigToFailBurgerShop.Ordering.Persistence.MassTransit
 {
     public class Envelope
     {
