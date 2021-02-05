@@ -23,10 +23,3 @@ jobs:
       run: cd src && dotnet build TooBigToFailBurgerShop.sln --no-restore
 #     - name: Test
 #       run: dotnet test --no-build --verbosity normal
-
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v1.5
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-    - name: Snyk
-      uses: snyk/actions@0.3.0
