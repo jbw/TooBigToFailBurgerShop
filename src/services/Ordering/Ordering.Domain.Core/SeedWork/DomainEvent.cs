@@ -10,6 +10,9 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork
 
         public DateTime Timestamp { get; init; }
 
+        // Need this for deserialisation
+        protected DomainEvent() { }
+
         public DomainEvent(TType aggregateRoot)
         {
             AggregateId = aggregateRoot.Id;
