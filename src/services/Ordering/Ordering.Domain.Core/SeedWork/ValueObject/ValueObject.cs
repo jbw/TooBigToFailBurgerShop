@@ -53,7 +53,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork.ValueObject
 
         public static bool operator !=(ValueObject a, ValueObject b)
         {
-            return a != b;
+            return !a.Equals(b);
         }
 
     }
