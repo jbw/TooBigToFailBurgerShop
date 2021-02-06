@@ -10,6 +10,7 @@ using TooBigToFailBurgerShop.Ordering.Domain.Core;
 
 namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 {
+
     public class CreateBurgerOrderConsumer : IConsumer<CreateBurgerOrder>
     {
         private readonly ILogger<CreateBurgerOrderConsumer> _logger;
