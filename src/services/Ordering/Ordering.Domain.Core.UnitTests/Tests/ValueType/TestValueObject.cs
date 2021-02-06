@@ -1,6 +1,6 @@
+using FluentAssertions;
 using System;
 using Xunit;
-using Shouldly;
 
 namespace Ordering.Domain.Core.UnitTests
 {
@@ -10,10 +10,12 @@ namespace Ordering.Domain.Core.UnitTests
         [Fact]
         public void Should_Throw_When_ValueObject_Is_Not_Immutable()
         {
-            Assert.ThrowsAny<Exception>(() =>
-            {
-                new NotImmutablePureValueObject();
-            });
+            Action initValueObject = () => new NotImmutablePureValueObject();
+
+            initValueObject
+                .Should()
+                .Throw<AggregateException>()
+                .And.InnerExceptions.Count.Should().Be(5);
         }
 
         [Fact]
@@ -50,7 +52,6 @@ namespace Ordering.Domain.Core.UnitTests
             var address = new Address("A", "A");
 
             Assert.True(address != null);
-   
         }
 
         [Fact]
