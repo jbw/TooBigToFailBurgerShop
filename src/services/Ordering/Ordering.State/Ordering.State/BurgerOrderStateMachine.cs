@@ -65,6 +65,8 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         private async Task SendOrderForProcessing(BehaviorContext<BurgerOrderStateInstance, OrderCreated> context)
         {
+            // get order and upstate status and dispatch event
+            // https://blog.jonathanoliver.com/cqrs-sagas-with-event-sourcing-part-ii-of-ii/
             _logger.LogInformation("Initiating order for processing: {0}", context.Data.AggregateId);
 
             var order = CreateProcessBurgerOrder(context.Data);

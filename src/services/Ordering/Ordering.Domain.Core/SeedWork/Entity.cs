@@ -1,4 +1,4 @@
-﻿namespace TooBigToFailBurgerShop.Ordering.Domain.Core
+﻿namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork
 {
     public abstract class Entity<TKey> : IEntity<TKey>
     {

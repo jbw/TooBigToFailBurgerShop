@@ -14,6 +14,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Infrastructure
             // limit the number of messages consumed concurrently
             // this applies to the consumer only, not the endpoint
             ConcurrentMessageLimit = 8;
+            
         }
 
         protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,

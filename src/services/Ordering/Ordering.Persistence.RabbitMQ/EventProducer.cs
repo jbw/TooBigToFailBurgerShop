@@ -3,16 +3,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.EventBus;
+using TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.MassTransit
 {
-    public class Envelope
-    {
-        public Guid Key { get; set; }
-        public string Value { get; set; }
-    }
 
     public class EventProducer<TType, TKey> : IEventProducer<TType, TKey> where TType : IAggregateRoot<TKey>
     {

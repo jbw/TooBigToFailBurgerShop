@@ -1,6 +1,6 @@
 ﻿using System;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
-using TooBigToFailBurgerShop.Ordering.Domain.Core;
+using TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork;
 
 namespace TooBigToFailBurgerShop.Ordering.Domain.Events
 {

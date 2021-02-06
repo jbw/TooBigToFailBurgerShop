@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace TooBigToFailBurgerShop.Ordering.Domain.Core
+namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork
 {
     public abstract class DomainEvent<TType, TKey> : IDomainEvent<TKey> where TType : IAggregateRoot<TKey>
     {
-        public long AggregateVersion { get; set; }
+        public long AggregateVersion { get; private set; }
 
-        public TKey AggregateId { get; set; }
+        public TKey AggregateId { get; private set; }
 
-        public DateTime Timestamp { get; set; }
+        public DateTime Timestamp { get; private set; }
 
-        public DomainEvent()
+        protected DomainEvent()
         {
 
         }
@@ -19,7 +19,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core
         {
             AggregateId = aggregateRoot.Id;
             AggregateVersion = aggregateRoot.Version;
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.UtcNow;
         }
     }
 }

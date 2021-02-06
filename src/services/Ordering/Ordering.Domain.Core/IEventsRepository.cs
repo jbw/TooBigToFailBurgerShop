@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork;
 
 namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 {

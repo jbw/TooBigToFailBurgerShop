@@ -12,6 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\Migrations\**" />
+    <Content Remove="Infrastructure\Migrations\**" />
+    <EmbeddedResource Remove="Infrastructure\Migrations\**" />
+    <None Remove="Infrastructure\Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="6.1.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
     <PackageReference Include="MassTransit" Version="7.1.4" />
@@ -33,7 +40,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="Npgsql" Version="5.0.2" />
+    <PackageReference Include="Npgsql" Version="5.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.0.0-rc1.1" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.0.0-rc1.1" />
@@ -51,10 +58,6 @@
     <ProjectReference Include="..\Ordering.Persistence.MartenDb\Ordering.Persistence.MartenDb.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.RabbitMQ\Ordering.Persistence.MassTransit.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Mongo.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\Migrations\" />
   </ItemGroup>
 
 </Project>

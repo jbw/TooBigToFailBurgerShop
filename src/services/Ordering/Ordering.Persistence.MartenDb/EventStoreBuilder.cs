@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using TooBigToFailBurgerShop.Ordering.Domain.Core;
+using TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
 {

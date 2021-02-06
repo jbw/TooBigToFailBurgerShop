@@ -25,7 +25,6 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 
         public async Task Consume(ConsumeContext<CreateBurgerOrder> context)
         {
-
             _logger.LogInformation($"CreateBurgerOrderConsumer {context.MessageId}");
 
             if(await _orderRepository.ExistsAsync(context.Message.OrderId))

@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
-using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.EventBus;
+using TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.MassTransit
 {
