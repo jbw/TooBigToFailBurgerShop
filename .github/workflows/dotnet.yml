@@ -1,0 +1,31 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: cd src && dotnet restore TooBigToFailBurgerShop.sln
+    - name: Build
+      run: cd src && dotnet build TooBigToFailBurgerShop.sln --no-restore
+#     - name: Test
+#       run: dotnet test --no-build --verbosity normal
+
+    - name: Codecov
+      # You may pin to the exact commit or the version.
+      # uses: codecov/codecov-action@e156083f13aff6830c92fc5faa23505779fbf649
+      uses: codecov/codecov-action@v1.2.1
+ 
