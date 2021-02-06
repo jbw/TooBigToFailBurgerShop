@@ -24,15 +24,16 @@ namespace Ordering.Domain.Core
 
     public class ValidationException : Exception
     {
-        public ValidationException(string message) : this(message, null)
+        public ValidationException(string message) : base(message)
         {
+
         }
 
-        public ValidationException(string message, params ValidationError[] errors) : base(message, null)
+        public ValidationException(string message, params ValidationError[] errors) : base(message)
         {
             Errors = errors ?? Enumerable.Empty<ValidationError>();
         }
 
-        public IEnumerable<ValidationError> Errors { get; private set; }
+        public IEnumerable<ValidationError>? Errors { get; private set; }
     }
 }

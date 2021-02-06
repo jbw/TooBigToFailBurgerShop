@@ -6,10 +6,6 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Events
 {
     public class OrderCreated : DomainEvent<Order, Guid>
     {
-        public OrderCreated()
-        {
-
-        }
 
         public OrderCreated(Order order) : base(order)
         {
