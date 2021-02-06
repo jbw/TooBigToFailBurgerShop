@@ -12,12 +12,16 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
         private readonly IMongoDatabase _mongoDatabase;
 
         private readonly IMongoCollection<OrderId> _orderIdCollection;
+        private readonly IMongoCollection<OrderArchiveItem> _orderArchiveItemCollection;
 
         public OrdersRepository(string connectionString, string databaseName, string collectionName)
         {
             var client = new MongoClient(connectionString);
             _mongoDatabase = client.GetDatabase(databaseName);
+
             _orderIdCollection = _mongoDatabase.GetCollection<OrderId>(collectionName);
+            _orderArchiveItemCollection = _mongoDatabase.GetCollection<OrderArchiveItem>(typeof(OrderArchiveItem).Name);
+
         }
 
         public async Task CreateAsync(Guid orderId, CancellationToken cancellationToken = default)
@@ -26,7 +30,28 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
                  .Set(a => a.Id, orderId);
 
             await _orderIdCollection.UpdateOneAsync(
-                c => c.Id == orderId, update, options: new UpdateOptions() { IsUpsert = true }, cancellationToken);
+                c => c.Id == orderId,
+                update,
+                options: new UpdateOptions() { IsUpsert = true },
+                cancellationToken
+            );
+        }
+
+        public async Task CreateAsync(Guid orderId, DateTime timestamp, CancellationToken cancellationToken = default)
+        {
+            var filter = Builders<OrderArchiveItem>.Filter
+                .Eq(a => a.Id, orderId);
+
+            var update = Builders<OrderArchiveItem>.Update
+                .Set(a => a.Id, orderId)
+                .Set(a => a.Timestamp, timestamp);
+
+            await _orderArchiveItemCollection.UpdateOneAsync(filter,
+               cancellationToken: cancellationToken,
+               update: update,
+               options: new UpdateOptions() { IsUpsert = true }
+            );
+
         }
 
         public async Task<bool> ExistsAsync(Guid orderId, CancellationToken cancellationToken = default)
