@@ -17,22 +17,12 @@ namespace Ordering.Domain.Core.UnitTests
         }
 
         [Fact]
-        public void Should_Be_Same_Type()
-        {
-            var address = new Address("", "");
-            var sameAddress = new Address("", "");
-
-            address.ShouldBeOfType<Address>();
-            sameAddress.ShouldBeOfType<Address>();
-        }
-
-        [Fact]
         public void Should_Be_Equal()
         {
             var address = new Address("A", "A");
             var sameAddress = new Address("A", "A");
 
-            address.ShouldBe(sameAddress);
+            Assert.True(address == sameAddress);
         }
 
 
@@ -42,7 +32,7 @@ namespace Ordering.Domain.Core.UnitTests
             var address = new Address("A", "B");
             var differentAddress = new Address("B", "B");
 
-            address.ShouldNotBe(differentAddress);
+            Assert.True(address != differentAddress);
         }
 
         [Fact]
@@ -51,7 +41,7 @@ namespace Ordering.Domain.Core.UnitTests
             var address = new Address("A", "A");
             var differentAddress = new CopyOfAddress("A", "A");
 
-            address.Equals(differentAddress).ShouldBe(false);
+            Assert.True(address != differentAddress);
         }
 
         [Fact]
@@ -59,7 +49,8 @@ namespace Ordering.Domain.Core.UnitTests
         {
             var address = new Address("A", "A");
 
-            address.Equals(null).ShouldBe(false);
+            Assert.True(address != null);
+   
         }
 
         [Fact]
@@ -68,7 +59,7 @@ namespace Ordering.Domain.Core.UnitTests
             var address = new Address("A", "A");
             var subClassOfAddress = new SubClassOfAddress("A", "A");
 
-            address.Equals(subClassOfAddress).ShouldBe(false);
+            Assert.True(address != subClassOfAddress);
         }
     }
 }
