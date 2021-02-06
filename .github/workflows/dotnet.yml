@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: cd src && dotnet build TooBigToFailBurgerShop.sln --no-restore
     - name: Test
-      run: dotnet test src/services/Ordering/Ordering.Domain.Core.UnitTests --no-build --verbosity normal
+      run: cd src && dotnet test TooBigToFailBurgerShop.sln --no-build --verbosity normal
 
     - name: Codecov
       # You may pin to the exact commit or the version.
