@@ -1,6 +1,6 @@
 ## .NET Microservice Reference Application 
 
-![build](https://github.com/jbw/TooBigToFailBurgerShop/workflows/.NET/badge.svg?branch=main)
+![build](https://github.com/jbw/TooBigToFailBurgerShop/workflows/Build/badge.svg?branch=main)
 [![codecov](https://codecov.io/gh/jbw/TooBigToFailBurgerShop/branch/main/graph/badge.svg?token=4FB88IONQC)](https://codecov.io/gh/jbw/TooBigToFailBurgerShop)
 
 ### Feature highlights
