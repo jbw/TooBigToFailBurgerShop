@@ -6,6 +6,8 @@ using TooBigToFailBurgerShop.Ordering.Domain;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
+   
+    
 
     public class OrdersRepository : IOrdersRepository
     {
@@ -14,12 +16,12 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
         private readonly IMongoCollection<OrderId> _orderIdCollection;
         private readonly IMongoCollection<OrderArchiveItem> _orderArchiveItemCollection;
 
-        public OrdersRepository(string connectionString, string databaseName, string collectionName)
+        public OrdersRepository(IMongoClient mongoClient, MongoOptions mongoOptions)
         {
-            var client = new MongoClient(connectionString);
-            _mongoDatabase = client.GetDatabase(databaseName);
+           
+            _mongoDatabase = mongoClient.GetDatabase(mongoOptions.DatabaseName);
 
-            _orderIdCollection = _mongoDatabase.GetCollection<OrderId>(collectionName);
+            _orderIdCollection = _mongoDatabase.GetCollection<OrderId>(mongoOptions.CollectionName);
             _orderArchiveItemCollection = _mongoDatabase.GetCollection<OrderArchiveItem>(typeof(OrderArchiveItem).Name);
 
         }

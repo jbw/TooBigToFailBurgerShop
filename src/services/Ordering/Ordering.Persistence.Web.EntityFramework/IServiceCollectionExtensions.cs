@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using System;
 using TooBigToFailBurgerShop.Application.Queries;
 using TooBigToFailBurgerShop.Application.Queries.Models;
@@ -22,15 +23,22 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 
         public static IServiceCollection AddMongoOrderRepository(this IServiceCollection services, MongoOptions options)
         {
-            services.AddSingleton<IOrdersRepository>(ctx =>
+            services.AddSingleton<IMongoClient>(ctx =>
             {
-                return new OrdersRepository(options.ConnectionString, options.DatabaseName, options.CollectionName);
+                return new MongoClient(options.ConnectionString);
             });
 
-            services.AddSingleton<IRequestHandler<OrderById, OrderDetails>>(ctx =>
+            services.AddSingleton(options);
+
+            services.AddScoped(c =>
             {
-                return new OrderByIdHandler(options.ConnectionString, options.DatabaseName);
+                return c.GetService<IMongoClient>().StartSession();
             });
+
+            services.AddScoped<IOrdersRepository, OrdersRepository>();
+
+            services.AddScoped<IRequestHandler<OrderById, OrderDetails>, OrderByIdHandler>();
+     
 
             return services;
         }
