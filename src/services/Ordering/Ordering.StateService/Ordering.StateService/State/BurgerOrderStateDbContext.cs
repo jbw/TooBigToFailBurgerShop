@@ -2,7 +2,6 @@
 using MassTransit.EntityFrameworkCoreIntegration.Mappings;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using TooBigToFailBurgerShop.Ordering.State;
 
 namespace Ordering.StateService
 {

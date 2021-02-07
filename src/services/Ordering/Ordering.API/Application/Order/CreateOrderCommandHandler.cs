@@ -4,20 +4,23 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TooBigToFailBurgerShop.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Ordering.Contracts;
+using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 
 namespace TooBigToFailBurgerShop.Application.Commands.Order
 {
+
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly ILogger<CreateOrderCommand> _logger;
 
+
         public CreateOrderCommandHandler(IPublishEndpoint publishEndpoint, ILogger<CreateOrderCommand> logger)
         {
             _publishEndpoint = publishEndpoint;
             _logger = logger;
+
         }
 
         /// <summary>
@@ -38,8 +41,12 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
 
             };
 
-            // Submit the burger order as a message and we're done. 
-            await _publishEndpoint.Publish<SubmitBurgerOrder>(message, cancellationToken);
+            // Consistency solution: 
+            // We've moved the create order code into a consumer which runs in the saga
+            // scope. This give us transactional behaviour. 
+            // Limitation: This publish could still fail and not get handled but we 
+            // don't run into consistency issues. 
+            await _publishEndpoint.Publish<CreateBurgerOrder>(message, cancellationToken);
 
             return true;
         }
