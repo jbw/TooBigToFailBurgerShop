@@ -23,6 +23,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.StateService", "se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessOrder.Consumer", "services\Ordering\ProcessOrder.Consumer\ProcessOrder.Consumer.csproj", "{A936F0F0-AA9D-4A11-8488-81B33338ECC5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Domain.Core", "services\Ordering\Ordering.Domain.Core\Ordering.Domain.Core.csproj", "{A2CDD615-8E7F-414B-BB1D-9F25853A8F31}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.MartenDb", "services\Ordering\Ordering.Persistence.MartenDb\Ordering.Persistence.MartenDb.csproj", "{6DB77608-A897-40C7-91D4-A13F09416AFA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Domain", "services\Ordering\Ordering.Domain\Ordering.Domain.csproj", "{4609ECDF-F471-4151-974B-F1A1D60538F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.Mongo", "services\Ordering\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Mongo.csproj", "{6037334E-1919-4828-8485-F4B1FE1F0D3A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.MassTransit", "services\Ordering\Ordering.Persistence.RabbitMQ\Ordering.Persistence.MassTransit.csproj", "{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "services\Ordering\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{20047E49-6828-4A48-A03A-AC2D5AD8E101}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain.Core.UnitTests", "services\Ordering\Ordering.Domain.Core.UnitTests\Ordering.Domain.Core.UnitTests.csproj", "{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Application", "services\Ordering\Ordering.Application\Ordering.Application.csproj", "{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +77,38 @@ Global
 		{A936F0F0-AA9D-4A11-8488-81B33338ECC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A936F0F0-AA9D-4A11-8488-81B33338ECC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A936F0F0-AA9D-4A11-8488-81B33338ECC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2CDD615-8E7F-414B-BB1D-9F25853A8F31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2CDD615-8E7F-414B-BB1D-9F25853A8F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2CDD615-8E7F-414B-BB1D-9F25853A8F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2CDD615-8E7F-414B-BB1D-9F25853A8F31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DB77608-A897-40C7-91D4-A13F09416AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DB77608-A897-40C7-91D4-A13F09416AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DB77608-A897-40C7-91D4-A13F09416AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DB77608-A897-40C7-91D4-A13F09416AFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4609ECDF-F471-4151-974B-F1A1D60538F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4609ECDF-F471-4151-974B-F1A1D60538F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4609ECDF-F471-4151-974B-F1A1D60538F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4609ECDF-F471-4151-974B-F1A1D60538F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6037334E-1919-4828-8485-F4B1FE1F0D3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6037334E-1919-4828-8485-F4B1FE1F0D3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6037334E-1919-4828-8485-F4B1FE1F0D3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6037334E-1919-4828-8485-F4B1FE1F0D3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20047E49-6828-4A48-A03A-AC2D5AD8E101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20047E49-6828-4A48-A03A-AC2D5AD8E101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20047E49-6828-4A48-A03A-AC2D5AD8E101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20047E49-6828-4A48-A03A-AC2D5AD8E101}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +121,13 @@ Global
 		{19DE63A3-189E-4EC2-B5D1-AA7D205B00BC} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
 		{C331A008-33E0-4164-BE3A-205ED0D64CB3} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
 		{A936F0F0-AA9D-4A11-8488-81B33338ECC5} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{A2CDD615-8E7F-414B-BB1D-9F25853A8F31} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{6DB77608-A897-40C7-91D4-A13F09416AFA} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{4609ECDF-F471-4151-974B-F1A1D60538F8} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{6037334E-1919-4828-8485-F4B1FE1F0D3A} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{2CDAF7E3-8B85-4592-9094-C00FF0F9909E} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{20047E49-6828-4A48-A03A-AC2D5AD8E101} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02C70C03-DB0D-4686-B6DA-D28229C8C13F}

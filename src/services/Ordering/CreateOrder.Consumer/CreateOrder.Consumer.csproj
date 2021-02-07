@@ -21,10 +21,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="7.1.3" />
-    <PackageReference Include="MassTransit.AspNetCore" Version="7.1.2" />
-    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.2" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.2" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="MassTransit" Version="7.1.4" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.1.4" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.4" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
@@ -36,7 +41,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ordering.Domain.Core\Ordering.Domain.Core.csproj" />
+    <ProjectReference Include="..\Ordering.Domain\Ordering.Domain.csproj" />
+    <ProjectReference Include="..\Ordering.Infrastructure\Ordering.Infrastructure.csproj" />
     <ProjectReference Include="..\Ordering.Messages\Ordering.Contracts.csproj" />
+    <ProjectReference Include="..\Ordering.Persistence.MartenDb\Ordering.Persistence.MartenDb.csproj" />
+    <ProjectReference Include="..\Ordering.Persistence.RabbitMQ\Ordering.Persistence.MassTransit.csproj" />
+    <ProjectReference Include="..\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Mongo.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,20 @@
 version: '3.4'
 
 services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: burger
+      MONGO_INITDB_ROOT_PASSWORD: burger
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: burger
+      ME_CONFIG_MONGODB_ADMINPASSWORD: burger
 
   pgadmin:
     image: dpage/pgadmin4
@@ -20,11 +34,13 @@ services:
   rabbitmq:
     image: rabbitmq:management-alpine
     ports:
-      - "5672:5672"
       - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
 
   burgers.data:
-    image: postgres
+    image: postgres:alpine
     ports:
       - "5432:5432"
     environment:
@@ -59,7 +75,7 @@ services:
       dockerfile: services/Ordering/Ordering.StateService/Ordering.StateService/Dockerfile
 
   burgers.process.order.consumer:
-    image: ${DOCKER_REGISTRY-}processorderconsumer
+    image: burgers.process.order.consumer
     build:
       context: .
       dockerfile: services/Ordering/ProcessOrder.Consumer/Dockerfile

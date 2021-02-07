@@ -7,11 +7,17 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MassTransit;
 using Autofac;
-using TooBigToFailBurgerShop.Infrastructure.Idempotency;
-using TooBigToFailBurgerShop.Infrastructure;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry;
+using System;
+using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
+using TooBigToFailBurgerShop.Ordering.Domain.Core;
+using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
+using TooBigToFailBurgerShop.Ordering.Infrastructure;
+using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
+using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
+using TooBigToFailBurgerShop.Ordering.Persistence.MassTransit;
 
 namespace TooBigToFailBurgerShop
 {
@@ -32,9 +38,38 @@ namespace TooBigToFailBurgerShop
 
             services.AddControllers();
 
+            services.AddDbContext<BurgerShopContext>(contextOptions =>
+                contextOptions.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
+
+            services.AddEventStore(cfg =>
+            {
+                var connectionString = Configuration.GetConnectionString("BurgerShopEventsConnectionString");
+                cfg.AddEventStore<Order>(connectionString);
+            });
+
+            services.Configure<OrderIdRepositorySettings>(Configuration.GetSection(typeof(OrderIdRepositorySettings).Name));
+
+            services.AddMongoClient(cfg =>
+            {
+                var options = Configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
+
+                cfg.DatabaseName = options.DatabaseName;
+                cfg.CollectionName = options.OrdersCollectionName;
+                cfg.ConnectionString = options.ConnectionString;
+            });
+
+            services.AddOrderIdRepository();
+            services.AddOrderArchiveItemRepository();
+            services.AddOrderArchiveByIdHandler();
+            services.AddOrdersArchiveHandler();
+
+            services.AddEventProducer(cfg =>
+            {
+                cfg.AddProducer<Order, Guid>();
+            });
+
             services.AddMassTransit(x =>
             {
-
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseInMemoryOutbox();
@@ -46,20 +81,16 @@ namespace TooBigToFailBurgerShop
                     });
 
                     cfg.ConfigureEndpoints(context);
-
                 });
             });
 
+
             services.AddMassTransitHostedService();
 
-            services.AddDbContext<BurgerShopContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
-
-           
             services.AddOpenTelemetryTracing(builder =>
             {
 
-                builder                 
+                builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
@@ -70,7 +101,6 @@ namespace TooBigToFailBurgerShop
                         options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
                     });
             });
-
 
             services.AddSwaggerGen(c =>
             {
@@ -85,7 +115,10 @@ namespace TooBigToFailBurgerShop
             // call builder.Populate(), that happens in AutofacServiceProviderFactory
             // for you.
             builder.RegisterType<RequestManager>().AsImplementedInterfaces();
+            builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
+
             builder.RegisterModule(new MediatorModule());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

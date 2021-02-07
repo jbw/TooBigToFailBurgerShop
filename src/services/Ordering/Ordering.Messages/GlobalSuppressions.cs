@@ -8,3 +8,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.BurgerOrderProcessed")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.BurgerOrderFaulted")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.BurgerOrderReceived")]
+[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "type", Target = "~T:TooBigToFailBurgerShop.Ordering.Contracts.CreateBurgerOrder")]

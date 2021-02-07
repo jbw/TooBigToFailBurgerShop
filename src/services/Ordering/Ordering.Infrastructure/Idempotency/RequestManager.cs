@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace TooBigToFailBurgerShop.Infrastructure.Idempotency
+namespace TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency
 {
     public class RequestManager : IRequestManager
     {
