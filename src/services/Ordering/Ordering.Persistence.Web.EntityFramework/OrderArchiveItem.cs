@@ -2,8 +2,10 @@
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
-    internal class OrderId
+    internal class OrderArchiveItem
     {
         public Guid Id { get; set; }
+        public DateTime Timestamp { get; set; }
+
     }
 }

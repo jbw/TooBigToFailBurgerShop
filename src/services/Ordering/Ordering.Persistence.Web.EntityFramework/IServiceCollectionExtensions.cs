@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using TooBigToFailBurgerShop.Application.Queries;
+using TooBigToFailBurgerShop.Application.Queries.Models;
 using TooBigToFailBurgerShop.Ordering.Domain;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
@@ -22,6 +25,11 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
             services.AddSingleton<IOrdersRepository>(ctx =>
             {
                 return new OrdersRepository(options.ConnectionString, options.DatabaseName, options.CollectionName);
+            });
+
+            services.AddSingleton<IRequestHandler<OrderById, OrderDetails>>(ctx =>
+            {
+                return new OrderByIdHandler(options.ConnectionString, options.DatabaseName);
             });
 
             return services;
