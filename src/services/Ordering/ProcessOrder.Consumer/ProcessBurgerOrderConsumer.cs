@@ -42,7 +42,7 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
             builder.AddVariable("OrderId", context.Message.OrderId);
             builder.AddVariable("CorrelationId", context.CorrelationId);
 
-            // TODO abstract out this work
+            // minor: abstract out this
             var activityName = typeof(ProcessBurgerOrderActivity).Name;
             var queueName = $"{activityName.Replace("Activity", string.Empty)}_execute";
             var executeAddress = new Uri($"queue:{queueName}");
