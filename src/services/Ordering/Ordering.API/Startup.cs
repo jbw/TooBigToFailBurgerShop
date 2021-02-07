@@ -49,7 +49,7 @@ namespace TooBigToFailBurgerShop
 
             services.Configure<OrderIdRepositorySettings>(Configuration.GetSection(typeof(OrderIdRepositorySettings).Name));
 
-            services.AddOrderRepository(cfg =>
+            services.AddMongoClient(cfg =>
             {
                 var options = Configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
 
@@ -57,6 +57,9 @@ namespace TooBigToFailBurgerShop
                 cfg.CollectionName = options.OrdersCollectionName;
                 cfg.ConnectionString = options.ConnectionString;
             });
+
+            services.AddOrderIdRepository();
+            services.AddOrderArchiveItemRepository();
 
             services.AddEventProducer(cfg =>
             {

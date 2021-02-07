@@ -15,20 +15,20 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
     {
         private readonly ILogger<CreateBurgerOrderConsumer> _logger;
         private readonly IEventsService<Order, Guid> _orderEventsService;
-        private readonly IOrdersRepository _orderRepository;
+        private readonly IOrderIdRepository _orderIdRepository;
 
-        public CreateBurgerOrderConsumer(IOrdersRepository ordersRepository, IEventsService<Order, Guid> orderEventsService, ILogger<CreateBurgerOrderConsumer> logger)
+        public CreateBurgerOrderConsumer(IOrderIdRepository orderIdRepository, IEventsService<Order, Guid> orderEventsService, ILogger<CreateBurgerOrderConsumer> logger)
         {
             _logger = logger;
             _orderEventsService = orderEventsService;
-            _orderRepository = ordersRepository;
+            _orderIdRepository = orderIdRepository;
         }
 
         public async Task Consume(ConsumeContext<CreateBurgerOrder> context)
         {
             _logger.LogInformation($"CreateBurgerOrderConsumer {context.MessageId}");
 
-            if(await _orderRepository.ExistsAsync(context.Message.OrderId))
+            if (await _orderIdRepository.ExistsAsync(context.Message.OrderId))
             {
                 throw new ValidationException("Unable to create Order", new ValidationError(nameof(CreateBurgerOrder), $"Id '{context.Message.OrderId}' already exists"));
             }
@@ -36,7 +36,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
             var orderAggregate = new Order(context.Message.OrderId);
 
             await _orderEventsService.PersistAsync(orderAggregate);
-            await _orderRepository.CreateAsync(context.Message.OrderId);
+            await _orderIdRepository.CreateAsync(context.Message.OrderId);
 
         }
     }
