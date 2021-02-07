@@ -2,6 +2,9 @@
 
 ### Feature highlights
 * .NET 5
+* DDD
+* CQRS
+* Event sourcing
 * Distributed tracing
 * Distributed transactions
 * Idempotency
