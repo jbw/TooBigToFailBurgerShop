@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/jbw/TooBigToFailBurgerShop/branch/main/graph/badge.svg?token=4FB88IONQC)](https://codecov.io/gh/jbw/TooBigToFailBurgerShop)
+
 ### Feature highlights
 * .NET 5
 * Distributed tracing
