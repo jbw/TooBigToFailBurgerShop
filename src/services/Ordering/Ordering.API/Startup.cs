@@ -60,6 +60,8 @@ namespace TooBigToFailBurgerShop
 
             services.AddOrderIdRepository();
             services.AddOrderArchiveItemRepository();
+            services.AddOrderArchiveByIdHandler();
+            services.AddOrdersArchiveHandler();
 
             services.AddEventProducer(cfg =>
             {

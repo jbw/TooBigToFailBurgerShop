@@ -79,9 +79,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     });
 
                     services.AddOrderIdRepository();
-                    services.AddOrderArchiveByIdHandler();
-                    services.AddOrdersArchiveHandler();
-           
+                    services.AddOrderArchiveItemRepository();
 
                 })
                 .ConfigureContainer<ContainerBuilder>(builder =>
