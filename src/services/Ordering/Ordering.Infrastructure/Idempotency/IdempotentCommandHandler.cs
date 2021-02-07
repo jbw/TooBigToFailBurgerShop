@@ -21,7 +21,6 @@ namespace TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency
         public async Task<R> Handle(IdempotentCommand<T, R> request, CancellationToken cancellationToken)
         {
             // TODO Check request not a duplicated and return default(R) 
-
             // Send the embedded command to mediator to run the actual requested command
             var result = await _mediator.Send(request.Command, cancellationToken);
 
