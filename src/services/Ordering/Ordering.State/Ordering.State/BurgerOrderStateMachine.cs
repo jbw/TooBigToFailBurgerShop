@@ -23,7 +23,6 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         public BurgerOrderStateMachine(ILogger<BurgerOrderStateMachine> logger)
         {
-            //_publishEndpoint = publishEndpoint;
 
             _logger = logger;
 
