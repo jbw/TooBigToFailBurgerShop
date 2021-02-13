@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using System;
 using System.Reflection;
+using TooBigToFailBurgerShop;
 using TooBigToFailBurgerShop.Ordering.State;
 
 namespace Ordering.StateService
@@ -21,10 +22,14 @@ namespace Ordering.StateService
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host("rabbitmq", "/", h =>
+                    var rabbitMqSettings = configuration
+                        .GetSection(typeof(RabbitMqSettings).Name)
+                        .Get<RabbitMqSettings>();
+
+                    cfg.Host(rabbitMqSettings.Host, "/", h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(rabbitMqSettings.Username);
+                        h.Password(rabbitMqSettings.Password);
                     });
 
                     // Configure the outbox

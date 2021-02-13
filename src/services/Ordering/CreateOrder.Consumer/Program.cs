@@ -46,15 +46,19 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     services.Configure<BurgerShopSettings>(configuration.GetSection("BurgerShopSettings"));
                     services.Configure<BurgerShopEventsSettings>(configuration.GetSection("BurgerShopEventsSettings"));
                     services.Configure<OrderIdRepositorySettings>(configuration.GetSection("OrderIdRepositorySettings"));
+                    services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMqSettings"));
 
-                    services.AddMassTransitConfiguration();
+                    services.AddMassTransitConfiguration(configuration.GetSection("RabbitMqSettings").Get<RabbitMqSettings>());
                     services.AddMassTransitHostedService();
 
                     services.AddOpenTelemetryTracing(builder =>
                     {
+                        var resourceBuilder = ResourceBuilder
+                            .CreateDefault()
+                            .AddService(configuration.GetValue<string>("Jaeger:ServiceName"));
 
                         builder
-                            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(configuration.GetValue<string>("Jaeger:ServiceName")))
+                            .SetResourceBuilder(resourceBuilder)
                             .AddAspNetCoreInstrumentation()
                             .AddJaegerExporter(options =>
                             {

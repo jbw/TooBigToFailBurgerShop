@@ -72,14 +72,18 @@ namespace TooBigToFailBurgerShop
 
             services.AddMassTransit(x =>
             {
+                var rabbitMqSettings = Configuration
+                    .GetSection(typeof(RabbitMqSettings).Name)
+                    .Get<RabbitMqSettings>();
+
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseInMemoryOutbox();
 
-                    cfg.Host("rabbitmq", "/", h =>
+                    cfg.Host(rabbitMqSettings.Host, "/", h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(rabbitMqSettings.Username);
+                        h.Password(rabbitMqSettings.Password);
                     });
 
                     cfg.ConfigureEndpoints(context);
