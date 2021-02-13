@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
 using Ordering.StateService;
 using System.Diagnostics;
 using System.Reflection;
@@ -31,9 +32,17 @@ namespace TooBigToFailBurgerShop.Ordering.StateService
                     services.AddDbContext<BurgerOrderStateDbContext>(builder =>
                     {
                         var connectionString = hostContext.Configuration.GetConnectionString("BurgerOrderStateConnectionString");
+                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+                        {
+                            AutoPrepareMinUsages = 2,
+                            MaxAutoPrepare = 2
+                        };
+
+                        connectionString = connectionStringBuilder.ToString();
 
                         builder.UseNpgsql(connectionString, m =>
                         {
+    
                             m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
                             m.MigrationsHistoryTable($"__{nameof(BurgerOrderStateDbContext)}");
                         });

@@ -2,7 +2,6 @@
 using MediatR;
 using Autofac;
 using TooBigToFailBurgerShop.Application.Commands.Order;
-using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 
 namespace TooBigToFailBurgerShop
 {

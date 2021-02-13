@@ -10,14 +10,10 @@ using Autofac;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry;
-using System;
-using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
-using TooBigToFailBurgerShop.Ordering.Domain.Core;
-using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
 using TooBigToFailBurgerShop.Ordering.Infrastructure;
 using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
-using TooBigToFailBurgerShop.Ordering.Persistence.MassTransit;
+using Npgsql;
 
 namespace TooBigToFailBurgerShop
 {
@@ -38,58 +34,74 @@ namespace TooBigToFailBurgerShop
 
             services.AddControllers();
 
-            services.AddDbContext<BurgerShopContext>(contextOptions =>
-                contextOptions.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
-
-            services.AddEventStore(cfg =>
+            services.AddDbContext<BurgerShopContext>(cfg =>
             {
-                var connectionString = Configuration.GetConnectionString("BurgerShopEventsConnectionString");
-                cfg.AddEventStore<Order>(connectionString);
+                var settings = Configuration
+                    .GetSection("BurgerShopSettings")
+                    .Get<BurgerShopSettings>()
+                    .Connection;
+
+                var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+                {
+                    Host = settings.Host,
+                    Port = settings.Port,
+                    Username = settings.Username,
+                    Password = settings.Password,
+                    Database = settings.Database,
+
+                    AutoPrepareMinUsages = 2,
+                    MaxAutoPrepare = 2
+                };
+
+                var connectionString = connectionStringBuilder.ToString();
+
+                cfg.UseNpgsql(connectionString);
             });
 
-            services.Configure<OrderIdRepositorySettings>(Configuration.GetSection(typeof(OrderIdRepositorySettings).Name));
 
             services.AddMongoClient(cfg =>
             {
-                var options = Configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
+                var options = Configuration
+                    .GetSection(typeof(OrderIdRepositorySettings).Name)
+                    .Get<OrderIdRepositorySettings>()
+                    .Connection;
 
-                cfg.DatabaseName = options.DatabaseName;
-                cfg.CollectionName = options.OrdersCollectionName;
-                cfg.ConnectionString = options.ConnectionString;
+                cfg.Host = options.Host;
+                cfg.Port = options.Port;
+                cfg.Username = options.Username;
+                cfg.Password = options.Password;
+                cfg.Database = options.Database;
+                cfg.CollectionName = options.CollectionName;
+
             });
 
-            services.AddOrderIdRepository();
-            services.AddOrderArchiveItemRepository();
             services.AddOrderArchiveByIdHandler();
             services.AddOrdersArchiveHandler();
 
-            services.AddEventProducer(cfg =>
-            {
-                cfg.AddProducer<Order, Guid>();
-            });
-
             services.AddMassTransit(x =>
             {
+                var rabbitMqSettings = Configuration
+                    .GetSection(typeof(RabbitMqSettings).Name)
+                    .Get<RabbitMqSettings>();
+
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseInMemoryOutbox();
 
-                    cfg.Host("rabbitmq", "/", h =>
+                    cfg.Host(rabbitMqSettings.Host, "/", h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(rabbitMqSettings.Username);
+                        h.Password(rabbitMqSettings.Password);
                     });
 
                     cfg.ConfigureEndpoints(context);
                 });
             });
 
-
             services.AddMassTransitHostedService();
 
             services.AddOpenTelemetryTracing(builder =>
             {
-
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
                     .AddAspNetCoreInstrumentation()
@@ -115,7 +127,6 @@ namespace TooBigToFailBurgerShop
             // call builder.Populate(), that happens in AutofacServiceProviderFactory
             // for you.
             builder.RegisterType<RequestManager>().AsImplementedInterfaces();
-            builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
 
             builder.RegisterModule(new MediatorModule());
 

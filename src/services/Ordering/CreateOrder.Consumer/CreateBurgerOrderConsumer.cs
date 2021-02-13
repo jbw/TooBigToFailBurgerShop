@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Ordering.Domain.Core;
 using System;
 using System.Threading.Tasks;
+using System.Transactions;
 using TooBigToFailBurgerShop.Ordering.Contracts;
 using TooBigToFailBurgerShop.Ordering.Domain;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
@@ -26,19 +27,22 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 
         public async Task Consume(ConsumeContext<CreateBurgerOrder> context)
         {
-            _logger.LogInformation($"CreateBurgerOrderConsumer {context.MessageId}");
-
-            if (await _orderIdRepository.ExistsAsync(context.Message.OrderId))
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, TransactionScopeAsyncFlowOption.Enabled))
             {
-                throw new ValidationException("Unable to create Order", new ValidationError(nameof(CreateBurgerOrder), $"Id '{context.Message.OrderId}' already exists"));
+
+                if (await _orderIdRepository.ExistsAsync(context.Message.OrderId))
+                {
+                    throw new ValidationException("Unable to create Order", new ValidationError(nameof(CreateBurgerOrder), $"Id '{context.Message.OrderId}' already exists"));
+                }
+
+                var orderAggregate = new Order(context.Message.OrderId);
+
+                await _orderEventsService.PersistAsync(orderAggregate);
+                await _orderIdRepository.CreateAsync(context.Message.OrderId);
+     
+                scope.Complete();
             }
-
-            var orderAggregate = new Order(context.Message.OrderId);
-
-            await _orderEventsService.PersistAsync(orderAggregate);
-            await _orderIdRepository.CreateAsync(context.Message.OrderId);
 
         }
     }
-
 }

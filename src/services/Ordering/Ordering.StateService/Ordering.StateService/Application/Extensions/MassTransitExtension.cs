@@ -5,8 +5,10 @@ using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using System;
 using System.Reflection;
+using TooBigToFailBurgerShop;
 using TooBigToFailBurgerShop.Ordering.State;
 
 namespace Ordering.StateService
@@ -20,10 +22,14 @@ namespace Ordering.StateService
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host("rabbitmq", "/", h =>
+                    var rabbitMqSettings = configuration
+                        .GetSection(typeof(RabbitMqSettings).Name)
+                        .Get<RabbitMqSettings>();
+
+                    cfg.Host(rabbitMqSettings.Host, "/", h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(rabbitMqSettings.Username);
+                        h.Password(rabbitMqSettings.Password);
                     });
 
                     // Configure the outbox
@@ -31,7 +37,7 @@ namespace Ordering.StateService
                     cfg.UseMessageRetry(r => r.Immediate(5));
 
                     cfg.UseInMemoryOutbox();
-                    
+
                     cfg.ConfigureEndpoints(context);
 
                 });
@@ -53,6 +59,13 @@ namespace Ordering.StateService
                     r.AddDbContext<DbContext, BurgerOrderStateDbContext>((provider, builder) =>
                     {
                         var connectionString = configuration.GetConnectionString("BurgerOrderStateConnectionString");
+                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+                        {
+                            AutoPrepareMinUsages = 2,
+                            MaxAutoPrepare = 2
+                        };
+
+                        connectionString = connectionStringBuilder.ToString();
 
                         builder.UseNpgsql(connectionString, m =>
                         {

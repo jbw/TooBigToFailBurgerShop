@@ -41,12 +41,8 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
 
             };
 
-            // Consistency solution: 
-            // We've moved the create order code into a consumer which runs in the saga
-            // scope. This give us transactional behaviour. 
-            // Limitation: This publish could still fail and not get handled but we 
-            // don't run into consistency issues. 
-            await _publishEndpoint.Publish<CreateBurgerOrder>(message, cancellationToken);
+
+            await _publishEndpoint.Publish<SubmitBurgerOrder>(message, cancellationToken);
 
             return true;
         }

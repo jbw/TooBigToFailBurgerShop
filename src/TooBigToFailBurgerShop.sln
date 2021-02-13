@@ -33,11 +33,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.Mongo"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Persistence.MassTransit", "services\Ordering\Ordering.Persistence.RabbitMQ\Ordering.Persistence.MassTransit.csproj", "{2CDAF7E3-8B85-4592-9094-C00FF0F9909E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "services\Ordering\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{20047E49-6828-4A48-A03A-AC2D5AD8E101}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Infrastructure", "services\Ordering\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{20047E49-6828-4A48-A03A-AC2D5AD8E101}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain.Core.UnitTests", "services\Ordering\Ordering.Domain.Core.UnitTests\Ordering.Domain.Core.UnitTests.csproj", "{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Domain.Core.UnitTests", "services\Ordering\Ordering.Domain.Core.UnitTests\Ordering.Domain.Core.UnitTests.csproj", "{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Application", "services\Ordering\Ordering.Application\Ordering.Application.csproj", "{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.Application", "services\Ordering\Ordering.Application\Ordering.Application.csproj", "{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -128,6 +128,7 @@ Global
 		{2CDAF7E3-8B85-4592-9094-C00FF0F9909E} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
 		{20047E49-6828-4A48-A03A-AC2D5AD8E101} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
 		{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02C70C03-DB0D-4686-B6DA-D28229C8C13F}

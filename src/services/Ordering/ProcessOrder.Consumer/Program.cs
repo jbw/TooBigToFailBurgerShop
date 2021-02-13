@@ -6,6 +6,7 @@ using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
+using TooBigToFailBurgerShop;
 using TooBigToFailBurgerShop.ProcessOrder.Application.Extensions;
 
 Activity.DefaultIdFormat = ActivityIdFormat.W3C;
@@ -15,7 +16,7 @@ await Host.CreateDefaultBuilder(args)
     {
         var configuration = hostContext.Configuration;
 
-        services.AddMassTransitConfiguration();
+        services.AddMassTransitConfiguration(configuration.GetSection(typeof(RabbitMqSettings).Name).Get<RabbitMqSettings>());
         services.AddMassTransitHostedService();
 
         services.AddOpenTelemetryTracing(builder =>

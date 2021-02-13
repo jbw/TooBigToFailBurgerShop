@@ -15,9 +15,9 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 
         private readonly IMongoCollection<OrderArchiveItem> _orderArchiveItemCollection;
 
-        public OrdersArchiveHandler(IMongoClient mongoClient, MongoOptions mongoOptions)
+        public OrdersArchiveHandler(IMongoClient mongoClient, MongoConnectionSettings mongoOptions)
         {
-            _mongoDatabase = mongoClient.GetDatabase(mongoOptions.DatabaseName);
+            _mongoDatabase = mongoClient.GetDatabase(mongoOptions.Database);
 
             _orderArchiveItemCollection = _mongoDatabase.GetCollection<OrderArchiveItem>(typeof(OrderArchiveItem).Name);
         }
