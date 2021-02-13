@@ -53,12 +53,6 @@ namespace TooBigToFailBurgerShop.Ordering.State
                 x.CorrelateById(m => m.Message.OrderId);
             });
 
-            // TODO The NewOrder event is not handled during the WaitingForProcessing state for the BurgerOrderStateMachine state machine
-
-            // OrderSubmitted
-            // OrderCreated
-            // OrderProcessed
-
             Initially(
                 When(SubmitOrder)
                     .Then(Initialize)
@@ -76,7 +70,6 @@ namespace TooBigToFailBurgerShop.Ordering.State
                 When(BurgerOrderCreated) 
                     .Then(LogOrderReceived)
                     .PublishAsync(context => context.Init<ProcessBurgerOrder>(CreateProcessBurgerOrder(context.Data)))
-                    //.ThenAsync(SendOrderForProcessing)
                     .TransitionTo(WaitingForProcessing));
 
             During(WaitingForProcessing,
