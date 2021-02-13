@@ -92,44 +92,6 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         }
 
-        private async Task CreateOrder(BehaviorContext<BurgerOrderStateInstance, SubmitBurgerOrder> context)
-        {
-
-            _logger.LogInformation("CreateOrder : {0}", context.Data.OrderId);
-
-            var orderData = context.Data;
-
-            var message = new
-            {
-                OrderDate = orderData.OrderDate,
-                OrderId = orderData.OrderId,
-                CorrelationId = orderData.CorrelationId
-            };
-
-            var payload = context.GetPayload<ConsumeContext>();
-            var queueName = $"queue:{typeof(CreateBurgerOrder).Name}";
-            var endpoint = await payload.GetSendEndpoint(new Uri(queueName));
-            await endpoint.Send<CreateBurgerOrder>(message).ConfigureAwait(false);
-
-        }
-
-        private async Task SendOrderForProcessing(BehaviorContext<BurgerOrderStateInstance, OrderCreated> context)
-        {
-
-            _logger.LogInformation("Initiating order for processing: {0}", context.Data.AggregateId);
-
-            var order = CreateProcessBurgerOrder(context.Data);
-
-            var payload = context.GetPayload<ConsumeContext>();
-
-            var queueName = $"queue:{typeof(ProcessBurgerOrder).Name}";
-
-            var endpoint = await payload.GetSendEndpoint(new Uri(queueName));
-
-            await endpoint.Send(order).ConfigureAwait(false);
-
-        }
-
         private void Initialize(BehaviorContext<BurgerOrderStateInstance, SubmitBurgerOrder> context)
         {
             _logger.LogInformation("Initializing: {0}", context.Data.OrderId);
