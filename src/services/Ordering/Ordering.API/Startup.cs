@@ -10,14 +10,12 @@ using Autofac;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry;
-using System;
 using TooBigToFailBurgerShop.Ordering.Persistence.MartenDb;
-using TooBigToFailBurgerShop.Ordering.Domain.Core;
 using TooBigToFailBurgerShop.Ordering.Domain.AggregatesModel;
 using TooBigToFailBurgerShop.Ordering.Infrastructure;
 using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
-using TooBigToFailBurgerShop.Ordering.Persistence.MassTransit;
+using Npgsql;
 
 namespace TooBigToFailBurgerShop
 {
@@ -38,16 +36,30 @@ namespace TooBigToFailBurgerShop
 
             services.AddControllers();
 
-            services.AddDbContext<BurgerShopContext>(contextOptions =>
-                contextOptions.UseNpgsql(Configuration.GetConnectionString("BurgerShopConnectionString")));
-
-            services.AddEventStore(cfg =>
+            services.AddDbContext<BurgerShopContext>(cfg =>
             {
-                var connectionString = Configuration.GetConnectionString("BurgerShopEventsConnectionString");
-                cfg.AddEventStore<Order>(connectionString);
+                var settings = Configuration
+                    .GetSection("BurgerShopSettings")
+                    .Get<BurgerShopSettings>()
+                    .Connection;
+
+                var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+                {
+                    Host = settings.Host,
+                    Port = settings.Port,
+                    Username = settings.Username,
+                    Password = settings.Password,
+                    Database = settings.Database,
+
+                    AutoPrepareMinUsages = 2,
+                    MaxAutoPrepare = 2
+                };
+
+                var connectionString = connectionStringBuilder.ToString();
+
+                cfg.UseNpgsql(connectionString);
             });
 
-            services.Configure<OrderIdRepositorySettings>(Configuration.GetSection(typeof(OrderIdRepositorySettings).Name));
 
             services.AddMongoClient(cfg =>
             {
@@ -65,8 +77,6 @@ namespace TooBigToFailBurgerShop
 
             });
 
-            services.AddOrderIdRepository();
-            services.AddOrderArchiveItemRepository();
             services.AddOrderArchiveByIdHandler();
             services.AddOrdersArchiveHandler();
 
@@ -106,11 +116,6 @@ namespace TooBigToFailBurgerShop
                     });
             });
 
-            services.AddEventProducer(cfg =>
-            {
-                cfg.AddProducer<Order, Guid>();
-            });
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TooBigToFailBurgerShop", Version = "v1" });
@@ -124,7 +129,6 @@ namespace TooBigToFailBurgerShop
             // call builder.Populate(), that happens in AutofacServiceProviderFactory
             // for you.
             builder.RegisterType<RequestManager>().AsImplementedInterfaces();
-            builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
 
             builder.RegisterModule(new MediatorModule());
 

@@ -1,4 +1,4 @@
-﻿namespace CreateOrder.Consumer.Application.Options
+﻿namespace TooBigToFailBurgerShop
 {
     class ConnectionSettings
     {
@@ -7,6 +7,11 @@
         public string Password { get; set; }
         public string Database { get; set; }
         public int Port { get; set; }
+    }
+
+    class BurgerShopSettings
+    {
+        public ConnectionSettings Connection { get; set; }
     }
 
 }

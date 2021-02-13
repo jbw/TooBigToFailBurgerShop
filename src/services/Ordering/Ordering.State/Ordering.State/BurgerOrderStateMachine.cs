@@ -2,11 +2,8 @@
 namespace TooBigToFailBurgerShop.Ordering.State
 {
     using Automatonymous;
-    using GreenPipes;
     using MassTransit;
     using Microsoft.Extensions.Logging;
-    using System;
-    using System.Threading.Tasks;
     using TooBigToFailBurgerShop.Ordering.Contracts;
     using TooBigToFailBurgerShop.Ordering.Domain.Events;
 

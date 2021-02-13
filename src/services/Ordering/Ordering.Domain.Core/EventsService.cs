@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using System.Transactions;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.EventBus;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork;
 
