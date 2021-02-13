@@ -51,11 +51,18 @@ namespace TooBigToFailBurgerShop
 
             services.AddMongoClient(cfg =>
             {
-                var options = Configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
+                var options = Configuration
+                    .GetSection(typeof(OrderIdRepositorySettings).Name)
+                    .Get<OrderIdRepositorySettings>()
+                    .Connection;
 
-                cfg.DatabaseName = options.DatabaseName;
-                cfg.CollectionName = options.OrdersCollectionName;
-                cfg.ConnectionString = options.ConnectionString;
+                cfg.Host = options.Host;
+                cfg.Port = options.Port;
+                cfg.Username = options.Username;
+                cfg.Password = options.Password;
+                cfg.Database = options.Database;
+                cfg.CollectionName = options.CollectionName;
+
             });
 
             services.AddOrderIdRepository();

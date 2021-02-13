@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Infrastructure;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Npgsql;
+using CreateOrder.Consumer.Application.Options;
 
 namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 {
@@ -40,6 +41,12 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                 {
                     var configuration = hostContext.Configuration;
 
+                    services.AddOptions();
+
+                    services.Configure<BurgerShopSettings>(configuration.GetSection("BurgerShopSettings"));
+                    services.Configure<BurgerShopEventsSettings>(configuration.GetSection("BurgerShopEventsSettings"));
+                    services.Configure<OrderIdRepositorySettings>(configuration.GetSection("OrderIdRepositorySettings"));
+
                     services.AddMassTransitConfiguration();
                     services.AddMassTransitHostedService();
 
@@ -56,10 +63,22 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                             });
                     });
 
-                    services.AddDbContext<BurgerShopContext>(contextOptions => {
+                    services.AddDbContext<BurgerShopContext>(contextOptions =>
+                    {
 
-                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder(configuration.GetConnectionString("BurgerShopConnectionString"))
+                        var settings = configuration
+                            .GetSection("BurgerShopSettings")
+                            .Get<BurgerShopSettings>()
+                            .Connection;
+
+                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder
                         {
+                            Host = settings.Host,
+                            Port = settings.Port,
+                            Username = settings.Username,
+                            Password = settings.Password,
+                            Database = settings.Database,
+
                             AutoPrepareMinUsages = 2,
                             MaxAutoPrepare = 2
                         };
@@ -76,32 +95,49 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 
                     services.AddEventStore(cfg =>
                     {
-                        var connectionString = configuration.GetConnectionString("BurgerShopEventsConnectionString");
 
-                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+                        var settings = configuration
+                          .GetSection("BurgerShopEventsSettings")
+                          .Get<BurgerShopEventsSettings>()
+                          .Connection;
+
+                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder
                         {
+                            Host = settings.Host,
+                            Port = settings.Port,
+                            Username = settings.Username,
+                            Password = settings.Password,
+                            Database = settings.Database,
+
                             AutoPrepareMinUsages = 2,
                             MaxAutoPrepare = 2
                         };
 
-                        connectionString = connectionStringBuilder.ToString();
+                        var connectionString = connectionStringBuilder.ToString();
 
                         cfg.AddEventStore<Order>(connectionString);
                     });
 
                     services.AddMongoClient(cfg =>
                     {
-                        var options = configuration.GetSection(typeof(OrderIdRepositorySettings).Name).Get<OrderIdRepositorySettings>();
+                        var options = configuration
+                            .GetSection(typeof(OrderIdRepositorySettings).Name)
+                            .Get<OrderIdRepositorySettings>()
+                            .Connection;
 
-                        cfg.DatabaseName = options.DatabaseName;
-                        cfg.CollectionName = options.OrdersCollectionName;
-                        cfg.ConnectionString = options.ConnectionString;
+                        cfg.Host = options.Host;
+                        cfg.Port = options.Port;
+                        cfg.Username = options.Username;
+                        cfg.Password = options.Password;
+                        cfg.Database = options.Database;
+                        cfg.CollectionName = options.CollectionName;
                     });
 
                     services.AddOrderIdRepository();
                     services.AddOrderArchiveItemRepository();
 
                 })
+
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
                     builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();

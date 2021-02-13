@@ -6,6 +6,7 @@ services:
     environment:
       MONGODB_USERNAME: burger
       MONGODB_PASSWORD: burger
+      MONGODB_DATABASE: burgers
       MONGODB_ROOT_PASSWORD: burger
       MONGODB_REPLICA_SET_MODE: primary 
       MONGODB_ADVERTISED_HOSTNAME: mongo
@@ -41,8 +42,6 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongo  
       ME_CONFIG_MONGODB_ADMINUSERNAME: burger
       ME_CONFIG_MONGODB_ADMINPASSWORD: burger
-      ME_CONFIG_BASICAUTH_USERNAME: root
-      ME_CONFIG_BASICAUTH_PASSWORD: burger
 
   pgadmin:
     image: dpage/pgadmin4

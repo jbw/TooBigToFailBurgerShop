@@ -1,4 +1,4 @@
-﻿namespace TooBigToFailBurgerShop
+﻿namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
     public class MongoConnectionSettings
     {
@@ -8,10 +8,5 @@
         public string Database { get; set; }
         public string CollectionName { get; set; }
         public int Port { get; set; }
-    }
-
-    public class OrderIdRepositorySettings
-    {
-        public MongoConnectionSettings Connection { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using JohnKnoop.MongoRepository.DotNetCoreDi;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Configuration;
 using System;
 using System.Collections.Generic;
 using TooBigToFailBurgerShop.Ordering.Application.Queries;
@@ -13,22 +14,28 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddMongoClient(this IServiceCollection services, Action<MongoOptions> configure)
+        public static IServiceCollection AddMongoClient(this IServiceCollection services, Action<MongoConnectionSettings> configure)
         {
-            var options = new MongoOptions();
+            var options = new MongoConnectionSettings();
 
             configure(options);
 
             services.AddSingleton(options);
 
-            var mongoClient = new MongoClient(options.ConnectionString);
+            var mongoClientSettings = new MongoClientSettings
+            {
+                Credential = MongoCredential.CreateCredential(options.Database, options.Username, options.Password),
+                Server = new MongoServerAddress(options.Host, options.Port),
+                
+                Scheme = ConnectionStringScheme.MongoDB
+            };
 
-            
+            var mongoClient = new MongoClient(mongoClientSettings);
 
             services.AddSingleton<IMongoClient>(mongoClient);
 
             MongoRepository.Configure()
-                .Database(options.DatabaseName, db => db
+                .Database(options.Database, db => db
                     .MapAlongWithSubclassesInSameAssebmly<OrderId>(options.CollectionName))
                 .AutoEnlistWithTransactionScopes()
                 .Build();

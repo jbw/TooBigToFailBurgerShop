@@ -11,18 +11,15 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
     public class OrderIdRepository : IOrderIdRepository
     {
         private readonly IRepository<OrderId> _repository;
-        private readonly MongoOptions _mongoOptions;
 
-
-        public OrderIdRepository(IMongoClient mongoClient, MongoOptions mongoOptions)
+        public OrderIdRepository(IMongoClient mongoClient)
         {
             _repository = mongoClient.GetRepository<OrderId>();
-            _mongoOptions = mongoOptions;
         }
 
         public async Task CreateAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
-            //_repository.EnlistWithCurrentTransactionScope();
+
             await _repository.WithTransactionAsync(async () =>
             {
 
@@ -37,7 +34,6 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 
             }, TransactionType.TransactionScope, maxRetries: 3);
         }
-
 
         public async Task<bool> ExistsAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
