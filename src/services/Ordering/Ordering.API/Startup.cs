@@ -63,11 +63,6 @@ namespace TooBigToFailBurgerShop
             services.AddOrderArchiveByIdHandler();
             services.AddOrdersArchiveHandler();
 
-            services.AddEventProducer(cfg =>
-            {
-                cfg.AddProducer<Order, Guid>();
-            });
-
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, cfg) =>
@@ -84,12 +79,10 @@ namespace TooBigToFailBurgerShop
                 });
             });
 
-
             services.AddMassTransitHostedService();
 
             services.AddOpenTelemetryTracing(builder =>
             {
-
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
                     .AddAspNetCoreInstrumentation()
@@ -100,6 +93,11 @@ namespace TooBigToFailBurgerShop
                         options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
                         options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
                     });
+            });
+
+            services.AddEventProducer(cfg =>
+            {
+                cfg.AddProducer<Order, Guid>();
             });
 
             services.AddSwaggerGen(c =>

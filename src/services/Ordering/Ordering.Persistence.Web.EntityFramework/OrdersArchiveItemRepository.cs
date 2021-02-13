@@ -34,6 +34,7 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
                options: new UpdateOptions() { IsUpsert = true }
             );
 
+
         }
 
         public async Task<bool> ExistsAsync(Guid orderId, CancellationToken cancellationToken = default)

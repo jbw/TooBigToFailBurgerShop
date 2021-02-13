@@ -13,23 +13,32 @@ namespace TooBigToFailBurgerShop.Ordering.State
     public class BurgerOrderStateMachine : MassTransitStateMachine<BurgerOrderStateInstance>
     {
         private readonly ILogger<BurgerOrderStateMachine> _logger;
-        public Event<OrderCreated>? NewOrder { get; set; }
+
+        public Event<SubmitBurgerOrder>? SubmitOrder { get; set; }
+        public Event<OrderCreated>? BurgerOrderCreated { get; set; }
         public Event<BurgerOrderProcessed>? BurgerOrderProcessed { get; set; }
         public Event<BurgerOrderFaulted>? BurgerOrderFaulted { get; set; }
 
+        public State? OrderSubmitted { get; private set; }
         public State? WaitingForProcessing { get; private set; }
-        public State? Faulted { get; private set; }
-        public State? Processed { get; private set; }
-
+        public State? OrderFaulted { get; private set; }
+        public State? OrderProcessed { get; private set; }
 
         public BurgerOrderStateMachine(ILogger<BurgerOrderStateMachine> logger)
         {
+            //_publishEndpoint = publishEndpoint;
+
             _logger = logger;
 
             InstanceState(x => x.CurrentState);
 
             // Maps CorrelationId with this state machine
-            Event(() => NewOrder, x =>
+            Event(() => SubmitOrder, x =>
+            {
+                x.CorrelateById(m => m.Message.OrderId);
+            });
+
+            Event(() => BurgerOrderCreated, x =>
             {
                 x.CorrelateById(m => m.Message.AggregateId);
             });
@@ -44,22 +53,63 @@ namespace TooBigToFailBurgerShop.Ordering.State
                 x.CorrelateById(m => m.Message.OrderId);
             });
 
+            // TODO The NewOrder event is not handled during the WaitingForProcessing state for the BurgerOrderStateMachine state machine
+
+            // OrderSubmitted
+            // OrderCreated
+            // OrderProcessed
 
             Initially(
-                When(NewOrder)
+                When(SubmitOrder)
                     .Then(Initialize)
+                    // Start create order process 
+                    .PublishAsync(context => context.Init<CreateBurgerOrder>(new
+                    {
+                        OrderDate = context.Data.OrderDate,
+                        OrderId = context.Data.OrderId,
+                        CorrelationId = context.Data.CorrelationId
+                    }))
+                    .TransitionTo(OrderSubmitted));
+
+            During(OrderSubmitted,
+                // Hooking into domain events created in CreateBurgerOrder event
+                When(BurgerOrderCreated) 
                     .Then(LogOrderReceived)
-                    .ThenAsync(SendOrderForProcessing)
+                    .PublishAsync(context => context.Init<ProcessBurgerOrder>(CreateProcessBurgerOrder(context.Data)))
+                    //.ThenAsync(SendOrderForProcessing)
                     .TransitionTo(WaitingForProcessing));
 
             During(WaitingForProcessing,
                 When(BurgerOrderProcessed)
                     .Then(LogOrderProcessed)
-                    .TransitionTo(Processed)
+                    .TransitionTo(OrderProcessed)
                     .Finalize(),
                 When(BurgerOrderFaulted)
                     .Then(LogOrderFaulted)
-                    .TransitionTo(Faulted));
+                    .TransitionTo(OrderFaulted));
+
+            SetCompletedWhenFinalized();
+
+        }
+
+        private async Task CreateOrder(BehaviorContext<BurgerOrderStateInstance, SubmitBurgerOrder> context)
+        {
+
+            _logger.LogInformation("CreateOrder : {0}", context.Data.OrderId);
+
+            var orderData = context.Data;
+
+            var message = new
+            {
+                OrderDate = orderData.OrderDate,
+                OrderId = orderData.OrderId,
+                CorrelationId = orderData.CorrelationId
+            };
+
+            var payload = context.GetPayload<ConsumeContext>();
+            var queueName = $"queue:{typeof(CreateBurgerOrder).Name}";
+            var endpoint = await payload.GetSendEndpoint(new Uri(queueName));
+            await endpoint.Send<CreateBurgerOrder>(message).ConfigureAwait(false);
 
         }
 
@@ -80,16 +130,16 @@ namespace TooBigToFailBurgerShop.Ordering.State
 
         }
 
-        private void Initialize(BehaviorContext<BurgerOrderStateInstance, OrderCreated> context)
+        private void Initialize(BehaviorContext<BurgerOrderStateInstance, SubmitBurgerOrder> context)
         {
-            _logger.LogInformation("Initializing: {0}", context.Data.AggregateId);
-           
+            _logger.LogInformation("Initializing: {0}", context.Data.OrderId);
+
             InitializeInstance(context.Instance, context.Data);
         }
 
-        private static void InitializeInstance(BurgerOrderStateInstance instance, OrderCreated burgerOrderReceived)
+        private static void InitializeInstance(BurgerOrderStateInstance instance, SubmitBurgerOrder burgerOrderReceived)
         {
-            instance.BurgerOrderId = burgerOrderReceived.AggregateId;
+            instance.BurgerOrderId = burgerOrderReceived.OrderId;
         }
 
         private static ProcessBurgerOrder CreateProcessBurgerOrder(OrderCreated burgerOrder)

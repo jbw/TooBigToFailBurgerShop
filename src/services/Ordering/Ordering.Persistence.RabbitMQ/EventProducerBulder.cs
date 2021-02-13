@@ -17,7 +17,6 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MassTransit
         public void AddProducer<TType, TKey>() where TType : class, IAggregateRoot<TKey>
         {
             _services.AddSingleton<IEventProducer<TType, TKey>, EventProducer<TType, TKey>>();
-
         }
     }
 }

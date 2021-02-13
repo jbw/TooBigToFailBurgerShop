@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using System.Transactions;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.EventBus;
 using TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork;
 
@@ -17,11 +18,13 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core
 
         public async Task PersistAsync(TType aggregateRoot)
         {
+
             // Dispatch the events and then commit the data. 
             await _eventProducer.DispatchAsync(aggregateRoot);
             await _eventRepository.AppendAsync(aggregateRoot);
 
             aggregateRoot.ClearEvents();
+
         }
     }
 }

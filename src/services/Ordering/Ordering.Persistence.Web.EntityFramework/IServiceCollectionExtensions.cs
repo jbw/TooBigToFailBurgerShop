@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using JohnKnoop.MongoRepository;
+using JohnKnoop.MongoRepository.DotNetCoreDi;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using System;
@@ -19,10 +21,19 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 
             services.AddSingleton(options);
 
-            services.AddSingleton<IMongoClient>(ctx =>
-            {
-                return new MongoClient(options.ConnectionString);
-            });
+            var mongoClient = new MongoClient(options.ConnectionString);
+
+            
+
+            services.AddSingleton<IMongoClient>(mongoClient);
+
+            MongoRepository.Configure()
+                .Database(options.DatabaseName, db => db
+                    .MapAlongWithSubclassesInSameAssebmly<OrderId>(options.CollectionName))
+                .AutoEnlistWithTransactionScopes()
+                .Build();
+
+            services.AddRepositories(mongoClient);
 
             return services;
         }

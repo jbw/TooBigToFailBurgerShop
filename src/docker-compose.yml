@@ -2,27 +2,47 @@ version: '3.4'
 
 services:
   mongo:
-    image: mongo
-    restart: always
+    image: bitnami/mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: burger
-      MONGO_INITDB_ROOT_PASSWORD: burger
+      MONGODB_USERNAME: burger
+      MONGODB_PASSWORD: burger
+      MONGODB_ROOT_PASSWORD: burger
+      MONGODB_REPLICA_SET_MODE: primary 
+      MONGODB_ADVERTISED_HOSTNAME: mongo
+      MONGODB_REPLICA_SET_KEY: replicasetkey123 
+
+  mongodb-secondary:
+    image: 'docker.io/bitnami/mongodb:4.4-debian-10'
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_INITIAL_PRIMARY_HOST=mongo
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=burger
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+
+  mongodb-arbiter:
+    image: 'docker.io/bitnami/mongodb:4.4-debian-10'
+    depends_on:
+      - mongo
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_INITIAL_PRIMARY_HOST=mongo
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=burger
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
 
   mongo-express:
     image: mongo-express
     ports:
       - 8081:8081
     environment:
+      ME_CONFIG_MONGODB_SERVER: mongo  
       ME_CONFIG_MONGODB_ADMINUSERNAME: burger
       ME_CONFIG_MONGODB_ADMINPASSWORD: burger
-
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-        - "6541:80"
-    environment:
-        PGADMIN_DEFAULT_EMAIL: burger@burger.com
-        PGADMIN_DEFAULT_PASSWORD: burger
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: burger
 
   pgadmin:
     image: dpage/pgadmin4
@@ -55,6 +75,7 @@ services:
       POSTGRES_USER: "burger"
       POSTGRES_PASSWORD: "burger"
       POSTGRES_DB: "burgers"
+    command: "--max-prepared-transactions=110"
   
   burgers.webspa:
     image: burgers.webspa
@@ -87,6 +108,10 @@ services:
     build:
       context: .
       dockerfile: services/Ordering/ProcessOrder.Consumer/Dockerfile
+
+volumes:
+    mongodb_master_data:
+        driver: local
 
 networks:
   default:

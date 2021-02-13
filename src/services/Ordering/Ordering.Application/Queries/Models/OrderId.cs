@@ -6,8 +6,6 @@ namespace TooBigToFailBurgerShop.Ordering.Application.Queries.Models
     {
         public Guid Id { get; set; }
 
-        private OrderId() { }
-
         public OrderId(Guid id) => Id = id;
     }
 }

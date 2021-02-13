@@ -18,6 +18,7 @@ using Autofac.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Infrastructure;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
+using Npgsql;
 
 namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 {
@@ -55,8 +56,18 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                             });
                     });
 
-                    services.AddDbContext<BurgerShopContext>(contextOptions =>
-                        contextOptions.UseNpgsql(configuration.GetConnectionString("BurgerShopConnectionString")));
+                    services.AddDbContext<BurgerShopContext>(contextOptions => {
+
+                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder(configuration.GetConnectionString("BurgerShopConnectionString"))
+                        {
+                            AutoPrepareMinUsages = 2,
+                            MaxAutoPrepare = 2
+                        };
+
+                        var connectionString = connectionStringBuilder.ToString();
+                        contextOptions.UseNpgsql(connectionString);
+
+                    });
 
                     services.AddEventProducer(cfg =>
                     {
@@ -66,6 +77,15 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     services.AddEventStore(cfg =>
                     {
                         var connectionString = configuration.GetConnectionString("BurgerShopEventsConnectionString");
+
+                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString)
+                        {
+                            AutoPrepareMinUsages = 2,
+                            MaxAutoPrepare = 2
+                        };
+
+                        connectionString = connectionStringBuilder.ToString();
+
                         cfg.AddEventStore<Order>(connectionString);
                     });
 

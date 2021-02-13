@@ -26,7 +26,11 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Application.Extensions
                     });
 
                     cfg.ConfigureEndpoints(context);
+
+                    cfg.UseInMemoryOutbox();
                 });
+
+               
             });
         }
     }

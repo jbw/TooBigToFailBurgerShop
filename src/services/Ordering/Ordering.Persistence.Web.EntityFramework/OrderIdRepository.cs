@@ -4,40 +4,44 @@ using System.Threading;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Application.Queries.Models;
 using TooBigToFailBurgerShop.Ordering.Domain;
+using JohnKnoop.MongoRepository;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
     public class OrderIdRepository : IOrderIdRepository
     {
-        private readonly IMongoDatabase _mongoDatabase;
+        private readonly IRepository<OrderId> _repository;
+        private readonly MongoOptions _mongoOptions;
 
-        private readonly IMongoCollection<OrderId> _orderIdCollection;
 
         public OrderIdRepository(IMongoClient mongoClient, MongoOptions mongoOptions)
         {
-
-            _mongoDatabase = mongoClient.GetDatabase(mongoOptions.DatabaseName);
-
-            _orderIdCollection = _mongoDatabase.GetCollection<OrderId>(mongoOptions.CollectionName);
-
+            _repository = mongoClient.GetRepository<OrderId>();
+            _mongoOptions = mongoOptions;
         }
 
         public async Task CreateAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
-            var update = Builders<OrderId>.Update
-                 .Set(a => a.Id, orderId);
+            //_repository.EnlistWithCurrentTransactionScope();
+            await _repository.WithTransactionAsync(async () =>
+            {
 
-            await _orderIdCollection.UpdateOneAsync(
-                c => c.Id == orderId,
-                update,
-                options: new UpdateOptions() { IsUpsert = true },
-                cancellationToken
-            );
+                var update = Builders<OrderId>.Update
+                     .Set(a => a.Id, orderId);
+
+                await _repository.UpdateOneAsync(
+                    c => c.Id == orderId,
+                    x => x.Set(y => y.Id, orderId),
+                    options: new UpdateOptions() { IsUpsert = true }
+                );
+
+            }, TransactionType.TransactionScope, maxRetries: 3);
         }
+
 
         public async Task<bool> ExistsAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
-            var search = await _orderIdCollection.FindAsync(x => x.Id.Equals(orderId), cancellationToken: cancellationToken);
+            var search = await _repository.FindAsync(x => x.Id.Equals(orderId));
             return await search.AnyAsync(cancellationToken);
         }
     }
