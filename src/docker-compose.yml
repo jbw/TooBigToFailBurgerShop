@@ -1,6 +1,16 @@
 version: '3.4'
 
 services:
+
+  seq:
+    image: datalust/seq
+    environment:
+      ACCEPT_EULA: 'Y'
+      SEQ_FIRSTRUN_ADMINUSERNAME: burger
+      SEQ_FIRSTRUN_ADMINPASSWORD: burger
+    ports:
+      - 8033:80
+
   mongo:
     image: bitnami/mongodb
     environment:
