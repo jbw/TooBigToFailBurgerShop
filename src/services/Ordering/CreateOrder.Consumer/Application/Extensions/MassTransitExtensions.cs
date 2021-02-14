@@ -8,14 +8,14 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Application.Extensions
 {
     public static class MassTransitExtensions
     {
-   
+
         public static void AddMassTransitConfiguration(this IServiceCollection services, RabbitMqSettings rabbitMqSettings)
         {
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<CreateBurgerOrderConsumer>(typeof(CreateBurgerOrderConsumerDefinition));
                 x.AddConsumer<OrderArchiverConsumer>(typeof(OrderArchiverConsumerDefinition));
-                
+
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host(rabbitMqSettings.Host, "/", h =>
@@ -23,7 +23,7 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Application.Extensions
                         h.Username(rabbitMqSettings.Username);
                         h.Password(rabbitMqSettings.Password);
                     });
-                 
+
                     cfg.ConfigureEndpoints(context);
                 });
             });

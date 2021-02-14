@@ -18,7 +18,7 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
         {
             var options = new MongoConnectionSettings();
 
-            configure(options);
+            configure?.Invoke(options);
 
             services.AddSingleton(options);
 
@@ -26,7 +26,7 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
             {
                 Credential = MongoCredential.CreateCredential(options.Database, options.Username, options.Password),
                 Server = new MongoServerAddress(options.Host, options.Port),
-                
+
                 Scheme = ConnectionStringScheme.MongoDB
             };
 

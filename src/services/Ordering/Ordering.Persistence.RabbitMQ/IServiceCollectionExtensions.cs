@@ -10,7 +10,7 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MassTransit
         {
             var builder = new EventProducerBulder(services);
 
-            build(builder);
+            build?.Invoke(builder);
 
             return services;
         }

@@ -19,6 +19,8 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 
         public async Task Consume(ConsumeContext<OrderCreated> context)
         {
+            _logger.LogInformation("OrderArchiverConsumer OrderId: {id}", context.Message.AggregateId);
+
             var @event = context.Message;
 
             await _orderArchiveItemRepository.CreateAsync(@event.AggregateId, @event.Timestamp);

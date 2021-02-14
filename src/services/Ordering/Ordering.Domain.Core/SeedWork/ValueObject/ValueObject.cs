@@ -21,10 +21,10 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork.ValueObject
 
         public override int GetHashCode()
         {
-            int hash = 17;
-            int multiplier = 59;
+            const int hash = 17;
+            const int multiplier = 59;
 
-            int hashCode = hash;
+            var hashCode = hash;
 
             var props = GetType().GetProperties();
             foreach (var prop in props)
@@ -37,7 +37,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork.ValueObject
             var fields = GetType().GetFields();
             foreach (var field in fields)
             {
-                object? value = field.GetValue(this);
+                var value = field.GetValue(this);
 
                 if (value != null)
                     hashCode = hashCode * multiplier + value.GetHashCode();

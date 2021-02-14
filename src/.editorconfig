@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CC0062: You should add letter 'I' before interface name.
+dotnet_diagnostic.CC0062.severity = silent

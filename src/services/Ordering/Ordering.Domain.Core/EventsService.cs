@@ -18,7 +18,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core
         public async Task PersistAsync(TType aggregateRoot)
         {
 
-            // Dispatch the events and then commit the data. 
+            // Dispatch the events and then commit the data.
             await _eventProducer.DispatchAsync(aggregateRoot);
             await _eventRepository.AppendAsync(aggregateRoot);
 

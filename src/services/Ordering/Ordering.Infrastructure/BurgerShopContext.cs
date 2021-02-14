@@ -16,7 +16,7 @@ namespace TooBigToFailBurgerShop.Ordering.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+
         }
     }
 
@@ -25,11 +25,11 @@ namespace TooBigToFailBurgerShop.Ordering.Infrastructure
 
         public BurgerShopContext CreateDbContext(string[] args)
         {
-  
+
             var connectionSting = "host=localhost;database=burgers;user id=burger;password=burger";
 
             var optionsBuilder = new DbContextOptionsBuilder<BurgerShopContext>();
-          
+
             optionsBuilder.UseNpgsql(connectionSting);
 
             return new BurgerShopContext(optionsBuilder.Options);

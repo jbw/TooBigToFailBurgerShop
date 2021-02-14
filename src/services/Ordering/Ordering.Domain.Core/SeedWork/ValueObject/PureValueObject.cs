@@ -11,7 +11,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork.ValueObject
             ValueObjectImmutabiltyValidation validation;
 
             if (!this.IsImmutable(out validation)) RaiseNotImmutableException(validation);
-       
+
         }
 
         private void RaiseNotImmutableException(ValueObjectImmutabiltyValidation validation)

@@ -2,7 +2,7 @@
 {
     class OrderIdRepositorySettings
     {
-        public MongoConnectionSettings Connection { get; set; }
+        public MongoConnectionSettings? Connection { get; set; }
     }
 
 }

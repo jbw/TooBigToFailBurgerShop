@@ -42,7 +42,7 @@ namespace TooBigToFailBurgerShop.Ordering.StateService
 
                         builder.UseNpgsql(connectionString, m =>
                         {
-    
+
                             m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
                             m.MigrationsHistoryTable($"__{nameof(BurgerOrderStateDbContext)}");
                         });

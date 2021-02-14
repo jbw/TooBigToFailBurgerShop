@@ -6,7 +6,7 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
     {
         public CreateOrderCommand()
         {
-            
-        } 
+
+        }
     }
 }

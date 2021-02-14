@@ -52,18 +52,18 @@ namespace TooBigToFailBurgerShop.Ordering.State
             Initially(
                 When(SubmitOrder)
                     .Then(Initialize)
-                    // Start create order process 
+                    // Start create order process
                     .PublishAsync(context => context.Init<CreateBurgerOrder>(new
                     {
-                        OrderDate = context.Data.OrderDate,
-                        OrderId = context.Data.OrderId,
-                        CorrelationId = context.Data.CorrelationId
+                        context.Data.OrderDate,
+                        context.Data.OrderId,
+                        context.Data.CorrelationId
                     }))
                     .TransitionTo(OrderSubmitted));
 
             During(OrderSubmitted,
                 // Hooking into domain events created in CreateBurgerOrder event
-                When(BurgerOrderCreated) 
+                When(BurgerOrderCreated)
                     .Then(LogOrderReceived)
                     .PublishAsync(context => context.Init<ProcessBurgerOrder>(CreateProcessBurgerOrder(context.Data)))
                     .TransitionTo(WaitingForProcessing));
