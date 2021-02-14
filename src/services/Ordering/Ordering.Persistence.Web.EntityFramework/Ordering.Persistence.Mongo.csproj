@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="codecracker.CSharp" Version="1.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="JohnKnoop.MongoRepository" Version="6.2.1" />
     <PackageReference Include="JohnKnoop.MongoRepository.DotNetCoreDi" Version="1.0.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
