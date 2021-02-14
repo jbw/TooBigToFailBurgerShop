@@ -19,7 +19,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork
         protected void AddEvent(IDomainEvent<TKey> domainEvent)
         {
             _events.Enqueue(domainEvent);
-            
+
             Version++;
         }
 

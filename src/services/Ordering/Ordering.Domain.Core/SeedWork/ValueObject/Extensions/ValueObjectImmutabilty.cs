@@ -10,7 +10,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork.ValueObject.Exten
     {
         internal static bool IsImmutable(this ValueObject valueObject, ValueObjectImmutabiltyValidation? validation=null)
         {
-         
+
             var nonImmutableProperties = FindNonImmutableProperties(valueObject);
             var nonImmutableFields = FindNonImmutableFields(valueObject);
 
@@ -57,7 +57,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork.ValueObject.Exten
 
         private static bool IsInitOnly(PropertyInfo propertyInfo)
         {
-            MethodInfo? setMethod = propertyInfo.SetMethod;
+            var setMethod = propertyInfo.SetMethod;
 
             if (setMethod == null)
                 return false;

@@ -13,7 +13,7 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork
         // Need this for deserialisation
         protected DomainEvent() { }
 
-        public DomainEvent(TType aggregateRoot)
+        protected DomainEvent(TType aggregateRoot)
         {
             AggregateId = aggregateRoot.Id;
             AggregateVersion = aggregateRoot.Version;

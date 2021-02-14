@@ -12,6 +12,6 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
             builder(eventStoreBuilder);
 
             return services;
-        } 
+        }
     }
 }

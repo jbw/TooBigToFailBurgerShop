@@ -43,12 +43,12 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 
                     services.AddOptions();
 
-                    services.Configure<BurgerShopSettings>(configuration.GetSection("BurgerShopSettings"));
-                    services.Configure<BurgerShopEventsSettings>(configuration.GetSection("BurgerShopEventsSettings"));
-                    services.Configure<OrderIdRepositorySettings>(configuration.GetSection("OrderIdRepositorySettings"));
-                    services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMqSettings"));
+                    services.Configure<BurgerShopSettings>(configuration.GetSection(nameof(BurgerShopSettings)));
+                    services.Configure<BurgerShopEventsSettings>(configuration.GetSection(nameof(BurgerShopEventsSettings)));
+                    services.Configure<OrderIdRepositorySettings>(configuration.GetSection(nameof(OrderIdRepositorySettings)));
+                    services.Configure<RabbitMqSettings>(configuration.GetSection(nameof(RabbitMqSettings)));
 
-                    services.AddMassTransitConfiguration(configuration.GetSection("RabbitMqSettings").Get<RabbitMqSettings>());
+                    services.AddMassTransitConfiguration(configuration.GetSection(nameof(RabbitMqSettings)).Get<RabbitMqSettings>());
                     services.AddMassTransitHostedService();
 
                     services.AddOpenTelemetryTracing(builder =>
@@ -71,7 +71,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     {
 
                         var settings = configuration
-                            .GetSection("BurgerShopSettings")
+                            .GetSection(nameof(BurgerShopSettings))
                             .Get<BurgerShopSettings>()
                             .Connection;
 
@@ -101,7 +101,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     {
 
                         var settings = configuration
-                          .GetSection("BurgerShopEventsSettings")
+                          .GetSection(nameof(BurgerShopEventsSettings))
                           .Get<BurgerShopEventsSettings>()
                           .Connection;
 

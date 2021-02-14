@@ -37,14 +37,14 @@ namespace TooBigToFailBurgerShop
             services.AddDbContext<BurgerShopContext>(cfg =>
             {
                 var settings = Configuration
-                    .GetSection("BurgerShopSettings")
+                    .GetSection(nameof(BurgerShopSettings))
                     .Get<BurgerShopSettings>()
                     .Connection;
 
                 var connectionStringBuilder = new NpgsqlConnectionStringBuilder
                 {
                     Host = settings.Host,
-                    Port = settings.Port,
+                    Port = settings.Port.Value,
                     Username = settings.Username,
                     Password = settings.Password,
                     Database = settings.Database,
@@ -67,7 +67,7 @@ namespace TooBigToFailBurgerShop
                     .Connection;
 
                 cfg.Host = options.Host;
-                cfg.Port = options.Port;
+                cfg.Port = options.Port.Value;
                 cfg.Username = options.Username;
                 cfg.Password = options.Password;
                 cfg.Database = options.Database;
@@ -116,7 +116,7 @@ namespace TooBigToFailBurgerShop
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TooBigToFailBurgerShop", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = nameof(TooBigToFailBurgerShop), Version = "v1" });
             });
 
         }

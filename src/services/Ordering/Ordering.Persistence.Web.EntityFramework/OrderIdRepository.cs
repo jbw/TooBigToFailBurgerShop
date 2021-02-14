@@ -29,7 +29,7 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
                 await _repository.UpdateOneAsync(
                     c => c.Id == orderId,
                     x => x.Set(y => y.Id, orderId),
-                    options: new UpdateOptions() { IsUpsert = true }
+                    options: new UpdateOptions { IsUpsert = true }
                 );
 
             }, TransactionType.TransactionScope, maxRetries: 3);
