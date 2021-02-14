@@ -38,7 +38,7 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
         private static RoutingSlip BuildRoutingSlip(ConsumeContext<ProcessBurgerOrder> context, Guid trackingId)
         {
             var builder = new RoutingSlipBuilder(trackingId);
- 
+
             builder.AddVariable("OrderId", context.Message.OrderId);
             builder.AddVariable("CorrelationId", context.CorrelationId);
 
@@ -50,11 +50,33 @@ namespace TooBigToFailBurgerShop.ProcessOrder.Consumer
             builder.AddActivity(activityName, executeAddress);
 
             // Completed
-            builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Completed, x => x.Send<BurgerOrderProcessed>(new { context.Message.OrderId }));
+            builder
+                .AddSubscription(
+                    context.SourceAddress,
+                    RoutingSlipEvents.Completed,
+                    x => x.Send<BurgerOrderProcessed>(
+                        new
+                        {
+                            context.Message.CorrelationId,
+                            context.Message.OrderId,
+                            context.Message.OrderDate
+                        })
+                    );
 
             // Faulted
-            builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.ActivityFaulted, x => x.Send<BurgerOrderFaulted>(new { context.Message.OrderId }));
-            
+            builder
+                .AddSubscription(
+                    context.SourceAddress,
+                    RoutingSlipEvents.ActivityFaulted,
+                    x => x.Send<BurgerOrderFaulted>(
+                        new
+                        {
+                            context.Message.CorrelationId,
+                            context.Message.OrderId,
+                            context.Message.OrderDate
+                        })
+                    );
+
             return builder.Build();
 
         }

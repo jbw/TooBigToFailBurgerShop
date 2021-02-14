@@ -78,7 +78,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                         var connectionStringBuilder = new NpgsqlConnectionStringBuilder
                         {
                             Host = settings.Host,
-                            Port = settings.Port,
+                            Port = settings.Port.Value,
                             Username = settings.Username,
                             Password = settings.Password,
                             Database = settings.Database,
@@ -108,7 +108,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                         var connectionStringBuilder = new NpgsqlConnectionStringBuilder
                         {
                             Host = settings.Host,
-                            Port = settings.Port,
+                            Port = settings.Port.Value,
                             Username = settings.Username,
                             Password = settings.Password,
                             Database = settings.Database,
@@ -130,7 +130,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                             .Connection;
 
                         cfg.Host = options.Host;
-                        cfg.Port = options.Port;
+                        cfg.Port = options.Port.Value;
                         cfg.Username = options.Username;
                         cfg.Password = options.Password;
                         cfg.Database = options.Database;
