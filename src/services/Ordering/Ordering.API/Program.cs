@@ -28,6 +28,7 @@ namespace TooBigToFailBurgerShop.Ordering.API
                 Log.Information("Starting web host ({ApplicationContext})...", "Ordering.API");
 
                 await host.RunAsync();
+
                 return 0;
             }
             catch (Exception ex)
@@ -56,13 +57,13 @@ namespace TooBigToFailBurgerShop.Ordering.API
 
         static ILogger CreateSerilogLogger(IConfiguration configuration)
         {
-            var seqServerUrl = configuration["Serilog:SeqServerUrl"];
+            var seqServerUrl = configuration["Serilog:SeqServerUrl"] ?? "http://seq";
 
             return new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
+                .WriteTo.Seq(seqServerUrl)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }
