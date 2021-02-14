@@ -23,7 +23,6 @@
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
     <PackageReference Include="MassTransit" Version="7.1.5" />
-    <PackageReference Include="MassTransit.Analyzers" Version="7.1.5" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.1.5" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.5" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.5" />
@@ -36,10 +35,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.8.55">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.0.1" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc2" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc2" />

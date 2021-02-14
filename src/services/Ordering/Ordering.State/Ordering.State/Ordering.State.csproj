@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="7.1.5" />
-    <PackageReference Include="MassTransit.Analyzers" Version="7.1.5" />
   </ItemGroup>
 
   <ItemGroup>

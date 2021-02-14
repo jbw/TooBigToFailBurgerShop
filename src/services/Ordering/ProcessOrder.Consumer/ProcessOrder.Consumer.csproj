@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit.Analyzers" Version="7.1.5" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.1.5" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
