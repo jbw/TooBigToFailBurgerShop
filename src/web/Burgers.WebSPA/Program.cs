@@ -13,4 +13,4 @@ await Host.CreateDefaultBuilder(args)
     })
     .Build()
     .RunAsync();
-   
+

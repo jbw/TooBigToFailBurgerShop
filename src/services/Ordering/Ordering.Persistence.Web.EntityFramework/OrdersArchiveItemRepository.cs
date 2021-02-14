@@ -14,7 +14,7 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
         private readonly IMongoCollection<OrderArchiveItem> _orderArchiveItemCollection;
 
         public OrdersArchiveItemRepository(IMongoClient mongoClient, MongoConnectionSettings mongoOptions)
-        {       
+        {
             _mongoDatabase = mongoClient.GetDatabase(mongoOptions.Database);
             _orderArchiveItemCollection = _mongoDatabase.GetCollection<OrderArchiveItem>(typeof(OrderArchiveItem).Name);
         }
@@ -31,7 +31,7 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
             await _orderArchiveItemCollection.UpdateOneAsync(filter,
                cancellationToken: cancellationToken,
                update: update,
-               options: new UpdateOptions() { IsUpsert = true }
+               options: new UpdateOptions { IsUpsert = true }
             );
 
 

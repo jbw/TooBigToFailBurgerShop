@@ -2,7 +2,7 @@
 {
     class MongoConnectionSettings : ConnectionSettings
     {
-        public string CollectionName { get; set; }
+        public string? CollectionName { get; set; }
     }
 
 }

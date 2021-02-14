@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace TooBigToFailBurgerShop.Ordering.Application.Queries.Models
-{ 
+{
     public record OrderArchiveItem
     {
         private OrderArchiveItem() { }

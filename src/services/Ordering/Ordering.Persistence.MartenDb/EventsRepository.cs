@@ -27,7 +27,7 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
             using var session = _store.OpenSession(SessionOptions.ForCurrentTransaction());
 
             var aggregateRootId = aggregateRoot.Id;
-            int aggregateVersion = (int)aggregateRoot.Version;
+            var aggregateVersion = (int)aggregateRoot.Version;
             var events = aggregateRoot.Events;
 
             session.Events.StartStream<TType>(aggregateRootId, events);

@@ -39,7 +39,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 
                 await _orderEventsService.PersistAsync(orderAggregate);
                 await _orderIdRepository.CreateAsync(context.Message.OrderId);
-     
+
                 scope.Complete();
             }
 

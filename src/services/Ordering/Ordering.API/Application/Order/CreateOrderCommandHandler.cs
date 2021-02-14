@@ -24,7 +24,7 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
         }
 
         /// <summary>
-        /// Handles a request to create an Order. 
+        /// Handles a request to create an Order.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>

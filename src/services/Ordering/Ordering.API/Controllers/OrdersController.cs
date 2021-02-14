@@ -15,7 +15,7 @@ namespace TooBigToFailBurgerShop.Controllers
     [Route("[controller]")]
     public class OrdersController : ControllerBase
     {
-   
+
         private readonly ILogger<OrdersController> _logger;
         private readonly IMediator _mediator;
 
@@ -77,7 +77,7 @@ namespace TooBigToFailBurgerShop.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetOrdersAsync(CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("GetOrderAsync");
+            _logger.LogInformation(nameof(GetOrderAsync));
 
             var query = new OrdersArchive();
 

@@ -2,7 +2,7 @@
 {
     class BurgerShopEventsSettings
     {
-        public ConnectionSettings Connection { get; set; }
+        public ConnectionSettings? Connection { get; set; }
     }
 
 }
