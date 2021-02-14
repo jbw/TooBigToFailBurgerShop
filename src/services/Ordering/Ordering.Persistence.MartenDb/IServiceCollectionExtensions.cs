@@ -9,7 +9,8 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
         public static IServiceCollection AddEventStore(this IServiceCollection services, Action<EventStoreBuilder> builder)
         {
             var eventStoreBuilder = new EventStoreBuilder(services);
-            builder(eventStoreBuilder);
+
+            builder?.Invoke(eventStoreBuilder);
 
             return services;
         }
