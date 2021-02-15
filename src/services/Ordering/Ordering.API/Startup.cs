@@ -9,11 +9,11 @@ using MassTransit;
 using Autofac;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
-using OpenTelemetry;
 using TooBigToFailBurgerShop.Ordering.Infrastructure;
 using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Npgsql;
+using Serilog;
 
 namespace TooBigToFailBurgerShop
 {
@@ -141,6 +141,8 @@ namespace TooBigToFailBurgerShop
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TooBigToFailBurgerShop v1"));
             }
+
+            app.UseSerilogRequestLogging();
 
             app.UseRouting();
 

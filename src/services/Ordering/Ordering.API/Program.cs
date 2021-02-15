@@ -51,21 +51,10 @@ namespace TooBigToFailBurgerShop.Ordering.API
                 .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                        .UseStartup<Startup>()
+                        .CaptureStartupErrors(true);
                 });
-        }
-
-        static ILogger CreateSerilogLogger(IConfiguration configuration)
-        {
-            var seqServerUrl = configuration["Serilog:SeqServerUrl"] ?? "http://seq";
-
-            return new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.Seq(seqServerUrl)
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
         }
 
         static IConfiguration GetConfiguration()
@@ -77,5 +66,13 @@ namespace TooBigToFailBurgerShop.Ordering.API
 
             return builder.Build();
         }
+
+        static ILogger CreateSerilogLogger(IConfiguration configuration)
+        {
+            return new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+        }
+
     }
 }
