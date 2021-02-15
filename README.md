@@ -17,6 +17,12 @@
 
 ### Links
 
+**Application**
 * [Order UI](https://localhost:6968/)
 * [Orders API](http://localhost:6969/swagger/index.html)
+
+**Tracing**
 * [Jaeger](http://localhost:16686/)
+
+**Logging**
+* [Seq](http://localhost:8033)
