@@ -58,10 +58,15 @@ namespace TooBigToFailBurgerShop.Ordering.API
         }
 
         static IConfiguration GetConfiguration()
-        {
+        {        
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env ?? "Production" }.json", optional: true)
+                .AddJsonFile($"appsettings.Logging.json", optional: true)
+
                 .AddEnvironmentVariables();
 
             return builder.Build();
