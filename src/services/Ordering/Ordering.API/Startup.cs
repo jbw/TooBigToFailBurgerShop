@@ -84,19 +84,18 @@ namespace TooBigToFailBurgerShop
                     .GetSection(typeof(RabbitMqSettings).Name)
                     .Get<RabbitMqSettings>();
 
-                x.UsingInMemory();
-                //x.UsingRabbitMq((context, cfg) =>
-                //{
-                //    cfg.UseInMemoryOutbox();
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.UseInMemoryOutbox();
 
-                //    cfg.Host(rabbitMqSettings.Host, "/", h =>
-                //    {
-                //        h.Username(rabbitMqSettings.Username);
-                //        h.Password(rabbitMqSettings.Password);
-                //    });
+                    cfg.Host(rabbitMqSettings.Host, "/", h =>
+                    {
+                        h.Username(rabbitMqSettings.Username);
+                        h.Password(rabbitMqSettings.Password);
+                    });
 
-                //    cfg.ConfigureEndpoints(context);
-                //});
+                    cfg.ConfigureEndpoints(context);
+                });
             });
 
             services.AddMassTransitHostedService();
@@ -107,12 +106,12 @@ namespace TooBigToFailBurgerShop
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddConsoleExporter();
-                    //.AddJaegerExporter(options =>
-                    //{
-                    //    options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
-                    //    options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
-                    //});
+                    .AddConsoleExporter()
+                    .AddJaegerExporter(options =>
+                    {
+                        options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
+                        options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
+                    });
             });
 
             services.AddSwaggerGen(c =>
