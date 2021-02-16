@@ -17,7 +17,7 @@ namespace Ordering.IntegrationTests.Features.Order
 
         public OrderApiTests(OrderWebApplicationFactory factory, ITestOutputHelper outputHelper)
         {
-            _factory = factory; 
+            _factory = factory;
             _factory.OutputHelper = outputHelper;
 
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
@@ -50,6 +50,34 @@ namespace Ordering.IntegrationTests.Features.Order
             {
                 await harness.Stop();
             }
+        }
+
+        [Fact]
+        public async Task Should_get_order_by_id()
+        {
+            // Given
+            var url = "/Orders/getorder?id=000c0000-ac17-0242-010d-08d8d05ecd76";
+
+            // When
+            _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
+            var resp = await _client.GetAsync(url);
+
+            // Then
+            resp.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task Should_get_all_orders()
+        {
+            // Given
+            var url = "/Orders/getorders";
+
+            // When
+            _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
+            var resp = await _client.GetAsync(url);
+
+            // Then
+            resp.EnsureSuccessStatusCode();
         }
     }
 }
