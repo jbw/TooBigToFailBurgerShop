@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
-using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
@@ -20,23 +19,50 @@ using TooBigToFailBurgerShop.Ordering.Infrastructure;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Npgsql;
 using CreateOrder.Consumer.Application.Options;
+using Serilog;
+using System.IO;
 
 namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 {
     public static class Program
     {
-        public static async Task Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            var configuration = GetConfiguration();
+            Log.Logger = CreateSerilogLogger(configuration);
 
-            var host = CreateHostBuilder(args).Build();
-            await host.RunAsync();
+            try
+            {
+                Log.Information("Configuring web host ({ApplicationContext})...", "Ordering.API");
+
+                var host = CreateHostBuilder(configuration, args).Build();
+
+                Log.Information("Starting web host ({ApplicationContext})...", "Ordering.API");
+
+                await host.RunAsync();
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", "Ordering.API");
+                return 1;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+
+
         }
 
-        private static IHostBuilder CreateHostBuilder(string[] args)
+        private static IHostBuilder CreateHostBuilder(IConfiguration configuration, string[] args)
         {
             return Host.CreateDefaultBuilder(args)
+                .UseSerilog()
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
                 .ConfigureServices((hostContext, services) =>
                 {
                     var configuration = hostContext.Configuration;
@@ -146,6 +172,28 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                 {
                     builder.RegisterType<EventsService<Order, Guid>>().AsImplementedInterfaces();
                 });
+        }
+
+        static IConfiguration GetConfiguration()
+        {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env ?? "Production" }.json", optional: true)
+                .AddJsonFile($"appsettings.Logging.json", optional: true)
+
+                .AddEnvironmentVariables();
+
+            return builder.Build();
+        }
+
+        static ILogger CreateSerilogLogger(IConfiguration configuration)
+        {
+            return new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
         }
     }
 }
