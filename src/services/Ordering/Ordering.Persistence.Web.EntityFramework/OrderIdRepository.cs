@@ -22,10 +22,6 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 
             await _repository.WithTransactionAsync(async () =>
             {
-
-                var update = Builders<OrderId>.Update
-                     .Set(a => a.Id, orderId);
-
                 await _repository.UpdateOneAsync(
                     c => c.Id == orderId,
                     x => x.Set(y => y.Id, orderId),
