@@ -34,6 +34,44 @@ namespace TooBigToFailBurgerShop
 
             services.AddControllers();
 
+            ConfigureMassTransit(services);
+            services.AddMassTransitHostedService();
+
+            ConfigureDatabaseConnections(services);
+
+            ConfigureMongoClient(services);
+
+            ConfigureTracing(services);
+
+            services.AddOrderArchiveByIdHandler();
+            services.AddOrdersArchiveHandler();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = nameof(TooBigToFailBurgerShop), Version = "v1" });
+            });
+
+        }
+
+        private void ConfigureTracing(IServiceCollection services)
+        {
+            services.AddOpenTelemetryTracing(builder =>
+            {
+                builder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddConsoleExporter();
+                //.AddJaegerExporter(options =>
+                //{
+                //    options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
+                //    options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
+                //});
+            });
+        }
+
+        private void ConfigureDatabaseConnections(IServiceCollection services)
+        {
             services.AddDbContext<BurgerShopContext>(cfg =>
             {
                 var settings = Configuration
@@ -57,8 +95,10 @@ namespace TooBigToFailBurgerShop
 
                 cfg.UseNpgsql(connectionString);
             });
+        }
 
-
+        private void ConfigureMongoClient(IServiceCollection services)
+        {
             services.AddMongoClient(cfg =>
             {
                 var options = Configuration
@@ -74,33 +114,6 @@ namespace TooBigToFailBurgerShop
                 cfg.CollectionName = options.CollectionName;
 
             });
-
-            services.AddOrderArchiveByIdHandler();
-            services.AddOrdersArchiveHandler();
-
-            ConfigureMassTransit(services);
-
-            services.AddMassTransitHostedService();
-
-            services.AddOpenTelemetryTracing(builder =>
-            {
-                builder
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
-                    .AddConsoleExporter();
-                //.AddJaegerExporter(options =>
-                //{
-                //    options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
-                //    options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
-                //});
-            });
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = nameof(TooBigToFailBurgerShop), Version = "v1" });
-            });
-
         }
 
         public virtual void ConfigureMassTransit(IServiceCollection services)
