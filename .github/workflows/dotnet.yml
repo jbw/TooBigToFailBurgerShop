@@ -13,7 +13,7 @@ jobs:
     services:
       mongo:
         image: bitnami/mongodb
-        environment:
+        env:
           MONGODB_USERNAME: burger
           MONGODB_PASSWORD: burger
           MONGODB_DATABASE: burgers
@@ -26,25 +26,21 @@ jobs:
 
       mongodb-secondary:
         image: 'docker.io/bitnami/mongodb:4.4-debian-10'
-        depends_on:
-          - mongo
-        environment:
-          - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
-          - MONGODB_REPLICA_SET_MODE=secondary
-          - MONGODB_INITIAL_PRIMARY_HOST=mongo
-          - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=burger
-          - MONGODB_REPLICA_SET_KEY=replicasetkey123
+        env:
+          MONGODB_ADVERTISED_HOSTNAME: mongodb-secondary
+          MONGODB_REPLICA_SET_MODE: secondary
+          MONGODB_INITIAL_PRIMARY_HOST: mongo
+          MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: burger
+          MONGODB_REPLICA_SET_KEY: replicasetkey123
 
       mongodb-arbiter:
         image: 'docker.io/bitnami/mongodb:4.4-debian-10'
-        depends_on:
-          - mongo
-        environment:
-          - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
-          - MONGODB_REPLICA_SET_MODE=arbiter
-          - MONGODB_INITIAL_PRIMARY_HOST=mongo
-          - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=burger
-          - MONGODB_REPLICA_SET_KEY=replicasetkey123
+        env:
+          MONGODB_ADVERTISED_HOSTNAME: mongodb-arbiter
+          MONGODB_REPLICA_SET_MODE: arbiter
+          MONGODB_INITIAL_PRIMARY_HOST: mongo
+          MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: burger
+          MONGODB_REPLICA_SET_KEY: replicasetkey123
       
     steps:
     - uses: actions/checkout@v2
