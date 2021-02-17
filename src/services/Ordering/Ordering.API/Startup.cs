@@ -78,26 +78,7 @@ namespace TooBigToFailBurgerShop
             services.AddOrderArchiveByIdHandler();
             services.AddOrdersArchiveHandler();
 
-            services.AddMassTransit(x =>
-            {
-                var rabbitMqSettings = Configuration
-                    .GetSection(typeof(RabbitMqSettings).Name)
-                    .Get<RabbitMqSettings>();
-
-                x.UsingInMemory();
-                //x.UsingRabbitMq((context, cfg) =>
-                //{
-                //    cfg.UseInMemoryOutbox();
-
-                //    cfg.Host(rabbitMqSettings.Host, "/", h =>
-                //    {
-                //        h.Username(rabbitMqSettings.Username);
-                //        h.Password(rabbitMqSettings.Password);
-                //    });
-
-                //    cfg.ConfigureEndpoints(context);
-                //});
-            });
+            ConfigureMassTransit(services);
 
             services.AddMassTransitHostedService();
 
@@ -108,11 +89,11 @@ namespace TooBigToFailBurgerShop
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddConsoleExporter();
-                    //.AddJaegerExporter(options =>
-                    //{
-                    //    options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
-                    //    options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
-                    //});
+                //.AddJaegerExporter(options =>
+                //{
+                //    options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
+                //    options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
+                //});
             });
 
             services.AddSwaggerGen(c =>
@@ -120,6 +101,29 @@ namespace TooBigToFailBurgerShop
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = nameof(TooBigToFailBurgerShop), Version = "v1" });
             });
 
+        }
+
+        public virtual void ConfigureMassTransit(IServiceCollection services)
+        {
+            services.AddMassTransit(x =>
+            {
+                var rabbitMqSettings = Configuration
+                    .GetSection(typeof(RabbitMqSettings).Name)
+                    .Get<RabbitMqSettings>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.UseInMemoryOutbox();
+
+                    cfg.Host(rabbitMqSettings.Host, "/", h =>
+                    {
+                        h.Username(rabbitMqSettings.Username);
+                        h.Password(rabbitMqSettings.Password);
+                    });
+
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
         }
 
         public void ConfigureContainer(ContainerBuilder builder)

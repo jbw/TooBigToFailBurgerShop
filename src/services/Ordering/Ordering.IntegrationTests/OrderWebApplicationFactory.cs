@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using System.Linq;
 
 namespace Ordering.IntegrationTests.Features.Order
 {
@@ -38,20 +39,18 @@ namespace Ordering.IntegrationTests.Features.Order
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                        .UseStartup<TooBigToFailBurgerShop.Startup>();
+                        .UseStartup<TestStartup>()
+                        .ConfigureLogging(logging =>
+                        {
+                            logging.ClearProviders();
+                            logging.AddXUnit(OutputHelper);
+                        });
                 });
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureLogging(logging =>
-            {
-                logging.ClearProviders();
-                logging.AddXUnit(OutputHelper);
-            });
-
             builder.UseEnvironment(Environments.Development);
-
         }
     }
 }
