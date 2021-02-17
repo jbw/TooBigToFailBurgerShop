@@ -26,7 +26,6 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
             {
                 Credential = MongoCredential.CreateCredential(options.Database, options.Username, options.Password),
                 Server = new MongoServerAddress(options.Host, options.Port),
-
                 Scheme = ConnectionStringScheme.MongoDB
             };
 
@@ -36,7 +35,8 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 
             MongoRepository.Configure()
                 .Database(options.Database, db => db
-                    .MapAlongWithSubclassesInSameAssebmly<OrderId>(options.CollectionName))
+                    .MapAlongWithSubclassesInSameAssebmly<OrderId>(options.CollectionName)
+                    .MapAlongWithSubclassesInSameAssebmly<OrderArchiveItem>())
                 .AutoEnlistWithTransactionScopes()
                 .Build();
 

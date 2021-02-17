@@ -1,9 +1,15 @@
 ﻿using MassTransit.Testing;
 using Microsoft.AspNetCore.Mvc.Testing;
+using MongoDB.Driver;
 using Shouldly;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using TooBigToFailBurgerShop.Ordering.Application.Queries.Models;
+using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -56,11 +62,15 @@ namespace Ordering.IntegrationTests.Features.Order
         public async Task Should_get_order_by_id()
         {
             // Given
-            var url = "/Orders/getorder?id=000c0000-ac17-0242-010d-08d8d05ecd76";
+            IMongoClient mongoClient = (IMongoClient)_factory.Services.GetService(typeof(IMongoClient));
+            var repo = new OrdersArchiveItemRepository(mongoClient);
+            var id = Guid.NewGuid();
+            await repo.CreateAsync(id, DateTime.UtcNow);
 
             // When
+            var getOrderByIdUrl = "/Orders/getorder?id=" + id;
             _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
-            var resp = await _client.GetAsync(url);
+            var resp = await _client.GetAsync(getOrderByIdUrl);
 
             // Then
             resp.EnsureSuccessStatusCode();

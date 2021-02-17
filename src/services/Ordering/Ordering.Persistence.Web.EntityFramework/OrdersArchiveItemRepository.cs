@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using JohnKnoop.MongoRepository;
+using MongoDB.Driver;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,14 +10,12 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
 {
     public class OrdersArchiveItemRepository : IOrderArchiveItemRepository
     {
-        private readonly IMongoDatabase _mongoDatabase;
+        private readonly IRepository<OrderArchiveItem> _repository;
 
-        private readonly IMongoCollection<OrderArchiveItem> _orderArchiveItemCollection;
-
-        public OrdersArchiveItemRepository(IMongoClient mongoClient, MongoConnectionSettings mongoOptions)
+        public OrdersArchiveItemRepository(IMongoClient mongoClient)
         {
-            _mongoDatabase = mongoClient.GetDatabase(mongoOptions.Database);
-            _orderArchiveItemCollection = _mongoDatabase.GetCollection<OrderArchiveItem>(typeof(OrderArchiveItem).Name);
+            _repository = mongoClient.GetRepository<OrderArchiveItem>();
+
         }
 
         public async Task CreateAsync(Guid orderId, DateTime timestamp, CancellationToken cancellationToken = default)
@@ -28,18 +27,13 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
                 .Set(a => a.Id, orderId)
                 .Set(a => a.Timestamp, timestamp);
 
-            await _orderArchiveItemCollection.UpdateOneAsync(filter,
-               cancellationToken: cancellationToken,
-               update: update,
-               options: new UpdateOptions { IsUpsert = true }
-            );
-
+            await _repository.InsertAsync(new OrderArchiveItem(orderId, timestamp));
 
         }
 
         public async Task<bool> ExistsAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
-            var search = await _orderArchiveItemCollection.FindAsync(x => x.Id.Equals(orderId), cancellationToken: cancellationToken);
+            var search = await _repository.FindAsync(x => x.Id.Equals(orderId));
             return await search.AnyAsync(cancellationToken);
         }
     }
