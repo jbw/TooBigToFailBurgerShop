@@ -53,7 +53,7 @@ namespace TooBigToFailBurgerShop
 
         }
 
-        private void ConfigureTracing(IServiceCollection services)
+        public virtual void ConfigureTracing(IServiceCollection services)
         {
             services.AddOpenTelemetryTracing(builder =>
             {
@@ -61,12 +61,12 @@ namespace TooBigToFailBurgerShop
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddConsoleExporter();
-                //.AddJaegerExporter(options =>
-                //{
-                //    options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
-                //    options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
-                //});
+                    .AddConsoleExporter()
+                    .AddJaegerExporter(options =>
+                    {
+                        options.AgentHost = Configuration.GetValue<string>("Jaeger:Host");
+                        options.AgentPort = Configuration.GetValue<int>("Jaeger:Port");
+                    });
             });
         }
 
