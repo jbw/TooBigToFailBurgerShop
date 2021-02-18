@@ -6,7 +6,14 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["services/Ordering/CreateOrder.Consumer/CreateOrder.Consumer.csproj", "services/Ordering/CreateOrder.Consumer/"]
-COPY ["services/Ordering/Ordering.Messages/Ordering.Messages.csproj", "services/Ordering/Ordering.Messages/"]
+COPY ["services/Ordering/Ordering.Domain.Core/Ordering.Domain.Core.csproj", "services/Ordering/Ordering.Domain.Core/"]
+COPY ["services/Ordering/Ordering.Persistence.RabbitMQ/Ordering.Persistence.MassTransit.csproj", "services/Ordering/Ordering.Persistence.RabbitMQ/"]
+COPY ["services/Ordering/Ordering.Messages/Ordering.Contracts.csproj", "services/Ordering/Ordering.Messages/"]
+COPY ["services/Ordering/Ordering.Domain/Ordering.Domain.csproj", "services/Ordering/Ordering.Domain/"]
+COPY ["services/Ordering/Ordering.Persistence.MartenDb/Ordering.Persistence.MartenDb.csproj", "services/Ordering/Ordering.Persistence.MartenDb/"]
+COPY ["services/Ordering/Ordering.Persistence.Web.EntityFramework/Ordering.Persistence.Mongo.csproj", "services/Ordering/Ordering.Persistence.Web.EntityFramework/"]
+COPY ["services/Ordering/Ordering.Application/Ordering.Application.csproj", "services/Ordering/Ordering.Application/"]
+COPY ["services/Ordering/Ordering.Infrastructure/Ordering.Infrastructure.csproj", "services/Ordering/Ordering.Infrastructure/"]
 RUN dotnet restore "services/Ordering/CreateOrder.Consumer/CreateOrder.Consumer.csproj"
 COPY . .
 WORKDIR "/src/services/Ordering/CreateOrder.Consumer"

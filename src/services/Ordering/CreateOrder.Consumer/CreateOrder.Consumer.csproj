@@ -9,6 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
+    <None Remove="appsettings.Logging.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.Logging.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
     <PackageReference Include="codecracker.CSharp" Version="1.1.0">
       <PrivateAssets>all</PrivateAssets>
@@ -49,7 +63,6 @@
     <ProjectReference Include="..\Ordering.Domain.Core\Ordering.Domain.Core.csproj" />
     <ProjectReference Include="..\Ordering.Domain\Ordering.Domain.csproj" />
     <ProjectReference Include="..\Ordering.Infrastructure\Ordering.Infrastructure.csproj" />
-    <ProjectReference Include="..\Ordering.Messages\Ordering.Contracts.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.MartenDb\Ordering.Persistence.MartenDb.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.RabbitMQ\Ordering.Persistence.MassTransit.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Mongo.csproj" />

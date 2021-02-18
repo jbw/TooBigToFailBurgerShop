@@ -21,6 +21,8 @@ services:
       MONGODB_REPLICA_SET_MODE: primary 
       MONGODB_ADVERTISED_HOSTNAME: mongo
       MONGODB_REPLICA_SET_KEY: replicasetkey123 
+    ports:
+      - 27017:27017
 
   mongodb-secondary:
     image: 'docker.io/bitnami/mongodb:4.4-debian-10'
@@ -48,6 +50,8 @@ services:
     image: mongo-express
     ports:
       - 8081:8081
+    depends_on:
+      - mongo
     environment:
       ME_CONFIG_MONGODB_SERVER: mongo  
       ME_CONFIG_MONGODB_ADMINUSERNAME: burger
