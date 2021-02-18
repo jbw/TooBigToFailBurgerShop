@@ -7,6 +7,8 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["services/Ordering/Ordering.StateService/Ordering.StateService/Ordering.StateService.csproj", "services/Ordering/Ordering.StateService/Ordering.StateService/"]
 COPY ["services/Ordering/Ordering.State/Ordering.State/Ordering.State.csproj", "services/Ordering/Ordering.State/Ordering.State/"]
+COPY ["services/Ordering/Ordering.Domain/Ordering.Domain.csproj", "services/Ordering/Ordering.Domain/"]
+COPY ["services/Ordering/Ordering.Domain.Core/Ordering.Domain.Core.csproj", "services/Ordering/Ordering.Domain.Core/"]
 COPY ["services/Ordering/Ordering.Messages/Ordering.Contracts.csproj", "services/Ordering/Ordering.Messages/"]
 RUN dotnet restore "services/Ordering/Ordering.StateService/Ordering.StateService/Ordering.StateService.csproj"
 COPY . .

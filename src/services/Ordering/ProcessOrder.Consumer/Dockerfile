@@ -6,6 +6,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["services/Ordering/ProcessOrder.Consumer/ProcessOrder.Consumer.csproj", "services/Ordering/ProcessOrder.Consumer/"]
+COPY ["services/Ordering/Ordering.Messages/Ordering.Contracts.csproj", "services/Ordering/Ordering.Messages/"]
 RUN dotnet restore "services/Ordering/ProcessOrder.Consumer/ProcessOrder.Consumer.csproj"
 COPY . .
 WORKDIR "/src/services/Ordering/ProcessOrder.Consumer"
