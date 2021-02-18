@@ -44,7 +44,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.IntegrationTests", "services\Ordering\Ordering.IntegrationTests\Ordering.IntegrationTests.csproj", "{03F2C26B-2506-459F-B416-E8683F558285}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ordering.IntegrationTests", "services\Ordering\Ordering.IntegrationTests\Ordering.IntegrationTests.csproj", "{03F2C26B-2506-459F-B416-E8683F558285}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "integration-tests", "integration-tests", "{EFFB5519-E3CC-4DE9-8079-D151923CDBAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,7 +142,7 @@ Global
 		{20047E49-6828-4A48-A03A-AC2D5AD8E101} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
 		{9EB7148B-7EAA-4A6A-B9CA-0992FEC1CD27} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
 		{E6D13C9D-7B4E-4B1E-84AA-2C14941D2C87} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
-		{03F2C26B-2506-459F-B416-E8683F558285} = {57D551BF-52BC-490D-A91D-9580AEA8CEC9}
+		{03F2C26B-2506-459F-B416-E8683F558285} = {EFFB5519-E3CC-4DE9-8079-D151923CDBAB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02C70C03-DB0D-4686-B6DA-D28229C8C13F}
