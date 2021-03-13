@@ -44,7 +44,7 @@ jobs:
           
       tests.rabbitmq:
         image: 'rabbitmq:management-alpine'
-        environment:
+        env:
           RABBITMQ_DEFAULT_USER: "guest"
           RABBITMQ_DEFAULT_PASS: "guest"
         ports:
@@ -52,7 +52,7 @@ jobs:
 
       tests.burgers.data:
         image: 'postgres:alpine'
-        environment:
+        env:
           POSTGRES_USER: "burger"
           POSTGRES_PASSWORD: "burger"
           POSTGRES_DB: "burgers"
