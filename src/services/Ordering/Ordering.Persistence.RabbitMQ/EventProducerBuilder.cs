@@ -5,11 +5,11 @@ using TooBigToFailBurgerShop.Ordering.Domain.Core.SeedWork;
 
 namespace TooBigToFailBurgerShop.Ordering.Persistence.MassTransit
 {
-    public class EventProducerBulder
+    public class EventProducerBuilder
     {
         private readonly IServiceCollection _services;
 
-        public EventProducerBulder(IServiceCollection services)
+        public EventProducerBuilder(IServiceCollection services)
         {
             _services = services;
         }
