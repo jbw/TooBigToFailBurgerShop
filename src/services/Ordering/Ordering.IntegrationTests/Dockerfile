@@ -8,19 +8,15 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["services/Ordering/Ordering.IntegrationTests/Ordering.IntegrationTests.csproj", "services/Ordering/Ordering.IntegrationTests/"]
-COPY ["services/Ordering/Ordering.StateService/Ordering.StateService/Ordering.StateService.csproj", "services/Ordering/Ordering.StateService/Ordering.StateService/"]
-COPY ["services/Ordering/Ordering.State/Ordering.State/Ordering.State.csproj", "services/Ordering/Ordering.State/Ordering.State/"]
-COPY ["services/Ordering/Ordering.Domain/Ordering.Domain.csproj", "services/Ordering/Ordering.Domain/"]
-COPY ["services/Ordering/Ordering.Domain.Core/Ordering.Domain.Core.csproj", "services/Ordering/Ordering.Domain.Core/"]
-COPY ["services/Ordering/Ordering.Messages/Ordering.Contracts.csproj", "services/Ordering/Ordering.Messages/"]
 COPY ["services/Ordering/Ordering.API/Ordering.API.csproj", "services/Ordering/Ordering.API/"]
+COPY ["services/Ordering/Ordering.Domain.Core/Ordering.Domain.Core.csproj", "services/Ordering/Ordering.Domain.Core/"]
 COPY ["services/Ordering/Ordering.Persistence.RabbitMQ/Ordering.Persistence.MassTransit.csproj", "services/Ordering/Ordering.Persistence.RabbitMQ/"]
+COPY ["services/Ordering/Ordering.Messages/Ordering.Contracts.csproj", "services/Ordering/Ordering.Messages/"]
+COPY ["services/Ordering/Ordering.Domain/Ordering.Domain.csproj", "services/Ordering/Ordering.Domain/"]
 COPY ["services/Ordering/Ordering.Persistence.MartenDb/Ordering.Persistence.MartenDb.csproj", "services/Ordering/Ordering.Persistence.MartenDb/"]
-COPY ["services/Ordering/Ordering.Persistence.Web.EntityFramework/Ordering.Persistence.Mongo.csproj", "services/Ordering/Ordering.Persistence.Web.EntityFramework/"]
+COPY ["services/Ordering/Ordering.Persistence.Mongo/Ordering.Persistence.Mongo.csproj", "services/Ordering/Ordering.Persistence.Mongo/"]
 COPY ["services/Ordering/Ordering.Application/Ordering.Application.csproj", "services/Ordering/Ordering.Application/"]
 COPY ["services/Ordering/Ordering.Infrastructure/Ordering.Infrastructure.csproj", "services/Ordering/Ordering.Infrastructure/"]
-COPY ["services/Ordering/ProcessOrder.Consumer/ProcessOrder.Consumer.csproj", "services/Ordering/ProcessOrder.Consumer/"]
-COPY ["services/Ordering/CreateOrder.Consumer/CreateOrder.Consumer.csproj", "services/Ordering/CreateOrder.Consumer/"]
 RUN dotnet restore "services/Ordering/Ordering.IntegrationTests/Ordering.IntegrationTests.csproj"
 COPY . .
 WORKDIR "/src/services/Ordering/Ordering.IntegrationTests"
@@ -31,4 +27,5 @@ FROM build AS test
 # set the directory to be within the unit test project
 
 # run the unit tests
+
 RUN dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=OpenCover  Ordering.IntegrationTests.csproj --verbosity normal
