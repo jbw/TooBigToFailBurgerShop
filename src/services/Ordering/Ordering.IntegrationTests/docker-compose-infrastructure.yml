@@ -19,6 +19,8 @@ services:
       MONGODB_REPLICA_SET_KEY: replicasetkey123
     networks:
       - burger_order_tests
+    ports:
+      - 27017:27017
 
   testsmongodb-secondary:
     image: 'docker.io/bitnami/mongodb:4.4-debian-10'
@@ -51,6 +53,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: "guest"
       RABBITMQ_DEFAULT_PASS: "guest"
+    ports:
+      - 5672:5672
     networks:
       - burger_order_tests
 
@@ -61,5 +65,7 @@ services:
       POSTGRES_PASSWORD: "burger"
       POSTGRES_DB: "burgers"
     command: "--max-prepared-transactions=110"
+    ports:
+      - 5432:5432
     networks:
       - burger_order_tests
