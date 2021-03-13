@@ -29,11 +29,12 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
         public static async Task<int> Main(string[] args)
         {
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-            var configuration = GetConfiguration();
-            Log.Logger = CreateSerilogLogger(configuration);
 
             try
             {
+                var configuration = GetConfiguration();
+                Log.Logger = CreateSerilogLogger(configuration);
+
                 Log.Information("Configuring web host ({ApplicationContext})...", "Ordering.API");
 
                 var host = CreateHostBuilder(configuration, args).Build();

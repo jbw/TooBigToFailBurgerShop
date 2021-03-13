@@ -4,50 +4,22 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    services:
-      mongo:
-        image: bitnami/mongodb
-        env:
-          MONGODB_USERNAME: burger
-          MONGODB_PASSWORD: burger
-          MONGODB_DATABASE: burgers
-          MONGODB_ROOT_PASSWORD: burger
-          MONGODB_REPLICA_SET_MODE: primary 
-          MONGODB_ADVERTISED_HOSTNAME: mongo
-          MONGODB_REPLICA_SET_KEY: replicasetkey123 
-        ports:
-          - 27017:27017
 
-      mongodb-secondary:
-        image: 'docker.io/bitnami/mongodb:4.4-debian-10'
-        env:
-          MONGODB_ADVERTISED_HOSTNAME: mongodb-secondary
-          MONGODB_REPLICA_SET_MODE: secondary
-          MONGODB_INITIAL_PRIMARY_HOST: mongo
-          MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: burger
-          MONGODB_REPLICA_SET_KEY: replicasetkey123
-
-      mongodb-arbiter:
-        image: 'docker.io/bitnami/mongodb:4.4-debian-10'
-        env:
-          MONGODB_ADVERTISED_HOSTNAME: mongodb-arbiter
-          MONGODB_REPLICA_SET_MODE: arbiter
-          MONGODB_INITIAL_PRIMARY_HOST: mongo
-          MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: burger
-          MONGODB_REPLICA_SET_KEY: replicasetkey123
-      
     steps:
     - uses: actions/checkout@v2
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+
+    - name: Startup integration test infrastructure
+      run: cd src/services/Ordering/Ordering.IntegrationTests && docker network create burger_order_tests && docker-compose -f docker-compose-infrastructure.yml up -d
 
     - name: Restore dependencies
       run: cd src && dotnet restore TooBigToFailBurgerShop.sln
@@ -55,7 +27,7 @@ jobs:
     - name: Build
       run: cd src && dotnet build TooBigToFailBurgerShop.sln --no-restore
 
-    - name: Test
+    - name: Integration & Unit tests
       run: cd src && dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=OpenCover  TooBigToFailBurgerShop.sln --no-build --verbosity normal
 
     - name: Codecov

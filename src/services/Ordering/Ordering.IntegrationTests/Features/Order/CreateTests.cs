@@ -35,27 +35,18 @@ namespace Ordering.IntegrationTests.Features.Order
         [Fact]
         public async Task Should_create_new_order()
         {
-            var harness = new InMemoryTestHarness();
 
-            await harness.Start();
+            // Given
+            var url = "/Orders/createorder";
+            var orderContent = JsonContent.Create(new { });
 
-            try
-            {
-                // Given
-                var url = "/Orders/createorder";
-                var orderContent = JsonContent.Create(new { });
+            // When
+            _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
+            var resp = await _client.PutAsync(url, orderContent);
 
-                // When
-                _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
-                var resp = await _client.PutAsync(url, orderContent);
+            // Then
+            resp.EnsureSuccessStatusCode();
 
-                // Then
-                resp.EnsureSuccessStatusCode();
-            }
-            finally
-            {
-                await harness.Stop();
-            }
         }
 
         [Fact]
