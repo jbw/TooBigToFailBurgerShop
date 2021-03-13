@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -65,7 +65,7 @@
     <ProjectReference Include="..\Ordering.Infrastructure\Ordering.Infrastructure.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.MartenDb\Ordering.Persistence.MartenDb.csproj" />
     <ProjectReference Include="..\Ordering.Persistence.RabbitMQ\Ordering.Persistence.MassTransit.csproj" />
-    <ProjectReference Include="..\Ordering.Persistence.Web.EntityFramework\Ordering.Persistence.Mongo.csproj" />
+    <ProjectReference Include="..\Ordering.Persistence.Mongo\Ordering.Persistence.Mongo.csproj" />
   </ItemGroup>
 
 </Project>
