@@ -28,3 +28,7 @@ cd Ordering.StateService
 dotnet ef database update
 
 ```
+
+#### Order events
+
+* Create 'order_events' database
