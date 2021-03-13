@@ -35,11 +35,11 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                 var configuration = GetConfiguration();
                 Log.Logger = CreateSerilogLogger(configuration);
 
-                Log.Information("Configuring web host ({ApplicationContext})...", "Ordering.API");
+                Log.Information("Configuring web host ({ApplicationContext})...", "CreateOrder.Consumer");
 
                 var host = CreateHostBuilder(configuration, args).Build();
 
-                Log.Information("Starting web host ({ApplicationContext})...", "Ordering.API");
+                Log.Information("Starting web host ({ApplicationContext})...", "CreateOrder.Consumer");
 
                 await host.RunAsync();
 
