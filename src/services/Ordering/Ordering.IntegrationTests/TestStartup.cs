@@ -11,10 +11,6 @@ namespace Ordering.IntegrationTests.Features.Order
 
         }
 
-        public override void ConfigureMassTransit(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
-        {
-            services.AddMassTransit(cfg => cfg.UsingInMemory());
-        }
 
         public override void ConfigureTracing(IServiceCollection services)
         {

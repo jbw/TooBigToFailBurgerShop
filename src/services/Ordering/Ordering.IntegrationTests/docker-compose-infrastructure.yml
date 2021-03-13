@@ -1,0 +1,65 @@
+version: '3.4'
+
+networks:
+  burger_order_tests:
+    external:
+      name: burger_order_tests
+
+services:
+
+  testsmongo:
+    image: bitnami/mongodb
+    environment:
+      MONGODB_USERNAME: burger
+      MONGODB_PASSWORD: burger
+      MONGODB_DATABASE: burgers
+      MONGODB_ROOT_PASSWORD: burger
+      MONGODB_REPLICA_SET_MODE: primary 
+      MONGODB_ADVERTISED_HOSTNAME: testsmongo
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+    networks:
+      - burger_order_tests
+
+  testsmongodb-secondary:
+    image: 'docker.io/bitnami/mongodb:4.4-debian-10'
+    depends_on:
+      - testsmongo
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=testsmongodb-secondary
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_INITIAL_PRIMARY_HOST=testsmongo
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=burger
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    networks:
+      - burger_order_tests
+
+  testsmongodb-arbiter:
+    image: 'docker.io/bitnami/mongodb:4.4-debian-10'
+    depends_on:
+      - testsmongo
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=testsmongodb-arbiter
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_INITIAL_PRIMARY_HOST=testsmongo
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=burger
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    networks:
+      - burger_order_tests
+
+  tests.rabbitmq:
+    image: rabbitmq:management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    networks:
+      - burger_order_tests
+
+  tests.burgers.data:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: "burger"
+      POSTGRES_PASSWORD: "burger"
+      POSTGRES_DB: "burgers"
+    command: "--max-prepared-transactions=110"
+    networks:
+      - burger_order_tests

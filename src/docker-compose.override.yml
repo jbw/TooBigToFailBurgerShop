@@ -9,7 +9,7 @@ services:
 
   burgers.data:
     volumes:
-      - burgers_data_db_volume:/var/lib/postgresql/data
+      - ./burgers_data_db_volume/:/var/lib/postgresql/data
 
   burgers.create.order.consumer:
     volumes:
@@ -33,6 +33,3 @@ services:
   burgers.process.order.consumer:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-
-volumes:
-  burgers_data_db_volume:
