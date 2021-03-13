@@ -47,7 +47,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", "Ordering.API");
+                Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", "CreateOrder.Consumer");
                 return 1;
             }
             finally
