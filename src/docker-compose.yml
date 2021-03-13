@@ -65,7 +65,8 @@ services:
         PGADMIN_DEFAULT_EMAIL: burger@burger.com
         PGADMIN_DEFAULT_PASSWORD: burger
     volumes:
-    - pgadmin-data:/var/lib/pgadmin
+        - ./../pgadmin/servers.json:/pgadmin4/servers.json
+        - ./../pgadmin/backups:/var/lib/pgadmin/storage/burger_burger.com
 
   jaeger:
     image: jaegertracing/all-in-one
@@ -127,6 +128,7 @@ services:
 volumes:
     mongodb_master_data:
         driver: local
+
 
 networks:
   default:

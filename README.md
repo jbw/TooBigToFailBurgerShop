@@ -18,8 +18,8 @@
 ### Links
 
 **Application**
-* [Order UI](https://localhost:6968/)
-* [Orders API](http://localhost:6969/swagger/index.html)
+* [Order UI](https://localhost:16968/)
+* [Orders API](http://localhost:16969/swagger/index.html)
 
 **Tracing**
 * [Jaeger](http://localhost:16686/)
@@ -29,6 +29,6 @@
 
 **Databases**
 * [pgAdmin](http://localhost:6541)
-
+* [Mongo Express](http://localhost:6541)
 **Messaging**
 * [RabbitMQ management UI](http://localhost:15672)
