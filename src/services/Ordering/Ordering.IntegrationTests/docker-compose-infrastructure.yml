@@ -51,8 +51,8 @@ services:
   tests.rabbitmq:
     image: rabbitmq:management-alpine
     environment:
-      RABBITMQ_DEFAULT_USER: "guest"
-      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_USER: "burger"
+      RABBITMQ_DEFAULT_PASS: "burger"
     ports:
       - 5672:5672
     networks:

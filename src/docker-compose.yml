@@ -64,6 +64,8 @@ services:
     environment:
         PGADMIN_DEFAULT_EMAIL: burger@burger.com
         PGADMIN_DEFAULT_PASSWORD: burger
+    volumes:
+    - pgadmin-data:/var/lib/pgadmin
 
   jaeger:
     image: jaegertracing/all-in-one
@@ -77,8 +79,8 @@ services:
     ports:
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: "guest"
-      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_USER: "burger"
+      RABBITMQ_DEFAULT_PASS: "burger"
 
   burgers.data:
     image: postgres:alpine
