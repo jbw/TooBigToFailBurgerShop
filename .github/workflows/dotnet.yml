@@ -20,6 +20,12 @@ jobs:
 
     - name: Startup integration test infrastructure
       run: cd src/services/Ordering/Ordering.IntegrationTests && docker network create burger_order_tests && docker-compose -f docker-compose-infrastructure.yml up -d
+    
+    - name: List containers
+      run docker ps -a
+      
+    - name: Integration tests
+      run: cd src/services/Ordering/Ordering.IntegrationTests && docker-compose -f docker-compose.yml up -d
 
     - name: Restore dependencies
       run: cd src && dotnet restore TooBigToFailBurgerShop.sln
