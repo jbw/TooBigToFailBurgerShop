@@ -17,7 +17,7 @@
 * 
 ### Migrations
 
-[Follow migration instructions](src/services/Ordering/Migrations/README.md)
+[Follow migration instructions](src/services/Ordering/Migrations/)
 
 ### Links
 
