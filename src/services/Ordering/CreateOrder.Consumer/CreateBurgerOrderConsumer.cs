@@ -37,6 +37,13 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
 
                 var orderAggregate = new Order(context.Message.OrderId);
 
+                // Here we are doing 3 things: 
+                // * persisting the aggregate
+                // * publishing domain events
+                // * and persisting order id. 
+                // This is across multiple technologies (postgres, mongo, rabbitmq).
+                // We are be concerned with consistency.
+                
                 await _orderEventsService.PersistAsync(orderAggregate);
                 await _orderIdRepository.CreateAsync(context.Message.OrderId);
 
