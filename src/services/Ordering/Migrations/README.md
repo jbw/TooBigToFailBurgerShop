@@ -31,4 +31,4 @@ dotnet ef database update
 
 #### Order events
 
-* Create 'order_events' database
+* Create 'order_events' database and run `event_store.sql`

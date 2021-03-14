@@ -14,6 +14,10 @@
 * Saga pattern
 * Outbox pattern
 * NRTs enabled
+* 
+### Migrations
+
+[Follow migration instructions](src/services/Ordering/Migrations/README.md)
 
 ### Links
 
