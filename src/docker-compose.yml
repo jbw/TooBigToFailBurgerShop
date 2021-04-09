@@ -124,7 +124,7 @@ services:
     image: ordering.stateservice
     build:
       context: .
-      dockerfile: services/Ordering/Ordering.StateService/Ordering.StateService/Dockerfile
+      dockerfile: services/Ordering/Ordering.StateService/Dockerfile
 
   burgers.process.order.consumer:
     image: burgers.process.order.consumer
