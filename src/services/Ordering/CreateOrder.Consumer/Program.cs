@@ -94,7 +94,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                             });
                     });
 
-                    services.AddDbContext<BurgerShopContext>(contextOptions =>
+                    services.AddDbContext<BurgerShopContext>(cfg =>
                     {
 
                         var settings = configuration
@@ -115,7 +115,11 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                         };
 
                         var connectionString = connectionStringBuilder.ToString();
-                        contextOptions.UseNpgsql(connectionString);
+
+                        cfg.UseNpgsql(
+                            connectionString,
+                            options => options.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null)
+                        );
 
                     });
 

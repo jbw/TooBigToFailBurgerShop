@@ -14,6 +14,7 @@ using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Npgsql;
 using Serilog;
+using System;
 
 namespace TooBigToFailBurgerShop
 {
@@ -93,7 +94,10 @@ namespace TooBigToFailBurgerShop
 
                 var connectionString = connectionStringBuilder.ToString();
 
-                cfg.UseNpgsql(connectionString);
+                cfg.UseNpgsql(
+                    connectionString,
+                    options => options.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null)
+                );
             });
         }
 
