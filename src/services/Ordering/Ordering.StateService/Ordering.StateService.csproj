@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Ordering.State\Ordering.State\Ordering.State.csproj" />
+    <ProjectReference Include="..\Ordering.State\Ordering.State.csproj" />
   </ItemGroup>
 
 </Project>
