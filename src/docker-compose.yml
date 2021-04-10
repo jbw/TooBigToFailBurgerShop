@@ -143,13 +143,13 @@ services:
       dockerfile: services/Basket/Basket.API/Dockerfile
 
   burgers.basket.api.dapr:
-    image: "daprio/daprd:edge"
+    image: "daprio/daprd:1.1.1"
     network_mode: "service:burgers.basket.api"
     depends_on:
       - burgers.basket.api
 
   dapr-placement:
-    image: "daprio/dapr:1.0.0"
+    image: "daprio/dapr:1.1.1"
 
 volumes:
   mongodb_master_data:
