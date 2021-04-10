@@ -28,11 +28,12 @@ namespace Burgers.WebSPA
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
+            var burgerOrderApiConfig = new ApiConfiguration();
+            Configuration.GetSection("BurgersOrderingAPI").Bind(burgerOrderApiConfig);
+
             services.AddHttpClient<OrdersService>(client =>
             {
-                // TODO config drive this
-                client.BaseAddress = new Uri("http://burgers.ordering.api");
-
+                client.BaseAddress = new Uri(burgerOrderApiConfig.Url);
             });
 
             services.AddOpenTelemetryTracing(builder =>
