@@ -2,6 +2,9 @@ version: '3.8'
 
 services:
 
+  redis:
+    image: redis:alpine
+
   seq:
     image: datalust/seq
     environment:
@@ -79,6 +82,7 @@ services:
     image: jaegertracing/all-in-one
     ports:
       - "16686:16686"
+      - "9412:9412"
     environment:
         COLLECTOR_ZIPKIN_HTTP_PORT: 9411
 
@@ -132,6 +136,21 @@ services:
       context: .
       dockerfile: services/Ordering/ProcessOrder.Consumer/Dockerfile
 
+  burgers.basket.api:
+    image: burgers.basket.api
+    build:
+      context: .
+      dockerfile: services/Basket/Basket.API/Dockerfile
+
+  burgers.basket.api.dapr:
+    image: "daprio/daprd:edge"
+    network_mode: "service:burgers.basket.api"
+    depends_on:
+      - burgers.basket.api
+
+  dapr-placement:
+    image: "daprio/dapr:1.0.0"
+
 volumes:
   mongodb_master_data:
     driver: local
@@ -139,3 +158,4 @@ networks:
   default:
     external:
       name: burgers.network
+

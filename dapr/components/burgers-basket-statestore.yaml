@@ -1,0 +1,14 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: burgers-statestore
+  namespace: default
+spec:
+  type: state.redis
+  metadata:
+  - name: redisHost
+    value: redis:5379
+  - name: redisPassword
+    value: ""
+  - name: actorStateStore
+    value: "true"

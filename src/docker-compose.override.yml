@@ -1,20 +1,31 @@
 version: '3.4'
 
 services:
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "5379:6379"
+
   burgers.ordering.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "16969:80"
-
-  burgers.create.order.consumer:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  burgers.create.order.consumer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
   burgers.webspa:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
     ports:
       - "16968:80"
       - "443"
@@ -23,9 +34,43 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
   burgers.ordering.state.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
   burgers.process.order.consumer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  burgers.basket.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "16970:80"
+      - "9103:81"
+      - "50001:50001"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - redis
+      - dapr-placement
+
+  burgers.basket.api.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.basket.api",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      ]
+    volumes:
+      - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
+    depends_on:
+      - burgers.basket.api
