@@ -28,6 +28,8 @@ namespace Burgers.WebSPA
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
+
+            // Configure ordering http client
             var burgerOrderApiConfig = new ApiConfiguration();
             Configuration.GetSection("BurgersOrderingApi").Bind(burgerOrderApiConfig);
 
@@ -36,9 +38,17 @@ namespace Burgers.WebSPA
                 client.BaseAddress = new Uri(burgerOrderApiConfig.Url);
             });
 
+            // Configure basket http client
+            var burgerBasketApiConfig = new ApiConfiguration();
+            Configuration.GetSection("BurgersBasketApi").Bind(burgerBasketApiConfig);
+
+            services.AddHttpClient<BasketService>(client =>
+            {
+                client.BaseAddress = new Uri(burgerBasketApiConfig.Url);    
+            });
+
             services.AddOpenTelemetryTracing(builder =>
             {
-
                 builder
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Configuration.GetValue<string>("Jaeger:ServiceName")))
                     .AddAspNetCoreInstrumentation()
@@ -50,7 +60,6 @@ namespace Burgers.WebSPA
                     });
             });
 
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +68,7 @@ namespace Burgers.WebSPA
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
             }
             else
             {
