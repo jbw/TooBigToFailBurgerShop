@@ -74,7 +74,6 @@ services:
         PGADMIN_DEFAULT_EMAIL: burger@burger.com
         PGADMIN_DEFAULT_PASSWORD: burger
 
-
   jaeger:
     image: jaegertracing/all-in-one
     ports:
@@ -121,7 +120,7 @@ services:
       dockerfile: services/Ordering/CreateOrder.Consumer/Dockerfile
 
   burgers.ordering.state.service:
-    image: ordering.stateservice
+    image: burgers.ordering.state.service
     build:
       context: .
       dockerfile: services/Ordering/Ordering.StateService/Dockerfile
