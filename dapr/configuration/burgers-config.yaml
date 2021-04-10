@@ -1,0 +1,10 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: config
+  namespace: default
+spec:
+  tracing:
+    samplingRate: "1"
+  zipkin:
+    endpointAddress: "http://jaeger:9412/api/v2/spans"
