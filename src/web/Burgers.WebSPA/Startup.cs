@@ -29,7 +29,7 @@ namespace Burgers.WebSPA
             services.AddServerSideBlazor();
 
             var burgerOrderApiConfig = new ApiConfiguration();
-            Configuration.GetSection("BurgersOrderingAPI").Bind(burgerOrderApiConfig);
+            Configuration.GetSection("BurgersOrderingApi").Bind(burgerOrderApiConfig);
 
             services.AddHttpClient<OrdersService>(client =>
             {
