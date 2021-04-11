@@ -14,6 +14,7 @@
 * Saga pattern
 * Outbox pattern
 * NRTs enabled
+* Dapr
 
 ![High level architecture](docs/images/high-level-arch.png)
 
@@ -24,9 +25,10 @@
 ### Links
 
 **Application**
-* [Order UI](https://localhost:16968/)
+* [Shop frontend](https://localhost:16968/)
 * [Orders API](http://localhost:16969/swagger/index.html)
-
+* [Basket API](http://localhost:16970/swagger/index.html)
+ 
 **Tracing**
 * [Jaeger](http://localhost:16686/)
 
