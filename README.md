@@ -15,6 +15,8 @@
 * Outbox pattern
 * NRTs enabled
 
+![High level architecture](docs/images/high-level-arch.png)
+
 ### Migrations
 
 [Follow migration instructions](src/services/Ordering/Migrations/)
