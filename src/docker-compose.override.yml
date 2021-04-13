@@ -32,6 +32,25 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
+  burgers.gateway.api:
+    volumes:
+      - ./services/ApiGateway/Envoy:/etc/envoy
+    ports:
+      - '9901:9901'
+      - '10000:10000'
+      - '10001:10001'
+
+  burgers.gateway.api.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.gateway.api",
+      "-app-port", "80",
+      "-components-path", "/components",
+      "-config", "/configuration/burgers-config.yaml"
+      ]
+    volumes:
+      - "./dapr/components/:/components"
+      - "./dapr/configuration/:/configuration"
+
   burgers.ordering.state.service:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
