@@ -12,8 +12,6 @@ namespace Basket.API.Controllers
     [Route("[controller]")]
     public class BasketController : ControllerBase
     {
-       
-
         private readonly ILogger<BasketController> _logger;
         private readonly IBasketRepository _basketRepository;
 
