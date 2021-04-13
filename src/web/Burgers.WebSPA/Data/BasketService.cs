@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using System.Text.Json;
+using System.Net.Http.Json;
+
 namespace Burgers.WebSPA.Data
 {
     public class BasketService
     {
         private readonly HttpClient _httpClient;
 
+        // Note: in lieu of an identity server we will use a hardcoded
+        // user identifier.
+        private readonly string _customerId = "91ee1060-fb77-4df7-9d1f-9134d27162ee";
         public BasketService(HttpClient client)
         {
             _httpClient = client;
@@ -16,22 +18,16 @@ namespace Burgers.WebSPA.Data
 
         public async Task AddItemToCustomerBasket()
         {
-            _httpClient.DefaultRequestHeaders.Remove("x-requestid");
-            _httpClient.DefaultRequestHeaders.Add("x-requestid", Guid.NewGuid().ToString());
+            var basket = await GetCustomerBasket();
+            var placeholderItem = "Juicy burger";
+            basket.Items.Add(new BasketItem(placeholderItem));
 
+            await _httpClient.PostAsJsonAsync<CustomerBasket>("/Basket", basket);
+        }
 
-            var customerId = Guid.NewGuid().ToString();
-            var items = new List<string> { };
-
-            var body = new StringContent(
-                JsonSerializer.Serialize(new { customerId, items }), 
-                System.Text.Encoding.UTF8, 
-                "application/json"
-            );
-
-            await _httpClient.PostAsync("/Basket", body);
-
+        public async Task<CustomerBasket> GetCustomerBasket()
+        {
+            return await _httpClient.GetFromJsonAsync<CustomerBasket>("/Basket?customerId=" + _customerId);
         }
     }
-
 }
