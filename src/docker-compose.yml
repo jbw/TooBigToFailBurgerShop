@@ -117,6 +117,12 @@ services:
     depends_on:
       - "burgers.data"
 
+  burgers.ordering.api.dapr:
+    image: "daprio/daprd:1.1.1"
+    network_mode: "service:burgers.ordering.api"
+    depends_on:
+      - burgers.ordering.api
+
   burgers.create.order.consumer:
     image: burgers.create.order.consumer
     build:
