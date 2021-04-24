@@ -1,14 +1,9 @@
-﻿using MassTransit.Testing;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using MongoDB.Driver;
-using Shouldly;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using TooBigToFailBurgerShop.Ordering.Application.Queries.Models;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Xunit;
 using Xunit.Abstractions;
