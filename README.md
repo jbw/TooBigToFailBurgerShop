@@ -41,3 +41,7 @@
   
 **Messaging**
 * [RabbitMQ management UI](http://localhost:15672)
+
+**Dapr**
+
+* [Dashboard](http://localhost:8034)

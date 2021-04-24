@@ -2,6 +2,13 @@ version: '3.8'
 
 services:
 
+  dapr-dashboard:
+    image: daprio/dashboard
+    ports:
+      - 8034:8080
+    volumes:
+      - "../dapr/components/:/home/nonroot/.dapr/components"
+      - "../dapr/configuration/:/home/nonroot/.dapr/configuration"
   redis:
     image: redis:alpine
 
@@ -137,6 +144,12 @@ services:
     build:
       context: .
       dockerfile: services/Ordering/CreateOrder.Consumer/Dockerfile
+
+  burgers.create.order.consumer.dapr:
+    image: "daprio/daprd:1.1.1"
+    network_mode: "service:burgers.create.order.consumer"
+    depends_on:
+      - burgers.create.order.consumer
 
   burgers.ordering.state.service:
     image: burgers.ordering.state.service
