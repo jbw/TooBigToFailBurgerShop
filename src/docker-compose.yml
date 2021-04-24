@@ -102,7 +102,16 @@ services:
       POSTGRES_PASSWORD: "burger"
       POSTGRES_DB: "burgers"
     command: "--max-prepared-transactions=110"
-  
+
+  burgers.gateway.api:
+    image: envoyproxy/envoy:v1.17.1
+
+  burgers.gateway.api.dapr:
+    image: "daprio/daprd:1.0.0"
+    network_mode: "service:burgers.gateway.api"
+    depends_on:
+      - burgers.gateway.api
+
   burgers.webspa:
     image: burgers.webspa
     build:
