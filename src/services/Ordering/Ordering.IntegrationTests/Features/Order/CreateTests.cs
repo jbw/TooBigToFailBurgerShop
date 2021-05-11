@@ -17,7 +17,7 @@ using Xunit.Abstractions;
 namespace Ordering.IntegrationTests.Features.Order
 {
 
-    public class OrderApiTests 
+    public class OrderApiTests : IClassFixture<OrderWebApplicationFactory>
     {
         private readonly IConfiguration _configuration;
         private readonly HttpClient _client;
@@ -32,10 +32,12 @@ namespace Ordering.IntegrationTests.Features.Order
             return builder.Build();
         }
 
-        public OrderApiTests()
+        public OrderApiTests(OrderWebApplicationFactory factory, ITestOutputHelper outputHelper)
         {
             _configuration = GetConfiguration();
-            _client = new HttpClient();
+
+            factory.OutputHelper = outputHelper;
+            _client = factory.CreateClient();
         }
 
         [Fact]
@@ -43,7 +45,7 @@ namespace Ordering.IntegrationTests.Features.Order
         {
 
             // Given
-            var url = "http://localhost:16969/Orders/createorder";
+            var url = "Orders/createorder";
             var orderContent = JsonContent.Create(new { });
 
             // When
@@ -85,7 +87,7 @@ namespace Ordering.IntegrationTests.Features.Order
             await repo.CreateAsync(id, DateTime.UtcNow);
 
             // When
-            var getOrderByIdUrl = "http://localhost:16969/Orders/getorder?id=" + id;
+            var getOrderByIdUrl = "Orders/getorder?id=" + id;
             _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
             var resp = await _client.GetAsync(getOrderByIdUrl);
 
@@ -97,7 +99,7 @@ namespace Ordering.IntegrationTests.Features.Order
         public async Task Should_get_all_orders()
         {
             // Given
-            var url = "http://localhost:16969/Orders/getorders";
+            var url = "/Orders/getorders";
 
             // When
             _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
