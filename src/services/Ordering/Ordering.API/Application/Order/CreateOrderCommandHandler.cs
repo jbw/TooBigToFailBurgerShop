@@ -1,10 +1,12 @@
-﻿using MassTransit;
+﻿using Dapr.Client;
+using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using TooBigToFailBurgerShop.Ordering.Contracts;
 using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 
 namespace TooBigToFailBurgerShop.Application.Commands.Order
@@ -12,15 +14,15 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
 
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
-        private readonly IPublishEndpoint _publishEndpoint;
+        private const string DaprPubSubName = "burgers-pubsub";
+        private readonly DaprClient _dapr;
         private readonly ILogger<CreateOrderCommand> _logger;
 
 
-        public CreateOrderCommandHandler(IPublishEndpoint publishEndpoint, ILogger<CreateOrderCommand> logger)
+        public CreateOrderCommandHandler(DaprClient dapr, ILogger<CreateOrderCommand> logger)
         {
-            _publishEndpoint = publishEndpoint;
+            _dapr = dapr;
             _logger = logger;
-
         }
 
         /// <summary>
@@ -33,16 +35,40 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
         {
             _logger.LogInformation("Ordering.API, CreateOrderCommandHandler");
 
+            var correlationId = Guid.NewGuid();
+
             var message = new
             {
-                OrderDate = DateTime.UtcNow,
-                OrderId = InVar.Id,
-                CorrelationId = InVar.Id,
+                CorrelationId = correlationId,
+                Message = new
+                {
+                    OrderDate = DateTime.UtcNow,
+                    OrderId = Guid.NewGuid(),
+                    CorrelationId = correlationId
+                },
 
+                MessageType = new string[]
+                {
+                    "urn:message:TooBigToFailBurgerShop.Ordering.Contracts:SubmitBurgerOrder"
+                }
             };
 
 
-            await _publishEndpoint.Publish<SubmitBurgerOrder>(message, cancellationToken);
+            var daprEndpoint = "http://localhost:3500";
+            var topic = "TooBigToFailBurgerShop.Ordering.Contracts:SubmitBurgerOrder";
+            var url = daprEndpoint + "/v1.0/publish/" + DaprPubSubName + "/" + topic;
+
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.PostAsJsonAsync(url, message, cancellationToken);
+                var responseContent =  await response.Content.ReadAsStringAsync();
+            }
+
+            //await _dapr.PublishEventAsync(
+            //    DaprPubSubName,
+            //    "TooBigToFailBurgerShop.Ordering.Contracts:SubmitBurgerOrder",
+            //    message,
+            //    cancellationToken);
 
             return true;
         }
