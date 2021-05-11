@@ -9,9 +9,9 @@ using System.Runtime.Serialization;
 using System.Text;
 
 
-namespace Ordering.StateService
+namespace Ordering.StateService.Application.Extensions.Dapr
 {
-    public class DaprTextPlainMessageDeserialiser : IMessageDeserializer
+    public partial class DaprTextPlainMessageDeserialiser : IMessageDeserializer
     {
         public ContentType ContentType => new ContentType("text/plain");
         private const string MessageSourceType = "com.dapr.event.sent";
@@ -23,18 +23,10 @@ namespace Ordering.StateService
             return string.IsNullOrWhiteSpace(contentEncoding) ? Encoding.UTF8 : Encoding.GetEncoding(contentEncoding);
         }
 
-        public class DaprMessageEnvelope
-        {
-            public string Type { get; set; }
-            public MessageEnvelope Data { get; set; }
-        }
-
-
         public ConsumeContext Deserialize(ReceiveContext receiveContext)
         {
             try
             {
-
                 var messageEncoding = GetMessageEncoding(receiveContext);
                 DaprMessageEnvelope daprMessageEnvelope;
 
@@ -42,7 +34,6 @@ namespace Ordering.StateService
                 using var reader = new StreamReader(body, messageEncoding, false, 1024, true);
                 using (var jsonReader = new JsonTextReader(reader))
                 {
-
                     daprMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<DaprMessageEnvelope>(jsonReader);
                 }
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Ordering.StateService;
+using Ordering.StateService.Application.Extensions;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;

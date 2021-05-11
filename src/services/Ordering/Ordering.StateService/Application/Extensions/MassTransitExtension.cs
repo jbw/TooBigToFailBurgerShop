@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Ordering.StateService.Application.Extensions.Dapr;
 using System;
 using System.Reflection;
 using TooBigToFailBurgerShop;
 using TooBigToFailBurgerShop.Ordering.State;
 
-namespace Ordering.StateService
+namespace Ordering.StateService.Application.Extensions
 {
     public static class MassTransitExtension
     {
