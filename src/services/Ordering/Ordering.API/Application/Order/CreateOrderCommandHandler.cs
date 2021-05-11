@@ -1,10 +1,7 @@
 ﻿using Dapr.Client;
-using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
@@ -53,22 +50,13 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
                 }
             };
 
-
-            var daprEndpoint = "http://localhost:3500";
             var topic = "TooBigToFailBurgerShop.Ordering.Contracts:SubmitBurgerOrder";
-            var url = daprEndpoint + "/v1.0/publish/" + DaprPubSubName + "/" + topic;
 
-            using (var httpClient = new HttpClient())
-            {
-                var response = await httpClient.PostAsJsonAsync(url, message, cancellationToken);
-                var responseContent =  await response.Content.ReadAsStringAsync();
-            }
-
-            //await _dapr.PublishEventAsync(
-            //    DaprPubSubName,
-            //    "TooBigToFailBurgerShop.Ordering.Contracts:SubmitBurgerOrder",
-            //    message,
-            //    cancellationToken);
+            await _dapr.PublishEventAsync(
+                DaprPubSubName,
+                topic,
+                message,
+                cancellationToken);
 
             return true;
         }
