@@ -31,4 +31,4 @@ dotnet ef database update
 
 #### Order events
 
-* Create a blank `order_events` database and run `event_store.sql` against it.
+* Create a blank `order_events` database on the `burgers.data` server and run `event_store.sql` against it.
