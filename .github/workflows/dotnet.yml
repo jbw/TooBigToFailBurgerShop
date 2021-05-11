@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 5.0.x
 
     - name: Startup integration test infrastructure
-      run: cd src/services/Ordering/Ordering.IntegrationTests && docker network create burger_order_tests && docker-compose -f docker-compose-infrastructure.yml up -d
+      run: cd src/ && docker network create burgers.network && docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
     - name: Restore dependencies
       run: cd src && dotnet restore TooBigToFailBurgerShop.sln

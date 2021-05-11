@@ -15,12 +15,44 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
+  burgers.ordering.api.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.ordering.api",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      "-config", "/configuration/burgers-config.yaml",
+      "-placement-host-address", "dapr-placement:50000",
+      ]
+    volumes:
+      - "../dapr/components/:/components"
+      - "../dapr/configuration/:/configuration"
+    depends_on:
+      - burgers.ordering.api
+      - rabbitmq
+
   burgers.create.order.consumer:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  burgers.create.order.consumer.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.create.order.consumer",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      "-config", "/configuration/burgers-config.yaml",
+      "-placement-host-address", "dapr-placement:50000",
+      ]
+    volumes:
+      - "../dapr/components/:/components"
+      - "../dapr/configuration/:/configuration"
+    depends_on:
+      - burgers.create.order.consumer
+      - rabbitmq
 
   burgers.webspa:
     environment:
@@ -31,6 +63,25 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  burgers.gateway.api:
+    volumes:
+      - ./services/ApiGateway/Envoy:/etc/envoy
+    ports:
+      - '9901:9901'
+      - '10000:10000'
+      - '10001:10001'
+
+  burgers.gateway.api.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.gateway.api",
+      "-app-port", "80",
+      "-components-path", "/components",
+      "-config", "/configuration/burgers-config.yaml"
+      ]
+    volumes:
+      - "../dapr/components/:/components"
+      - "../dapr/configuration/:/configuration"
 
   burgers.ordering.state.service:
     environment:

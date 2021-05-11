@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ordering.IntegrationTests.Features.Order
