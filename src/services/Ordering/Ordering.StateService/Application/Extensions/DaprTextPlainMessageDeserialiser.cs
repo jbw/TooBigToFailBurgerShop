@@ -2,18 +2,18 @@
 using MassTransit;
 using MassTransit.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Net.Mime;
 using System.Runtime.Serialization;
 using System.Text;
 
+
 namespace Ordering.StateService
 {
     public class DaprTextPlainMessageDeserialiser : IMessageDeserializer
     {
-        public ContentType ContentType => new ContentType("text/plain");
+        //public ContentType ContentType => new ContentType("text/plain");
         private const string MessageSourceType = "com.dapr.event.sent";
 
         static Encoding GetMessageEncoding(ReceiveContext receiveContext)
@@ -23,24 +23,37 @@ namespace Ordering.StateService
             return string.IsNullOrWhiteSpace(contentEncoding) ? Encoding.UTF8 : Encoding.GetEncoding(contentEncoding);
         }
 
+        public class DaprMessageEnvelope
+        {
+            public string Type { get; set; }
+            public MessageEnvelope Data { get; set; }
+        }
+
+
         public ConsumeContext Deserialize(ReceiveContext receiveContext)
         {
             try
             {
+
                 var messageEncoding = GetMessageEncoding(receiveContext);
+                DaprMessageEnvelope daprMessageEnvelope;
 
                 using var body = receiveContext.GetBodyStream();
                 using var reader = new StreamReader(body, messageEncoding, false, 1024, true);
-                using var jsonReader = new JsonTextReader(reader);
+                using (var jsonReader = new JsonTextReader(reader))
+                {
 
-                var messageToken = RawJsonMessageSerializer.Deserializer.Deserialize<JToken>(jsonReader);
+                    daprMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<DaprMessageEnvelope>(jsonReader);
+                }
 
-                if(!messageToken.SelectToken("type").ToString().Equals("com.dapr.event.sent"))
+                if (!daprMessageEnvelope.Type.Equals("com.dapr.event.sent"))
                 {
                     throw new SerializationException($"Message source should originate from Dapr ({MessageSourceType})");
                 }
 
-                return new RawJsonConsumeContext(RawJsonMessageSerializer.Deserializer, receiveContext, messageToken);
+                var massTransitEnvelope = daprMessageEnvelope.Data;
+
+                return new JsonConsumeContext(JsonMessageSerializer.Deserializer, receiveContext, massTransitEnvelope);
             }
             catch (JsonSerializationException ex)
             {
