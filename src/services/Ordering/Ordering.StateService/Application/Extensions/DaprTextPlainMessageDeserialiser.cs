@@ -13,7 +13,7 @@ namespace Ordering.StateService
 {
     public class DaprTextPlainMessageDeserialiser : IMessageDeserializer
     {
-        //public ContentType ContentType => new ContentType("text/plain");
+        public ContentType ContentType => new ContentType("text/plain");
         private const string MessageSourceType = "com.dapr.event.sent";
 
         static Encoding GetMessageEncoding(ReceiveContext receiveContext)
