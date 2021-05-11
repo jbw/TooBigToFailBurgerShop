@@ -17,7 +17,7 @@ services:
 
   burgers.ordering.api.dapr:
     command: ["./daprd",
-      "-app-id", "burgers.ordring.api",
+      "-app-id", "burgers.ordering.api",
       "-app-port", "80",
       "-log-level", "debug",
       "-components-path", "/components",
