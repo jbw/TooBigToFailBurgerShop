@@ -17,7 +17,9 @@ namespace Ordering.IntegrationTests.Features.Order
 
         public OrderApiTests(OrderWebApplicationFactory factory, ITestOutputHelper outputHelper)
         {
+            _factory = factory;
             _factory.OutputHelper = outputHelper;
+
             _client = factory.CreateClient();
             _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
         }
