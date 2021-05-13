@@ -20,7 +20,7 @@ namespace Burgers.WebSPA.Data
 
             var body = new StringContent("{}", System.Text.Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync("/Orders/createorder", body);
+            await _httpClient.PutAsync("/api/orders", body);
 
         }
     }
