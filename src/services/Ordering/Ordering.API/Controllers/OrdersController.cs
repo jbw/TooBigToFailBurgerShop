@@ -12,7 +12,7 @@ using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 namespace TooBigToFailBurgerShop.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
 
@@ -26,7 +26,6 @@ namespace TooBigToFailBurgerShop.Controllers
         }
 
 
-        [Route("createorder")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -53,8 +52,7 @@ namespace TooBigToFailBurgerShop.Controllers
 
 
 
-        [Route("getorder")]
-        [HttpGet]
+        [HttpGet("{id:Guid}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetOrderAsync(Guid id, CancellationToken cancellationToken = default)
@@ -71,7 +69,6 @@ namespace TooBigToFailBurgerShop.Controllers
         }
 
 
-        [Route("getorders")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

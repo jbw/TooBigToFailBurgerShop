@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Basket.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class BasketController : ControllerBase
     {
         private readonly ILogger<BasketController> _logger;

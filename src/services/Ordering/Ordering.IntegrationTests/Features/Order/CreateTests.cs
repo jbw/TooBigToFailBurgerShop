@@ -29,7 +29,7 @@ namespace Ordering.IntegrationTests.Features.Order
         {
 
             // Given
-            var url = "/Orders/createorder";
+            var url = "/api/orders";
             var orderContent = JsonContent.Create(new { });
 
             // When
@@ -49,7 +49,7 @@ namespace Ordering.IntegrationTests.Features.Order
             await repo.CreateAsync(orderId, DateTime.UtcNow);
 
             // When
-            var getOrderByIdUrl = $"/Orders/getorder?id={orderId}";
+            var getOrderByIdUrl = $"api/orders?id={orderId}";
             var resp = await _client.GetAsync(getOrderByIdUrl);
 
             // Then
@@ -60,7 +60,7 @@ namespace Ordering.IntegrationTests.Features.Order
         public async Task Should_get_all_orders()
         {
             // Given
-            var url = "/Orders/getorders";
+            var url = "/api/orders";
 
             // When
             var resp = await _client.GetAsync(url);
