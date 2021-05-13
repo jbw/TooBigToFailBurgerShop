@@ -41,13 +41,15 @@ namespace TooBigToFailBurgerShop.Controllers
                 return BadRequest();
             }
 
+            createOrderCommand.OrderId = Guid.NewGuid();
+
             var requestCreateOrder = new IdempotentCommand<CreateOrderCommand, bool>(createOrderCommand, requestIdGuid);
 
             var result = await _mediator.Send(requestCreateOrder);
 
             if (!result) return BadRequest();
 
-            return Ok();
+            return Ok(new { OrderId = requestCreateOrder.Command.OrderId });
         }
 
 
