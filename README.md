@@ -22,6 +22,7 @@
 
 [Follow migration instructions](src/services/Ordering/Migrations/)
 
+
 ### Links
 
 **Application**
@@ -43,5 +44,20 @@
 * [RabbitMQ management UI](http://localhost:15672)
 
 **Dapr**
-
 * [Dashboard](http://localhost:8034)
+
+### Running tests
+
+Start the application using docker-compose and run tests. 
+
+```
+cd src
+```
+
+```
+docker network create burgers.network && docker-compose -f docker-compose.yml -f docker-compose.override.yml up
+```
+
+```
+dotnet test /p:CollectCoverage=true TooBigToFailBurgerShop.sln
+```
