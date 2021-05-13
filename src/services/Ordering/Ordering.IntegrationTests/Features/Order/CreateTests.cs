@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Xunit;
 using Xunit.Abstractions;
+using Shouldly;
 
 namespace Ordering.IntegrationTests.Features.Order
 {
@@ -37,6 +38,10 @@ namespace Ordering.IntegrationTests.Features.Order
 
             // Then
             resp.EnsureSuccessStatusCode();
+            
+            var content = await resp.Content.ReadFromJsonAsync<dynamic>();
+            var orderId = content["orderId"];
+            orderId.ShouldNotBeNull();
 
         }
 
@@ -50,6 +55,7 @@ namespace Ordering.IntegrationTests.Features.Order
 
             // When
             var getOrderByIdUrl = $"api/orders?id={orderId}";
+            var getOrderByIdUrl = $"api/orders/{orderId}";
             var resp = await _client.GetAsync(getOrderByIdUrl);
 
             // Then
