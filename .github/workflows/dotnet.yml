@@ -28,7 +28,7 @@ jobs:
       run: cd src && dotnet build TooBigToFailBurgerShop.sln --no-restore
 
     - name: Integration & Unit tests
-      run: cd src && dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=OpenCover  TooBigToFailBurgerShop.sln --no-build --verbosity normal
+      run: cd src && dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=OpenCover TooBigToFailBurgerShop.sln --no-build --verbosity normal
 
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1

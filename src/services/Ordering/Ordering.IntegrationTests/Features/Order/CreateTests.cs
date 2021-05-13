@@ -17,7 +17,9 @@ namespace Ordering.IntegrationTests.Features.Order
 
         public OrderApiTests(OrderWebApplicationFactory factory, ITestOutputHelper outputHelper)
         {
+            _factory = factory;
             _factory.OutputHelper = outputHelper;
+
             _client = factory.CreateClient();
             _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
         }
@@ -27,7 +29,7 @@ namespace Ordering.IntegrationTests.Features.Order
         {
 
             // Given
-            var url = "Orders/createorder";
+            var url = "/Orders/createorder";
             var orderContent = JsonContent.Create(new { });
 
             // When
@@ -42,14 +44,12 @@ namespace Ordering.IntegrationTests.Features.Order
         public async Task Should_get_order_by_id()
         {
             // Given
-            IMongoClient mongoClient = (IMongoClient)_factory.Services.GetService(typeof(IMongoClient));
-            var repo = new OrdersArchiveItemRepository(mongoClient);
-
-            var id = Guid.NewGuid();
-            await repo.CreateAsync(id, DateTime.UtcNow);
+            OrdersArchiveItemRepository repo = CreateOrderIdRepository();
+            var orderId = Guid.NewGuid();
+            await repo.CreateAsync(orderId, DateTime.UtcNow);
 
             // When
-            var getOrderByIdUrl = "Orders/getorder?id=" + id;
+            var getOrderByIdUrl = $"/Orders/getorder?id={orderId}";
             var resp = await _client.GetAsync(getOrderByIdUrl);
 
             // Then
@@ -69,6 +69,11 @@ namespace Ordering.IntegrationTests.Features.Order
             resp.EnsureSuccessStatusCode();
         }
 
-     
+        private OrdersArchiveItemRepository CreateOrderIdRepository()
+        {
+            IMongoClient mongoClient = (IMongoClient)_factory.Services.GetService(typeof(IMongoClient));
+            var repo = new OrdersArchiveItemRepository(mongoClient);
+            return repo;
+        }
     }
 }
