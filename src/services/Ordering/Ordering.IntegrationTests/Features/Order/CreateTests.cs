@@ -25,6 +25,12 @@ namespace Ordering.IntegrationTests.Features.Order
             _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
         }
 
+
+        public class Order
+        {
+            public Guid OrderId { get; set; }
+        }
+
         [Fact]
         public async Task Should_create_new_order()
         {
@@ -39,9 +45,9 @@ namespace Ordering.IntegrationTests.Features.Order
             // Then
             resp.EnsureSuccessStatusCode();
             
-            var content = await resp.Content.ReadFromJsonAsync<dynamic>();
-            var orderId = content["orderId"];
-            orderId.ShouldNotBeNull();
+            var content = await resp.Content.ReadFromJsonAsync<Order>();
+            var orderId = content.OrderId;
+            orderId.ShouldNotBe(default);
 
         }
 
