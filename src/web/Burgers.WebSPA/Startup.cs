@@ -7,7 +7,6 @@ using System;
 using Burgers.WebSPA.Data;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
-using OpenTelemetry;
 
 namespace Burgers.WebSPA
 {

@@ -1,1 +1,3 @@
-docker network create burger_order_tests
+
+
+* Startup docker-compose for the main project and run tests. 

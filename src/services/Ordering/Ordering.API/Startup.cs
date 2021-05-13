@@ -33,7 +33,8 @@ namespace TooBigToFailBurgerShop
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddDapr();
+            
 
             ConfigureMassTransit(services);
             services.AddMassTransitHostedService();
@@ -163,6 +164,8 @@ namespace TooBigToFailBurgerShop
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TooBigToFailBurgerShop v1"));
             }
+
+            app.UseCloudEvents();
 
             app.UseSerilogRequestLogging();
 

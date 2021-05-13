@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Ordering.StateService.Application.Extensions.Dapr;
 using System;
 using System.Reflection;
 using TooBigToFailBurgerShop;
 using TooBigToFailBurgerShop.Ordering.State;
 
-namespace Ordering.StateService
+namespace Ordering.StateService.Application.Extensions
 {
     public static class MassTransitExtension
     {
@@ -32,6 +33,10 @@ namespace Ordering.StateService
                         h.Password(rabbitMqSettings.Password);
                     });
 
+                    // Register custom serialiser for Dapr interop
+                    var textPlainContentType = new System.Net.Mime.ContentType("text/plain");
+                    cfg.AddMessageDeserializer(textPlainContentType, () => new DaprTextPlainMessageDeserialiser());
+
                     // Configure the outbox
                     cfg.UseScheduledRedelivery(r => r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30)));
                     cfg.UseMessageRetry(r => r.Immediate(5));
@@ -41,7 +46,6 @@ namespace Ordering.StateService
                     cfg.ConfigureEndpoints(context);
 
                 });
-
 
                 x.AddSagaStateMachine<BurgerOrderStateMachine, BurgerOrderStateInstance>(cfg =>
                 {
