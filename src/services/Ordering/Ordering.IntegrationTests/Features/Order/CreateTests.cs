@@ -54,7 +54,6 @@ namespace Ordering.IntegrationTests.Features.Order
             await repo.CreateAsync(orderId, DateTime.UtcNow);
 
             // When
-            var getOrderByIdUrl = $"api/orders?id={orderId}";
             var getOrderByIdUrl = $"api/orders/{orderId}";
             var resp = await _client.GetAsync(getOrderByIdUrl);
 
