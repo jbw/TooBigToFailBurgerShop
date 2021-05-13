@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Xunit;
 using Xunit.Abstractions;
+using Shouldly;
 
 namespace Ordering.IntegrationTests.Features.Order
 {
@@ -24,12 +25,18 @@ namespace Ordering.IntegrationTests.Features.Order
             _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
         }
 
+
+        public class Order
+        {
+            public Guid OrderId { get; set; }
+        }
+
         [Fact]
         public async Task Should_create_new_order()
         {
 
             // Given
-            var url = "/Orders/createorder";
+            var url = "/api/orders";
             var orderContent = JsonContent.Create(new { });
 
             // When
@@ -37,6 +44,10 @@ namespace Ordering.IntegrationTests.Features.Order
 
             // Then
             resp.EnsureSuccessStatusCode();
+            
+            var content = await resp.Content.ReadFromJsonAsync<Order>();
+            var orderId = content.OrderId;
+            orderId.ShouldNotBe(default);
 
         }
 
@@ -49,7 +60,7 @@ namespace Ordering.IntegrationTests.Features.Order
             await repo.CreateAsync(orderId, DateTime.UtcNow);
 
             // When
-            var getOrderByIdUrl = $"/Orders/getorder?id={orderId}";
+            var getOrderByIdUrl = $"api/orders/{orderId}";
             var resp = await _client.GetAsync(getOrderByIdUrl);
 
             // Then
@@ -60,7 +71,7 @@ namespace Ordering.IntegrationTests.Features.Order
         public async Task Should_get_all_orders()
         {
             // Given
-            var url = "/Orders/getorders";
+            var url = "/api/orders";
 
             // When
             var resp = await _client.GetAsync(url);

@@ -28,13 +28,13 @@ static_resources:
                           match:
                             prefix: "/api/basket"
                           route:
-                            prefix_rewrite: "/basket"
+                            prefix_rewrite: "/api/basket"
                             cluster: burgers.basket.api
-                        - name: ordering
+                        - name: orders
                           match:
-                            prefix: "/api/ordering"
+                            prefix: "/api/orders"
                           route:
-                            prefix_rewrite: "/orders"
+                            prefix_rewrite: "/api/orders"
                             cluster: burgers.ordering.api
                 upgrade_configs:
                   - upgrade_type: websocket

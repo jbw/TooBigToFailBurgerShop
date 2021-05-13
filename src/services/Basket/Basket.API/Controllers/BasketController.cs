@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Basket.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class BasketController : ControllerBase
     {
         private readonly ILogger<BasketController> _logger;
@@ -19,13 +19,21 @@ namespace Basket.API.Controllers
             _basketRepository = basketRepository;
         }
 
-        [HttpGet]
+        [HttpGet("{customerId}")]
         [ProducesResponseType(typeof(CustomerBasket), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<ActionResult<CustomerBasket>> Get(string customerId)
         {
             _logger.LogInformation("Getting CustomerBasket");
 
-            return Ok(await _basketRepository.GetBasketAsync(customerId));
+            var basket = await _basketRepository.GetBasketAsync(customerId);
+
+            if(basket == null)
+            {
+                return new CustomerBasket(customerId);
+            }
+
+            return Ok(basket);
         }
 
 
@@ -38,7 +46,7 @@ namespace Basket.API.Controllers
             return Ok(await _basketRepository.UpdateBasketAsync(value));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{customerId}")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         public async Task DeleteBasketByIdAsync(string id)
         {
