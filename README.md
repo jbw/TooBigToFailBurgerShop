@@ -22,13 +22,12 @@
 
 [Follow migration instructions](src/services/Ordering/Migrations/)
 
-
 ### Links
 
 **Application**
 * [Shop frontend](https://localhost:16968/)
-* [Orders API](http://localhost:16969/swagger/index.html)
-* [Basket API](http://localhost:16970/swagger/index.html)
+* [Orders API](http://localhost:10000/api/ordering)
+* [Basket API](http://localhost:10000/api/basket)
  
 **Tracing**
 * [Jaeger](http://localhost:16686/)
@@ -45,6 +44,10 @@
 
 **Dapr**
 * [Dashboard](http://localhost:8034)
+
+**Swagger**
+* [Orders API](http://localhost:16969/swagger/index.html)
+* [Basket API](http://localhost:16970/swagger/index.html)
 
 ### Running tests
 
