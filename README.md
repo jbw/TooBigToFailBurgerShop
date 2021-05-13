@@ -26,7 +26,7 @@
 
 **Application**
 * [Shop frontend](https://localhost:16968/)
-* [Orders API](http://localhost:10000/api/ordering)
+* [Orders API](http://localhost:10000/api/orders)
 * [Basket API](http://localhost:10000/api/basket)
  
 **Tracing**
