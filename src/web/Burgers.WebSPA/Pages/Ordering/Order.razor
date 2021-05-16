@@ -32,8 +32,6 @@
 
     async Task CreateOrder()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         await OrdersService.CreateOrder();
     }
 }
