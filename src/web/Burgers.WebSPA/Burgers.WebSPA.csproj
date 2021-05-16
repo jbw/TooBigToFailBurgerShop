@@ -15,6 +15,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="5.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.0.1" />
@@ -29,8 +31,16 @@
     <Watch Include="..\**\*.cs" />
   </ItemGroup>
 
+
   <ItemGroup>
     <Watch Remove="Components\Menu\MenuItemCard.razor" />
     <Watch Remove="Data\BasketService.cs" />
+    <Watch Remove="InitialApplicationState.cs" />
+    <Watch Remove="Pages\Login.cshtml.cs" />
+    <Watch Remove="Pages\Logout.cshtml.cshtml.cs" />
+    <Watch Remove="Pages\User.razor" />
+    <Watch Remove="Shared\LoginDisplay.razor" />
+    <Watch Remove="Shared\RedirectToLogin.razor" />
+    <Watch Remove="TokenProvider.cs" />
   </ItemGroup>
 </Project>

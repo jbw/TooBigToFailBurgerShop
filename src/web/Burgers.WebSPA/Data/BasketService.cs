@@ -1,33 +1,37 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
+using Burgers.WebSPA.Authentication;
 
 namespace Burgers.WebSPA.Data
 {
     public class BasketService
     {
         private readonly HttpClient _httpClient;
+        private readonly TokenProvider _tokenProvider;
 
-        // Note: in lieu of an identity server we will use a hardcoded
-        // user identifier.
-        private readonly string _customerId = "91ee1060-fb77-4df7-9d1f-9134d27162ee";
-        public BasketService(HttpClient client)
+        public BasketService(HttpClient client, TokenProvider tokenProvider)
         {
             _httpClient = client;
+            _tokenProvider = tokenProvider;
+
+            var token = _tokenProvider.AccessToken;
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         }
 
-        public async Task AddItemToCustomerBasket()
+        public async Task AddItemToCustomerBasket(string userId)
         {
-            var basket = await GetCustomerBasket();
+            
+            var basket = await GetCustomerBasket(userId);
             var placeholderItem = "Juicy burger";
             basket.Items.Add(new BasketItem(placeholderItem));
 
             await _httpClient.PostAsJsonAsync("/api/basket", basket);
         }
 
-        public async Task<CustomerBasket> GetCustomerBasket()
+        public async Task<CustomerBasket> GetCustomerBasket(string userId)
         {
-            return await _httpClient.GetFromJsonAsync<CustomerBasket>($"/api/basket/{_customerId}");
+            return await _httpClient.GetFromJsonAsync<CustomerBasket>($"/api/basket/{userId}");
         }
     }
 }

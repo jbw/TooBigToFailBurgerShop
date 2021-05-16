@@ -1,8 +1,16 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Authentication
+@using WebSPA.Authentication
+
 @namespace Burgers.WebSPA.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = null;
+    var tokens = new InitialApplicationState
+    {
+        AccessToken = await HttpContext.GetTokenAsync("access_token"),
+        RefreshToken = await HttpContext.GetTokenAsync("refresh_token")
+    };
 }
 
 <!DOCTYPE html>
@@ -10,14 +18,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Burgers.WebSPA</title>
+    <title>Burger Shop</title>
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
     <link href="Burgers.WebSPA.styles.css" rel="stylesheet" />
 </head>
 <body>
-    <component type="typeof(App)" render-mode="ServerPrerendered" />
+    <component type="typeof(App)" param-InitialState="tokens" render-mode="ServerPrerendered" />
 
     <div id="blazor-error-ui">
         <environment include="Staging,Production">
@@ -33,3 +41,4 @@
     <script src="_framework/blazor.server.js"></script>
 </body>
 </html>
+
