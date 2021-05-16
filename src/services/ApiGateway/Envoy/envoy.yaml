@@ -39,30 +39,75 @@ static_resources:
                 upgrade_configs:
                   - upgrade_type: websocket
                 http_filters:
+                  - name: envoy.filters.http.oauth2
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.oauth2.v3alpha.OAuth2
+                      config:
+                        token_endpoint:
+                          cluster: keycloak
+                          uri: http://127.0.0.1:8080/auth/realms/master/protocol/openid-connect/token
+                          timeout: 5s
+                        authorization_endpoint: http://127.0.0.1:8080/auth/realms/master/protocol/openid-connect/auth
+                        redirect_uri: "http://%REQ(:authority)%/callback"
+                        redirect_path_matcher:
+                          path:
+                            exact: /callback
+                        signout_path:
+                          path:
+                            exact: /signout
+                        forward_bearer_token: true
+                        credentials:
+                          client_id: "burger-shop"
+                          token_secret:
+                            name: token
+                            sds_config:
+                              path: "/etc/envoy/token-secret.yaml"
+                          hmac_secret:
+                            name: hmac
+                            sds_config:
+                              path: "/etc/envoy/hmac-secret.yaml" 
+                        auth_scopes:
+                        - openid
+                        - email
+                        - profile
                   - name: envoy.filters.http.router
                     typed_config:
+        
   clusters:
-    - name: burgers.basket.api
-      connect_timeout: 0.25s
-      type: strict_dns
-      lb_policy: round_robin
-      load_assignment:
-        cluster_name: burgers.basket.api
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      { address: burgers.basket.api, port_value: 80 }
-    - name: burgers.ordering.api
-      connect_timeout: 0.25s
-      type: strict_dns
-      lb_policy: round_robin
-      load_assignment:
-        cluster_name: burgers.ordering.api
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      { address: burgers.ordering.api, port_value: 80 }
+  - name: keycloak
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: keycloak
+      endpoints:
+      - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address: { address: keycloak, port_value: 8080 }
+    
+  - name: burgers.basket.api
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: burgers.basket.api
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    { address: burgers.basket.api, port_value: 80 }
+  
+  - name: burgers.ordering.api
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: burgers.ordering.api
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    { address: burgers.ordering.api, port_value: 80 }
