@@ -65,49 +65,83 @@ static_resources:
                           hmac_secret:
                             name: hmac
                             sds_config:
-                              path: "/etc/envoy/hmac-secret.yaml" 
-                        auth_scopes:
-                        - openid
-                        - email
-                        - profile
-                  - name: envoy.filters.http.router
+                              path: "/etc/envoy/hmac-secret.yaml"
+                  - name: envoy.filters.http.jwt_authn
                     typed_config:
-        
+                      '@type': type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+                      providers:
+                        oidc_provider:
+                          issuer: http://kubernetes.docker.internal:8080/auth/realms/master
+                          audiences:
+                          - master-realm
+                          - account
+                          payload_in_metadata: jwt_payload
+                          forward: true
+                          forward_payload_header: x-jwt-payload
+                          remote_jwks:
+                            http_uri:
+                              uri: http://127.0.0.1:8080/auth/realms/master/protocol/openid-connect/certs
+                              cluster: keycloak
+                              timeout: 5s
+                            cache_duration:
+                              seconds: 300
+                      rules:
+                      - match:
+                          prefix: /api
+                        requires:
+                          provider_name: oidc_provider
+
+                  - name: envoy.filters.http.lua
+                    typed_config:
+                      "@type":  type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+                      inline_code: |
+                        function envoy_on_request(request_handle)
+                          request_handle:logInfo("hello")
+            
+                          local payload = request_handle:streamInfo():dynamicMetadata():get("envoy.filters.http.jwt_authn")["jwt_payload"]
+                          request_handle:headers():add("jwt-extracted-sub", payload.sub)
+                          
+                        end
+                        function envoy_on_response(response_handle)
+                        end
+
+                  - name: envoy.router
+
   clusters:
-  - name: keycloak
-    connect_timeout: 0.25s
-    type: strict_dns
-    lb_policy: round_robin
-    load_assignment:
-      cluster_name: keycloak
-      endpoints:
-      - lb_endpoints:
-          - endpoint:
-              address:
-                socket_address: { address: keycloak, port_value: 8080 }
-    
-  - name: burgers.basket.api
-    connect_timeout: 0.25s
-    type: strict_dns
-    lb_policy: round_robin
-    load_assignment:
-      cluster_name: burgers.basket.api
-      endpoints:
-        - lb_endpoints:
-            - endpoint:
-                address:
-                  socket_address:
-                    { address: burgers.basket.api, port_value: 80 }
-  
-  - name: burgers.ordering.api
-    connect_timeout: 0.25s
-    type: strict_dns
-    lb_policy: round_robin
-    load_assignment:
-      cluster_name: burgers.ordering.api
-      endpoints:
-        - lb_endpoints:
-            - endpoint:
-                address:
-                  socket_address:
-                    { address: burgers.ordering.api, port_value: 80 }
+    - name: keycloak
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: keycloak
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address: { address: keycloak, port_value: 8080 }
+
+    - name: burgers.basket.api
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: burgers.basket.api
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      { address: burgers.basket.api, port_value: 80 }
+
+    - name: burgers.ordering.api
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: burgers.ordering.api
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      { address: burgers.ordering.api, port_value: 80 }
