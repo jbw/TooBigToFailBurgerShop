@@ -5,8 +5,9 @@ namespace TooBigToFailBurgerShop.Ordering.Contracts
 {
     public record SubmitBurgerOrder : CorrelatedBy<Guid>
     {
-        public Guid OrderId { get; set; }
-        public DateTime OrderDate { get; set; }
-        public Guid CorrelationId { get; set; }
+        public Guid OrderId { get; init; }
+        public Guid CustomerId { get; init; }
+        public DateTime OrderDate { get; init; }
+        public Guid CorrelationId { get; init; }
     }
 }

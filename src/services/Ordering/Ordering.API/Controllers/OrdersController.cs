@@ -29,19 +29,27 @@ namespace TooBigToFailBurgerShop.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateOrderAsync([FromBody]CreateOrderCommand createOrderCommand, [FromHeader(Name = "x-requestid")] string requestId)
+        public async Task<IActionResult> CreateOrderAsync(
+            [FromBody] CreateOrderCommand createOrderCommand, 
+            [FromHeader(Name = "x-request-id")] string requestId, 
+            [FromHeader(Name = "jwt-extracted-sub")] string customerId)
         {
 
             _logger.LogInformation("CreateOrderAsync: {requestId}", requestId);
 
             var hasRequestGuid = Guid.TryParse(requestId, out Guid requestIdGuid) && requestIdGuid != Guid.Empty;
 
-            if(!hasRequestGuid)
+            if (!hasRequestGuid)
             {
                 return BadRequest();
             }
 
-            createOrderCommand.OrderId = Guid.NewGuid();
+            var hasCustomerGuid = Guid.TryParse(customerId, out Guid customerIdGuid) && customerIdGuid != Guid.Empty;
+
+            if (!hasCustomerGuid) return BadRequest();
+
+            createOrderCommand.OrderId = requestIdGuid;
+            createOrderCommand.CustomerId = customerIdGuid;
 
             var requestCreateOrder = new IdempotentCommand<CreateOrderCommand, bool>(createOrderCommand, requestIdGuid);
 

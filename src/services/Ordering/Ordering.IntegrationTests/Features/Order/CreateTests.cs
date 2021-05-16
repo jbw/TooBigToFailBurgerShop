@@ -22,7 +22,7 @@ namespace Ordering.IntegrationTests.Features.Order
             _factory.OutputHelper = outputHelper;
 
             _client = factory.CreateClient();
-            _client.DefaultRequestHeaders.Add("x-requestid", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
+            _client.DefaultRequestHeaders.Add("x-request-id", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
         }
 
 

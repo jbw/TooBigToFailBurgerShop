@@ -11,5 +11,7 @@ namespace TooBigToFailBurgerShop.Application.Commands.Order
         }
 
         public Guid OrderId { get; set; }
+
+        public Guid CustomerId { get; set; }
     }
 }

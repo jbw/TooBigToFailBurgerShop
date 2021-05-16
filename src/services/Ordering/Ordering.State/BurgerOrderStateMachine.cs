@@ -57,6 +57,7 @@ namespace TooBigToFailBurgerShop.Ordering.State
                     {
                         context.Data.OrderDate,
                         context.Data.OrderId,
+                        context.Data.CustomerId,
                         context.Data.CorrelationId
                     }))
                     .TransitionTo(OrderSubmitted));

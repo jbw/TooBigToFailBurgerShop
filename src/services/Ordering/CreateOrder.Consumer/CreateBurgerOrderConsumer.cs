@@ -35,14 +35,14 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                     throw new ValidationException("Unable to create Order", new ValidationError(nameof(CreateBurgerOrder), $"Id '{context.Message.OrderId}' already exists"));
                 }
 
-                var orderAggregate = new Order(context.Message.OrderId);
+                var orderAggregate = new Order(context.Message.OrderId, context.Message.CustomerId);
 
                 // Here we are doing 3 things: 
                 // * persisting the aggregate
                 // * publishing domain events
                 // * and persisting order id. 
                 // This is across multiple technologies (postgres, mongo, rabbitmq).
-                // We are be concerned with consistency.
+                // We are concerned with data consistency.
                 
                 await _orderEventsService.PersistAsync(orderAggregate);
                 await _orderIdRepository.CreateAsync(context.Message.OrderId);
