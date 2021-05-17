@@ -30,11 +30,10 @@ namespace TooBigToFailBurgerShop.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateOrderAsync(
-            [FromBody] CreateOrderCommand createOrderCommand, 
-            [FromHeader(Name = "x-request-id")] string requestId, 
+            [FromBody] CreateOrderCommand createOrderCommand,
+            [FromHeader(Name = "x-request-id")] string requestId,
             [FromHeader(Name = "jwt-extracted-sub")] string customerId)
         {
-
             _logger.LogInformation("CreateOrderAsync: {requestId}", requestId);
 
             var hasRequestGuid = Guid.TryParse(requestId, out Guid requestIdGuid) && requestIdGuid != Guid.Empty;
