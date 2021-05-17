@@ -85,39 +85,35 @@ namespace Burgers.WebSPA
             })
             .AddOpenIdConnect(options =>
             {
+                options.RequireHttpsMetadata = false; // dev only
+
                 options.Authority = "http://kubernetes.docker.internal:8080/auth/realms/master";
                 options.ClientId = "burger-shop";
                 options.ClientSecret = "75a5d513-5c1d-4668-bd1b-6f19c0cdd163";
 
                 options.SaveTokens = true;
                 options.ResponseType = OpenIdConnectResponseType.Code;
-                options.Resource = "burger-shop"; // needed for proper jwt format access_token
-                options.RequireHttpsMetadata = false; // dev only
+                options.Resource = "burger-shop";
+
                 options.GetClaimsFromUserInfoEndpoint = false;
                 options.SaveTokens = true;
-
-                options.Scope.Clear();
-                foreach (var scope in new[] { "openid", "profile", "email", "roles" })
-                {
-                    options.Scope.Add(scope);
-                }
-
-                options.Events = new OpenIdConnectEvents
-                {
-                    OnTokenValidated = t =>
-                    {
-                        t.Properties.ExpiresUtc = new JwtSecurityToken(t.TokenEndpointResponse.AccessToken).ValidTo; // align expiration of the cookie with expiration of the access token
-                        t.Properties.IsPersistent = true; // so that we don't issue a session cookie but one with a fixed expiration
-
-                        return Task.CompletedTask;
-                    }
-                };
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = "name",
                     RoleClaimType = "groups",
                     ValidateIssuer = true
+                };
+
+                options.Events = new OpenIdConnectEvents
+                {
+                    OnTokenValidated = t =>
+                    {
+                        t.Properties.ExpiresUtc = new JwtSecurityToken(t.TokenEndpointResponse.AccessToken).ValidTo;
+                        t.Properties.IsPersistent = true; 
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }
