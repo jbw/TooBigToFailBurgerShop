@@ -10,10 +10,7 @@
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    @{
-                        var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-                        NavigationManager.NavigateTo($"login?redirectUri={returnUrl}", forceLoad: true);
-                    }
+                    <RedirectToLogin />
                 </NotAuthorized>
                 <Authorizing>
                     <p>Logging you in please wait.</p>
