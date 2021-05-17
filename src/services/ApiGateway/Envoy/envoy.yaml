@@ -55,7 +55,6 @@ static_resources:
                         signout_path:
                           path:
                             exact: /signout
-                        forward_bearer_token: true
                         credentials:
                           client_id: "burger-shop"
                           token_secret:
@@ -66,38 +65,43 @@ static_resources:
                             name: hmac
                             sds_config:
                               path: "/etc/envoy/hmac-secret.yaml"
+                        auth_scopes:
+                          - openid
+                          - profile
+                          - email
+                          - roles
                   - name: envoy.filters.http.jwt_authn
                     typed_config:
-                      '@type': type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
                       providers:
                         oidc_provider:
                           issuer: http://kubernetes.docker.internal:8080/auth/realms/master
                           audiences:
-                          - master-realm
-                          - account
+                            - master-realm
+                            - account
                           payload_in_metadata: jwt_payload
-                          forward: true
                           forward_payload_header: x-jwt-payload
                           remote_jwks:
                             http_uri:
                               uri: http://127.0.0.1:8080/auth/realms/master/protocol/openid-connect/certs
                               cluster: keycloak
                               timeout: 5s
-                            cache_duration:
-                              seconds: 300
                       rules:
-                      - match:
-                          prefix: /api
-                        requires:
-                          provider_name: oidc_provider
+                        - match:
+                            prefix: /api
+                          requires:
+                            requires_any:
+                              requirements:
+                                - provider_name: oidc_provider
+                                - allow_missing_or_failed: {}
 
                   - name: envoy.filters.http.lua
                     typed_config:
-                      "@type":  type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
                       inline_code: |
                         function envoy_on_request(request_handle)
                           request_handle:logInfo("hello")
-            
+
                           local payload = request_handle:streamInfo():dynamicMetadata():get("envoy.filters.http.jwt_authn")["jwt_payload"]
                           request_handle:headers():add("jwt-extracted-sub", payload.sub)
                           
