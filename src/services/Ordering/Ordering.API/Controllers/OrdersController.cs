@@ -37,14 +37,9 @@ namespace TooBigToFailBurgerShop.Controllers
             _logger.LogInformation("CreateOrderAsync: {requestId}", requestId);
 
             var hasRequestGuid = Guid.TryParse(requestId, out Guid requestIdGuid) && requestIdGuid != Guid.Empty;
-
-            if (!hasRequestGuid)
-            {
-                return BadRequest();
-            }
+            if (!hasRequestGuid) return BadRequest();
 
             var hasCustomerGuid = Guid.TryParse(customerId, out Guid customerIdGuid) && customerIdGuid != Guid.Empty;
-
             if (!hasCustomerGuid) return BadRequest();
 
             createOrderCommand.OrderId = requestIdGuid;
