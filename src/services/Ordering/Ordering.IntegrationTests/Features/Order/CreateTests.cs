@@ -34,7 +34,7 @@ namespace Ordering.IntegrationTests.Features.Order
         }
 
         [Fact]
-        public async Task Should_Return_Validation_Message_When_Missing_CustomerId_Header()
+        public async Task Should_Return_Validation_Message_When_Missing_CustomerId()
         {
             // Given
             var url = "/api/orders";
@@ -49,7 +49,23 @@ namespace Ordering.IntegrationTests.Features.Order
         }
 
         [Fact]
-        public async Task Should_Return_Validation_Message_When_Missing_RequestId_Header()
+        public async Task Should_Return_Validation_Message_When_Invalid_Format_CustomerId()
+        {
+            // Given
+            var url = "/api/orders";
+            var orderContent = JsonContent.Create(new { });
+            _client.DefaultRequestHeaders.Remove("jwt-extracted-sub");
+            _client.DefaultRequestHeaders.Add("jwt-extracted-sub", "invalid");
+
+            // When
+            var resp = await _client.PutAsync(url, orderContent);
+
+            // Then
+            resp.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Should_Return_Validation_Message_When_Missing_RequestId()
         {
             // Given
             var url = "/api/orders";
@@ -62,8 +78,22 @@ namespace Ordering.IntegrationTests.Features.Order
             // Then
             resp.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
-    
 
+        [Fact]
+        public async Task Should_Return_Validation_Message_When_Invalid_Format_RequestId()
+        {
+            // Given
+            var url = "/api/orders";
+            var orderContent = JsonContent.Create(new { });
+            _client.DefaultRequestHeaders.Remove("x-request-id");
+            _client.DefaultRequestHeaders.Add("x-request-id", "invalid");
+
+            // When
+            var resp = await _client.PutAsync(url, orderContent);
+
+            // Then
+            resp.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
         [Fact]
         public async Task Should_create_new_order()
         {
