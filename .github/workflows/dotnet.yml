@@ -18,6 +18,12 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
+    - run: cd src/ && docker-compose pull
+
+    - uses: satackey/action-docker-layer-caching@v0.0.11
+      # Ignore the failure of a step and avoid terminating the job.
+      continue-on-error: true
+
     - name: Startup integration test infrastructure
       run: cd src/ && docker network create burgers.network && docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
