@@ -97,7 +97,7 @@ namespace Ordering.IntegrationTests.Features.Order
             // Given
             var url = "/api/orders";
             var orderContent = JsonContent.Create(new { });
-            var client = CreateClientWithValidHeaders(); ;
+            var client = CreateClientWithValidHeaders();
 
             // When
             var resp = await client.PutAsync(url, orderContent);
