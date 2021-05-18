@@ -32,9 +32,6 @@ else
     CustomerBasket basket { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-        basket = await BasketService.GetCustomerBasket(userId);
+        basket = await BasketService.GetCustomerBasket();
     }
 }
