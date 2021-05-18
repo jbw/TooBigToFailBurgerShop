@@ -19,16 +19,18 @@ namespace Basket.API.Controllers
             _basketRepository = basketRepository;
         }
 
-        [HttpGet("{customerId}")]
+        [HttpGet]
         [ProducesResponseType(typeof(CustomerBasket), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<ActionResult<CustomerBasket>> Get(string customerId)
+        public async Task<ActionResult<CustomerBasket>> Get(
+            [FromHeader(Name = "x-request-id")] string requestId,
+            [FromHeader(Name = "jwt-extracted-sub")] string customerId)
         {
-            _logger.LogInformation("Getting CustomerBasket");
+            _logger.LogInformation("Getting CustomerBasket: {requestId}", requestId);
 
             var basket = await _basketRepository.GetBasketAsync(customerId);
 
-            if(basket == null)
+            if (basket == null)
             {
                 return new CustomerBasket(customerId);
             }

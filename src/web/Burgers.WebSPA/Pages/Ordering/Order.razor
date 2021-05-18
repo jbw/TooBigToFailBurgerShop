@@ -25,9 +25,7 @@
 
     async Task AddItemToCustomerBasket()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        await BasketService.AddItemToCustomerBasket(userId);
+        await BasketService.AddItemToCustomerBasket();
     }
 
     async Task CreateOrder()

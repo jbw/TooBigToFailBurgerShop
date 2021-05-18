@@ -19,19 +19,19 @@ namespace Burgers.WebSPA.Data
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
         }
 
-        public async Task AddItemToCustomerBasket(string userId)
+        public async Task AddItemToCustomerBasket()
         {
             
-            var basket = await GetCustomerBasket(userId);
+            var basket = await GetCustomerBasket();
             var placeholderItem = "Juicy burger";
             basket.Items.Add(new BasketItem(placeholderItem));
 
             await _httpClient.PostAsJsonAsync("/api/basket", basket);
         }
 
-        public async Task<CustomerBasket> GetCustomerBasket(string userId)
+        public async Task<CustomerBasket> GetCustomerBasket( )
         {
-            return await _httpClient.GetFromJsonAsync<CustomerBasket>($"/api/basket/{userId}");
+            return await _httpClient.GetFromJsonAsync<CustomerBasket>($"/api/basket");
         }
     }
 }
