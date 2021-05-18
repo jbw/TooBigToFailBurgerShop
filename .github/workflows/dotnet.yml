@@ -18,6 +18,14 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
+    - uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget
+          
     - run: cd src/ && docker-compose pull
 
     - uses: satackey/action-docker-layer-caching@v0.0.11
