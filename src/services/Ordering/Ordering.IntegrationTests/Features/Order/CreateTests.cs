@@ -23,6 +23,7 @@ namespace Ordering.IntegrationTests.Features.Order
 
             _client = factory.CreateClient();
             _client.DefaultRequestHeaders.Add("x-request-id", "3fa85f64-5717-4562-b3fc-2c963f66afa6");
+            _client.DefaultRequestHeaders.Add("jwt-extracted-sub", "90e25abf-b5a3-4899-af34-12bf97d6ce35");
         }
 
 
