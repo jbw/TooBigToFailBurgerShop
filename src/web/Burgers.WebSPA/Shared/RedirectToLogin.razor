@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+
+@inject NavigationManager NavigationManager
+
+@code{
+
+    protected override async Task OnInitializedAsync()
+    {
+        var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.NavigateTo($"login?redirectUri={returnUrl}", forceLoad: true);
+    }
+
+}

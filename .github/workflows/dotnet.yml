@@ -18,6 +18,20 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
+    - uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget
+          
+    - run: cd src/ && docker-compose pull
+
+    - uses: satackey/action-docker-layer-caching@v0.0.11
+      # Ignore the failure of a step and avoid terminating the job.
+      continue-on-error: true
+
     - name: Startup integration test infrastructure
       run: cd src/ && docker network create burgers.network && docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 

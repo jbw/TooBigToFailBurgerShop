@@ -2,6 +2,31 @@ version: '3.8'
 
 services:
 
+  keycloak.data:
+      image: postgres:alpine
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: password
+
+  keycloak:
+      image: quay.io/keycloak/keycloak:latest
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR: keycloak.data
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+        KEYCLOAK_USER: burger
+        KEYCLOAK_PASSWORD: burger
+      ports:
+        - 8080:8080
+      depends_on:
+        - keycloak.data
+
   dapr-dashboard:
     image: daprio/dashboard
     ports:
@@ -104,6 +129,8 @@ services:
     image: postgres:alpine
     ports:
       - "5432:5432"
+    volumes:
+      - burgers_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: "burger"
       POSTGRES_PASSWORD: "burger"
@@ -111,7 +138,8 @@ services:
     command: "--max-prepared-transactions=110"
 
   burgers.gateway.api:
-    image: envoyproxy/envoy:v1.17.1
+    image: envoyproxy/envoy:v1.18-latest
+    command: "/usr/local/bin/envoy -c /etc/envoy/envoy.yaml --service-cluster 'service-a' --service-node 'service-a' --log-level 'debug'"
 
   burgers.gateway.api.dapr:
     image: "daprio/daprd:1.0.0"
@@ -179,8 +207,12 @@ services:
     image: "daprio/dapr:1.1.1"
 
 volumes:
+  burgers_data:
+      driver: local
   mongodb_master_data:
     driver: local
+  postgres_data:
+      driver: local
 networks:
   default:
     external:

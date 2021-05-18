@@ -1,7 +1,11 @@
 ﻿@page "/basket"
+@attribute [Authorize]
 
 @using Burgers.WebSPA.Data
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims;
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject BasketService BasketService
 
 <h1>Your basket</h1>
@@ -28,6 +32,9 @@ else
     CustomerBasket basket { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        basket = await BasketService.GetCustomerBasket();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+        basket = await BasketService.GetCustomerBasket(userId);
     }
 }
