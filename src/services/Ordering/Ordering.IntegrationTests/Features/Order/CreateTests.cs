@@ -7,6 +7,7 @@ using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Xunit;
 using Xunit.Abstractions;
 using Shouldly;
+using System.Net;
 
 namespace Ordering.IntegrationTests.Features.Order
 {
@@ -31,6 +32,37 @@ namespace Ordering.IntegrationTests.Features.Order
         {
             public Guid OrderId { get; set; }
         }
+
+        [Fact]
+        public async Task Should_Return_Validation_Message_When_Missing_CustomerId_Header()
+        {
+            // Given
+            var url = "/api/orders";
+            var orderContent = JsonContent.Create(new { });
+            _client.DefaultRequestHeaders.Remove("jwt-extracted-sub");
+
+            // When
+            var resp = await _client.PutAsync(url, orderContent);
+
+            // Then
+            resp.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Should_Return_Validation_Message_When_Missing_RequestId_Header()
+        {
+            // Given
+            var url = "/api/orders";
+            var orderContent = JsonContent.Create(new { });
+            _client.DefaultRequestHeaders.Remove("x-request-id");
+
+            // When
+            var resp = await _client.PutAsync(url, orderContent);
+
+            // Then
+            resp.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+    
 
         [Fact]
         public async Task Should_create_new_order()
