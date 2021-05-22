@@ -18,6 +18,11 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Core
         public async Task PersistAsync(TType aggregateRoot)
         {
 
+            // Info: Here we have decoupled the raising of domain events 
+            // and persiting the aggregate. The event raising and handling is 
+            // also decoupled and handled by TType events consumers. 
+            // E.g Order aggregate events (OrderCreated)
+
             // Dispatch the events and then commit the data.
             await _eventProducer.DispatchAsync(aggregateRoot);
             await _eventRepository.AppendAsync(aggregateRoot);

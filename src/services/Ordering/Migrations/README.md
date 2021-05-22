@@ -9,14 +9,26 @@ Using dotnet ef when Ordering.API is the startup project
 
 ```sh
 cd Ordering.Infrastructure
-dotnet ef --startup-project ../Ordering.API/ add migrations MyMigration  
+dotnet ef --startup-project ../Ordering.API/ migrations add MyMigration  
 ```
 
 This will create migrations in the Ordering.Infrastructure project.
 
 ### Applying migrations
 
-```
+#### Orders
+```sh
 cd Ordering.Infrastructure
 dotnet ef database update
 ```
+
+#### Saga State
+```sh
+cd Ordering.StateService
+dotnet ef database update
+
+```
+
+#### Order events
+
+* Create a blank `order_events` database on the `burgers.data` server and run `event_store.sql` against it.

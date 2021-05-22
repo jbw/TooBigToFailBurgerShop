@@ -1,0 +1,43 @@
+﻿@page "/me"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Claims Principal Data</h3>
+
+<p>@userAuthenticatedMessage</p>
+
+@if (userClaims.Count() > 0)
+{
+    <ul>
+        <li>@userEmail</li>
+        @foreach (var claim in userClaims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
+
+
+@code {
+    private string userAuthenticatedMessage;
+    private string userEmail;
+    private IEnumerable<Claim> userClaims = Enumerable.Empty<Claim>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userAuthenticatedMessage = $"{user.Identity.Name} is authenticated.";
+            userClaims = user.Claims;
+            userEmail = $"Email: {user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value}";
+        }
+        else
+        {
+            userAuthenticatedMessage = "You are not authenticated.";
+        }
+    }
+}

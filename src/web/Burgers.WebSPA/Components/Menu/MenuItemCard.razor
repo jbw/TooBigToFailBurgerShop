@@ -1,0 +1,27 @@
+﻿
+<div class="card" style="width: 18rem;">
+    <img class="card-img-top" src="@ImageUrl" alt="@ImageAltText">
+    <div class="card-body">
+        <h5 class="card-title">@TitleText</h5>
+        <p class="card-text">@BodyText</p>
+    </div>
+    <button class="btn btn-primary" @onclick="OnButtonClick">
+        @ButtonText 
+    </button>
+</div>
+
+@code
+{
+    [Parameter]
+    public string TitleText { get; set; }
+    [Parameter]
+    public string BodyText { get; set; }
+    [Parameter]
+    public string ButtonText { get; set; }
+    [Parameter]
+    public string ImageUrl { get; set; } = "//via.placeholder.com/350x250";
+    [Parameter]
+    public string ImageAltText { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnButtonClick { get; set; }
+}

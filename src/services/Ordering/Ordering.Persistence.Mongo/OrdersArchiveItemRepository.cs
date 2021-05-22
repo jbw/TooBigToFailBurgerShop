@@ -27,7 +27,13 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.Mongo
                 .Set(a => a.Id, orderId)
                 .Set(a => a.Timestamp, timestamp);
 
-            await _repository.InsertAsync(new OrderArchiveItem(orderId, timestamp));
+            var updatedEntry = await _repository.FindOneAndUpdateAsync(
+                x => x.Id.Equals(orderId),
+                x => update,
+                returnProjection: x => new { x },
+                returnedDocumentState: ReturnedDocumentState.AfterUpdate,
+                upsert: true
+            );
 
         }
 

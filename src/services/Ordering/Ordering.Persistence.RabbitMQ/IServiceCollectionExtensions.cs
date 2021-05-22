@@ -6,11 +6,11 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MassTransit
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddEventProducer(this IServiceCollection services, Action<EventProducerBulder> build)
+        public static IServiceCollection AddEventProducer(this IServiceCollection services, Action<EventProducerBuilder> builder)
         {
-            var builder = new EventProducerBulder(services);
+            var eventProducerBuilder = new EventProducerBuilder(services);
 
-            build?.Invoke(builder);
+            builder?.Invoke(eventProducerBuilder);
 
             return services;
         }

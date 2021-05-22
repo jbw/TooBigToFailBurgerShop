@@ -21,9 +21,10 @@ namespace TooBigToFailBurgerShop.Ordering.Persistence.MartenDb
             {
                 cfg.Connection(connectionString);
                 cfg.AutoCreateSchemaObjects = AutoCreate.All;
-                cfg.Events.InlineProjections.AggregateStreamsWith<TType>();
-            });
+                cfg.DatabaseSchemaName = Marten.StoreOptions.DefaultDatabaseSchemaName;
 
+            });
+       
             _services.AddSingleton<IEventsRepository<TType, Guid>, EventsRepository<TType>>();
         }
     }

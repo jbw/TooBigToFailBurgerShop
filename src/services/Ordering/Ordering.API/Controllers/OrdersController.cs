@@ -12,7 +12,7 @@ using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 namespace TooBigToFailBurgerShop.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
 
@@ -26,21 +26,24 @@ namespace TooBigToFailBurgerShop.Controllers
         }
 
 
-        [Route("createorder")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateOrderAsync([FromBody]CreateOrderCommand createOrderCommand, [FromHeader(Name = "x-requestid")] string requestId)
+        public async Task<IActionResult> CreateOrderAsync(
+            [FromBody] CreateOrderCommand createOrderCommand,
+            [FromHeader(Name = "x-request-id")] string requestId,
+            [FromHeader(Name = "jwt-extracted-sub")] string customerId)
         {
-
             _logger.LogInformation("CreateOrderAsync: {requestId}", requestId);
 
             var hasRequestGuid = Guid.TryParse(requestId, out Guid requestIdGuid) && requestIdGuid != Guid.Empty;
+            if (!hasRequestGuid) return BadRequest();
 
-            if(!hasRequestGuid)
-            {
-                return BadRequest();
-            }
+            var hasCustomerGuid = Guid.TryParse(customerId, out Guid customerIdGuid) && customerIdGuid != Guid.Empty;
+            if (!hasCustomerGuid) return BadRequest();
+
+            createOrderCommand.OrderId = requestIdGuid;
+            createOrderCommand.CustomerId = customerIdGuid;
 
             var requestCreateOrder = new IdempotentCommand<CreateOrderCommand, bool>(createOrderCommand, requestIdGuid);
 
@@ -48,13 +51,12 @@ namespace TooBigToFailBurgerShop.Controllers
 
             if (!result) return BadRequest();
 
-            return Ok();
+            return Ok(new { OrderId = requestCreateOrder.Command.OrderId });
         }
 
 
 
-        [Route("getorder")]
-        [HttpGet]
+        [HttpGet("{id:Guid}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetOrderAsync(Guid id, CancellationToken cancellationToken = default)
@@ -71,7 +73,6 @@ namespace TooBigToFailBurgerShop.Controllers
         }
 
 
-        [Route("getorders")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

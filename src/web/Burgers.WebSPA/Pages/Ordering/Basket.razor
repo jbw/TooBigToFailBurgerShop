@@ -1,0 +1,37 @@
+﻿@page "/basket"
+@attribute [Authorize]
+
+@using Burgers.WebSPA.Data
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims;
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject BasketService BasketService
+
+<h1>Your basket</h1>
+
+@if (basket == null)
+{
+    <text>Loading...</text>
+}
+else if (basket.Items.Count == 0)
+{
+    <text>Basket is empty.</text>
+}
+else
+{
+    <ul>
+        @foreach (BasketItem basketItem in basket.Items)
+        {
+            <li>@basketItem.Name</li>
+        }
+    </ul>
+}
+
+@code {
+    CustomerBasket basket { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        basket = await BasketService.GetCustomerBasket();
+    }
+}

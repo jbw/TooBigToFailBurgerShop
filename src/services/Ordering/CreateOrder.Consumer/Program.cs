@@ -29,16 +29,17 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
         public static async Task<int> Main(string[] args)
         {
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-            var configuration = GetConfiguration();
-            Log.Logger = CreateSerilogLogger(configuration);
 
             try
             {
-                Log.Information("Configuring web host ({ApplicationContext})...", "Ordering.API");
+                var configuration = GetConfiguration();
+                Log.Logger = CreateSerilogLogger(configuration);
+
+                Log.Information("Configuring web host ({ApplicationContext})...", "CreateOrder.Consumer");
 
                 var host = CreateHostBuilder(configuration, args).Build();
 
-                Log.Information("Starting web host ({ApplicationContext})...", "Ordering.API");
+                Log.Information("Starting web host ({ApplicationContext})...", "CreateOrder.Consumer");
 
                 await host.RunAsync();
 
@@ -46,7 +47,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", "Ordering.API");
+                Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", "CreateOrder.Consumer");
                 return 1;
             }
             finally
@@ -93,7 +94,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                             });
                     });
 
-                    services.AddDbContext<BurgerShopContext>(contextOptions =>
+                    services.AddDbContext<BurgerShopContext>(cfg =>
                     {
 
                         var settings = configuration
@@ -114,7 +115,11 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Consumer
                         };
 
                         var connectionString = connectionStringBuilder.ToString();
-                        contextOptions.UseNpgsql(connectionString);
+
+                        cfg.UseNpgsql(
+                            connectionString,
+                            options => options.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null)
+                        );
 
                     });
 

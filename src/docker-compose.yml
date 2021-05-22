@@ -1,6 +1,41 @@
-version: '3.4'
+version: '3.8'
 
 services:
+
+  keycloak.data:
+      image: postgres:alpine
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: password
+
+  keycloak:
+      image: quay.io/keycloak/keycloak:latest
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR: keycloak.data
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+        KEYCLOAK_USER: burger
+        KEYCLOAK_PASSWORD: burger
+      ports:
+        - 8080:8080
+      depends_on:
+        - keycloak.data
+
+  dapr-dashboard:
+    image: daprio/dashboard
+    ports:
+      - 8034:8080
+    volumes:
+      - "../dapr/components/:/home/nonroot/.dapr/components"
+      - "../dapr/configuration/:/home/nonroot/.dapr/configuration"
+  redis:
+    image: redis:alpine
 
   seq:
     image: datalust/seq
@@ -23,6 +58,8 @@ services:
       MONGODB_REPLICA_SET_KEY: replicasetkey123 
     ports:
       - 27017:27017
+    volumes:
+     - 'mongodb_master_data:/bitnami/mongodb'
 
   mongodb-secondary:
     image: 'docker.io/bitnami/mongodb:4.4-debian-10'
@@ -53,9 +90,16 @@ services:
     depends_on:
       - mongo
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongo  
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'false'
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_SERVER: mongo
       ME_CONFIG_MONGODB_ADMINUSERNAME: burger
       ME_CONFIG_MONGODB_ADMINPASSWORD: burger
+      ME_CONFIG_MONGODB_AUTH_DATABASE: burgers
+      ME_CONFIG_MONGODB_AUTH_USERNAME: burger
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: burger
+      ME_CONFIG_BASICAUTH_USERNAME: burger
+      ME_CONFIG_BASICAUTH_PASSWORD: burger
 
   pgadmin:
     image: dpage/pgadmin4
@@ -69,6 +113,7 @@ services:
     image: jaegertracing/all-in-one
     ports:
       - "16686:16686"
+      - "9412:9412"
     environment:
         COLLECTOR_ZIPKIN_HTTP_PORT: 9411
 
@@ -77,19 +122,31 @@ services:
     ports:
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: "guest"
-      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_USER: "burger"
+      RABBITMQ_DEFAULT_PASS: "burger"
 
   burgers.data:
     image: postgres:alpine
     ports:
       - "5432:5432"
+    volumes:
+      - burgers_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: "burger"
       POSTGRES_PASSWORD: "burger"
       POSTGRES_DB: "burgers"
     command: "--max-prepared-transactions=110"
-  
+
+  burgers.gateway.api:
+    image: envoyproxy/envoy:v1.18-latest
+    command: "/usr/local/bin/envoy -c /etc/envoy/envoy.yaml --service-cluster 'service-a' --service-node 'service-a' --log-level 'debug'"
+
+  burgers.gateway.api.dapr:
+    image: "daprio/daprd:1.0.0"
+    network_mode: "service:burgers.gateway.api"
+    depends_on:
+      - burgers.gateway.api
+
   burgers.webspa:
     image: burgers.webspa
     build:
@@ -104,17 +161,29 @@ services:
     depends_on:
       - "burgers.data"
 
+  burgers.ordering.api.dapr:
+    image: "daprio/daprd:1.1.1"
+    network_mode: "service:burgers.ordering.api"
+    depends_on:
+      - burgers.ordering.api
+
   burgers.create.order.consumer:
     image: burgers.create.order.consumer
     build:
       context: .
       dockerfile: services/Ordering/CreateOrder.Consumer/Dockerfile
 
+  burgers.create.order.consumer.dapr:
+    image: "daprio/daprd:1.1.1"
+    network_mode: "service:burgers.create.order.consumer"
+    depends_on:
+      - burgers.create.order.consumer
+
   burgers.ordering.state.service:
-    image: ordering.stateservice
+    image: burgers.ordering.state.service
     build:
       context: .
-      dockerfile: services/Ordering/Ordering.StateService/Ordering.StateService/Dockerfile
+      dockerfile: services/Ordering/Ordering.StateService/Dockerfile
 
   burgers.process.order.consumer:
     image: burgers.process.order.consumer
@@ -122,11 +191,30 @@ services:
       context: .
       dockerfile: services/Ordering/ProcessOrder.Consumer/Dockerfile
 
-volumes:
-    mongodb_master_data:
-        driver: local
+  burgers.basket.api:
+    image: burgers.basket.api
+    build:
+      context: .
+      dockerfile: services/Basket/Basket.API/Dockerfile
 
+  burgers.basket.api.dapr:
+    image: "daprio/daprd:1.1.1"
+    network_mode: "service:burgers.basket.api"
+    depends_on:
+      - burgers.basket.api
+
+  dapr-placement:
+    image: "daprio/dapr:1.1.1"
+
+volumes:
+  burgers_data:
+      driver: local
+  mongodb_master_data:
+    driver: local
+  postgres_data:
+      driver: local
 networks:
   default:
     external:
       name: burgers.network
+

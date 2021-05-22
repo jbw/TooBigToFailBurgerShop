@@ -1,38 +1,135 @@
 version: '3.4'
 
 services:
+
+  redis:
+    ports:
+      - "5379:6379"
+
   burgers.ordering.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "6969:80"
-
-  burgers.data:
-    volumes:
-      - burgers_data_db_volume:/var/lib/postgresql/data
-
-  burgers.create.order.consumer:
+      - "16969:80"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  burgers.ordering.api.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.ordering.api",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      "-config", "/configuration/burgers-config.yaml",
+      "-placement-host-address", "dapr-placement:50000",
+      ]
+    volumes:
+      - "../dapr/components/:/components"
+      - "../dapr/configuration/:/configuration"
+    depends_on:
+      - burgers.ordering.api
+      - rabbitmq
+
+  burgers.create.order.consumer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  burgers.create.order.consumer.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.create.order.consumer",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      "-config", "/configuration/burgers-config.yaml",
+      "-placement-host-address", "dapr-placement:50000",
+      ]
+    volumes:
+      - "../dapr/components/:/components"
+      - "../dapr/configuration/:/configuration"
+    depends_on:
+      - burgers.create.order.consumer
+      - rabbitmq
 
   burgers.webspa:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
     ports:
-      - "6968:80"
+      - "16968:80"
       - "443"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
+  burgers.gateway.api:
+    volumes:
+      - ./services/ApiGateway/Envoy:/etc/envoy
+
+    ports:
+      - '9901:9901'
+      - '10000:10000'
+      - '10001:10001'
+
+  burgers.gateway.api.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.gateway.api",
+      "-app-port", "80",
+      "-components-path", "/components",
+      "-config", "/configuration/burgers-config.yaml"
+      ]
+    volumes:
+      - "../dapr/components/:/components"
+      - "../dapr/configuration/:/configuration"
+
   burgers.ordering.state.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
   burgers.process.order.consumer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-volumes:
-  burgers_data_db_volume:
+  burgers.basket.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "16970:80"
+      - "9103:81"
+      - "50001:50001"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - redis
+      - dapr-placement
+
+  burgers.basket.api.dapr:
+    command: ["./daprd",
+      "-app-id", "burgers.basket.api",
+      "-app-port", "80",
+      "-log-level", "debug",
+      "-components-path", "/components",
+      "-config", "/configuration/burgers-config.yaml",
+      "-placement-host-address", "dapr-placement:50000",
+      ]
+    volumes:
+      - "../dapr/components/:/components"
+      - "../dapr/configuration/:/configuration"
+    depends_on:
+      - burgers.basket.api
+      - redis
+
+  dapr-placement:
+    command: ["./placement", "-port", "50000", "-log-level", "debug"]
+    ports:
+      - "50000:50000"

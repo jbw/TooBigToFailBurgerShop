@@ -7,7 +7,6 @@ using Xunit.Abstractions;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using System.Linq;
 
 namespace Ordering.IntegrationTests.Features.Order
 {

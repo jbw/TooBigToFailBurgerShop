@@ -1,0 +1,35 @@
+﻿@page "/order"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims;
+@using Burgers.WebSPA.Data
+@using Burgers.WebSPA.Components.Menu;
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject OrdersService OrdersService
+@inject BasketService BasketService
+
+<h1>Order</h1>
+
+<button class="btn btn-primary" @onclick="CreateOrder">Create Order</button>
+
+
+<MenuItemCard TitleText="Juicy Burger"
+              BodyText="Our original Juicy Burger that never fails the taste buds."
+              ButtonText="Add to basket"
+              OnButtonClick="AddItemToCustomerBasket" />
+
+
+@code {
+
+    async Task AddItemToCustomerBasket()
+    {
+        await BasketService.AddItemToCustomerBasket();
+    }
+
+    async Task CreateOrder()
+    {
+        await OrdersService.CreateOrder();
+    }
+}

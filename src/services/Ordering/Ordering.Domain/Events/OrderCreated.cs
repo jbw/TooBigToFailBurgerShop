@@ -9,9 +9,11 @@ namespace TooBigToFailBurgerShop.Ordering.Domain.Events
         // Need this for deserialisation
         protected OrderCreated() { }
 
+        public Guid CustomerId { get; init; }
+
         public OrderCreated(Order order) : base(order)
         {
-
+            CustomerId = order.CustomerId;
         }
     }
 }

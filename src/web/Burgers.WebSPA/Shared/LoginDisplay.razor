@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+@inject NavigationManager Navigation
+<AuthorizeView>
+    <Authorized>
+        <a href="/me">@context.User.Identity.Name</a>
+        <form method="get" action="logout">
+            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <a href="login?redirectUri=/">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>

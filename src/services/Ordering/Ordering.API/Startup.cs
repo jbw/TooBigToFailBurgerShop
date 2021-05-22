@@ -14,6 +14,7 @@ using TooBigToFailBurgerShop.Ordering.Infrastructure.Idempotency;
 using TooBigToFailBurgerShop.Ordering.Persistence.Mongo;
 using Npgsql;
 using Serilog;
+using System;
 
 namespace TooBigToFailBurgerShop
 {
@@ -32,7 +33,8 @@ namespace TooBigToFailBurgerShop
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddDapr();
+            
 
             ConfigureMassTransit(services);
             services.AddMassTransitHostedService();
@@ -93,7 +95,10 @@ namespace TooBigToFailBurgerShop
 
                 var connectionString = connectionStringBuilder.ToString();
 
-                cfg.UseNpgsql(connectionString);
+                cfg.UseNpgsql(
+                    connectionString,
+                    options => options.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null)
+                );
             });
         }
 
@@ -159,6 +164,8 @@ namespace TooBigToFailBurgerShop
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TooBigToFailBurgerShop v1"));
             }
+
+            app.UseCloudEvents();
 
             app.UseSerilogRequestLogging();
 

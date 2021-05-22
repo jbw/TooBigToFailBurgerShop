@@ -22,7 +22,7 @@ namespace TooBigToFailBurgerShop.Ordering.CreateOrder.Infrastructure
             endpointConfigurator.UseMessageRetry(r => r.Intervals(100, 200, 500, 800, 3000));
 
             // use the outbox to prevent duplicate events from being published
-            // defer messages until transactin complete
+            // defer messages until transaction complete
             endpointConfigurator.UseInMemoryOutbox();
 
         }
