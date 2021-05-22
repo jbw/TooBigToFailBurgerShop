@@ -28,13 +28,14 @@ namespace Ordering.StateService.Application.Extensions.Dapr
             try
             {
                 var messageEncoding = GetMessageEncoding(receiveContext);
-                DaprMessageEnvelope daprMessageEnvelope;
+                CloudEventMessageEnvelope daprMessageEnvelope;
 
                 using var body = receiveContext.GetBodyStream();
+               
                 using var reader = new StreamReader(body, messageEncoding, false, 1024, true);
                 using (var jsonReader = new JsonTextReader(reader))
                 {
-                    daprMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<DaprMessageEnvelope>(jsonReader);
+                    daprMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<CloudEventMessageEnvelope>(jsonReader);
                 }
 
                 if (!daprMessageEnvelope.Type.Equals(MessageSourceType))
