@@ -100,11 +100,8 @@ static_resources:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
                       inline_code: |
                         function envoy_on_request(request_handle)
-                          request_handle:logInfo("hello")
-
                           local payload = request_handle:streamInfo():dynamicMetadata():get("envoy.filters.http.jwt_authn")["jwt_payload"]
                           request_handle:headers():add("jwt-extracted-sub", payload.sub)
-                          
                         end
                         function envoy_on_response(response_handle)
                         end
