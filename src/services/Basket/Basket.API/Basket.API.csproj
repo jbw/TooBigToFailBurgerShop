@@ -9,11 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapr.Actors" Version="1.1.0" />
-    <PackageReference Include="Dapr.Actors.AspNetCore" Version="1.1.0" />
-    <PackageReference Include="Dapr.AspNetCore" Version="1.1.0" />
+    <PackageReference Include="Dapr.Actors" Version="1.1.2" />
+    <PackageReference Include="Dapr.Actors.AspNetCore" Version="1.1.2" />
+    <PackageReference Include="Dapr.AspNetCore" Version="1.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
   </ItemGroup>
 
 </Project>
