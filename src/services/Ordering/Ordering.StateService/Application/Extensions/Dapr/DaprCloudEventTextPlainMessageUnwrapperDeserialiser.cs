@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Ordering.StateService.Application.Extensions.Dapr
 {
-    public partial class DaprCloudEventTextPlainMessageDeserialiser : IMessageDeserializer
+    public partial class DaprCloudEventTextPlainMessageUnwrapperDeserialiser : IMessageDeserializer
     {
         private const string MessageSourceType = "com.dapr.event.sent";
 
@@ -28,22 +28,23 @@ namespace Ordering.StateService.Application.Extensions.Dapr
             try
             {
                 var messageEncoding = GetMessageEncoding(receiveContext);
-                CloudEventMessageEnvelope daprMessageEnvelope;
+                CloudEventMessageEnvelope cloudEventMessageEnvelope;
 
                 using var body = receiveContext.GetBodyStream();
                
                 using var reader = new StreamReader(body, messageEncoding, false, 1024, true);
                 using (var jsonReader = new JsonTextReader(reader))
                 {
-                    daprMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<CloudEventMessageEnvelope>(jsonReader);
+                    cloudEventMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<CloudEventMessageEnvelope>(jsonReader);
                 }
 
-                if (!daprMessageEnvelope.Type.Equals(MessageSourceType))
+                if (!cloudEventMessageEnvelope.Type.Equals(MessageSourceType))
                 {
                     throw new SerializationException($"Message source should originate from Dapr ({MessageSourceType})");
                 }
 
-                var massTransitEnvelope = daprMessageEnvelope.Data;
+                // Upwrap the CloudEvent envelope and continue as normal with the MassTransit envelope.
+                var massTransitEnvelope = cloudEventMessageEnvelope.Data;
 
                 return new JsonConsumeContext(JsonMessageSerializer.Deserializer, receiveContext, massTransitEnvelope);
             }

@@ -35,7 +35,7 @@ namespace Ordering.StateService.Application.Extensions
 
                     // Register custom serialiser for Dapr interop
                     var textPlainContentType = new System.Net.Mime.ContentType("text/plain");
-                    cfg.AddMessageDeserializer(textPlainContentType, () => new DaprCloudEventTextPlainMessageDeserialiser());
+                    cfg.AddMessageDeserializer(textPlainContentType, () => new DaprCloudEventTextPlainMessageUnwrapperDeserialiser());
                     
                     // Configure the outbox
                     cfg.UseScheduledRedelivery(r => r.Intervals(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30)));
