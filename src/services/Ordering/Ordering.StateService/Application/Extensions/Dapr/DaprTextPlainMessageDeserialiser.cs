@@ -13,14 +13,14 @@ namespace Ordering.StateService.Application.Extensions.Dapr
 {
     public partial class DaprTextPlainMessageDeserialiser : IMessageDeserializer
     {
-        public ContentType ContentType => new ContentType("text/plain");
         private const string MessageSourceType = "com.dapr.event.sent";
 
-        static Encoding GetMessageEncoding(ReceiveContext receiveContext)
-        {
-            var contentEncoding = receiveContext.TransportHeaders.Get("Content-Encoding", default(string));
+        public ContentType ContentType => new ContentType("text/plain");
 
-            return string.IsNullOrWhiteSpace(contentEncoding) ? Encoding.UTF8 : Encoding.GetEncoding(contentEncoding);
+        public void Probe(ProbeContext context)
+        {
+            var scope = context.CreateScope("darpCloudEventTextPlain");
+            scope.Add("contentType", ContentType);
         }
 
         public ConsumeContext Deserialize(ReceiveContext receiveContext)
@@ -37,7 +37,7 @@ namespace Ordering.StateService.Application.Extensions.Dapr
                     daprMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<DaprMessageEnvelope>(jsonReader);
                 }
 
-                if (!daprMessageEnvelope.Type.Equals("com.dapr.event.sent"))
+                if (!daprMessageEnvelope.Type.Equals(MessageSourceType))
                 {
                     throw new SerializationException($"Message source should originate from Dapr ({MessageSourceType})");
                 }
@@ -60,10 +60,11 @@ namespace Ordering.StateService.Application.Extensions.Dapr
             }
         }
 
-        public void Probe(ProbeContext context)
+        static Encoding GetMessageEncoding(ReceiveContext receiveContext)
         {
-            var scope = context.CreateScope("text");
-            scope.Add("contentType", ContentType);
+            var contentEncoding = receiveContext.TransportHeaders.Get("Content-Encoding", default(string));
+
+            return string.IsNullOrWhiteSpace(contentEncoding) ? Encoding.UTF8 : Encoding.GetEncoding(contentEncoding);
         }
     }
 }
