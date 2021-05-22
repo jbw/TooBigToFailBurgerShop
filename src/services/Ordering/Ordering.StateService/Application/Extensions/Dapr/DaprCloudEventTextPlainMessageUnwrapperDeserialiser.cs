@@ -11,16 +11,16 @@ using System.Text;
 
 namespace Ordering.StateService.Application.Extensions.Dapr
 {
-    public partial class DaprTextPlainMessageDeserialiser : IMessageDeserializer
+    public partial class DaprCloudEventTextPlainMessageUnwrapperDeserialiser : IMessageDeserializer
     {
-        public ContentType ContentType => new ContentType("text/plain");
         private const string MessageSourceType = "com.dapr.event.sent";
 
-        static Encoding GetMessageEncoding(ReceiveContext receiveContext)
-        {
-            var contentEncoding = receiveContext.TransportHeaders.Get("Content-Encoding", default(string));
+        public ContentType ContentType => new ContentType("text/plain");
 
-            return string.IsNullOrWhiteSpace(contentEncoding) ? Encoding.UTF8 : Encoding.GetEncoding(contentEncoding);
+        public void Probe(ProbeContext context)
+        {
+            var scope = context.CreateScope("darpCloudEventTextPlain");
+            scope.Add("contentType", ContentType);
         }
 
         public ConsumeContext Deserialize(ReceiveContext receiveContext)
@@ -28,21 +28,23 @@ namespace Ordering.StateService.Application.Extensions.Dapr
             try
             {
                 var messageEncoding = GetMessageEncoding(receiveContext);
-                DaprMessageEnvelope daprMessageEnvelope;
+                CloudEventMessageEnvelope cloudEventMessageEnvelope;
 
                 using var body = receiveContext.GetBodyStream();
+               
                 using var reader = new StreamReader(body, messageEncoding, false, 1024, true);
                 using (var jsonReader = new JsonTextReader(reader))
                 {
-                    daprMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<DaprMessageEnvelope>(jsonReader);
+                    cloudEventMessageEnvelope = JsonMessageSerializer.Deserializer.Deserialize<CloudEventMessageEnvelope>(jsonReader);
                 }
 
-                if (!daprMessageEnvelope.Type.Equals("com.dapr.event.sent"))
+                if (!cloudEventMessageEnvelope.Type.Equals(MessageSourceType))
                 {
                     throw new SerializationException($"Message source should originate from Dapr ({MessageSourceType})");
                 }
 
-                var massTransitEnvelope = daprMessageEnvelope.Data;
+                // Upwrap the CloudEvent envelope and continue as normal with the MassTransit envelope.
+                var massTransitEnvelope = cloudEventMessageEnvelope.Data;
 
                 return new JsonConsumeContext(JsonMessageSerializer.Deserializer, receiveContext, massTransitEnvelope);
             }
@@ -60,10 +62,11 @@ namespace Ordering.StateService.Application.Extensions.Dapr
             }
         }
 
-        public void Probe(ProbeContext context)
+        static Encoding GetMessageEncoding(ReceiveContext receiveContext)
         {
-            var scope = context.CreateScope("text");
-            scope.Add("contentType", ContentType);
+            var contentEncoding = receiveContext.TransportHeaders.Get("Content-Encoding", default(string));
+
+            return string.IsNullOrWhiteSpace(contentEncoding) ? Encoding.UTF8 : Encoding.GetEncoding(contentEncoding);
         }
     }
 }

@@ -9,9 +9,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MassTransit.Analyzers" Version="7.1.6" />
-    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.6" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.6" />
+    <PackageReference Include="MassTransit.Analyzers" Version="7.1.8" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.8" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.1.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
 

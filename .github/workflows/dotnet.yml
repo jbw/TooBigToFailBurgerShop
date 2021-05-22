@@ -2,50 +2,58 @@ name: Build
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
+      - uses: actions/checkout@v2
 
-    - uses: actions/cache@v2
-      with:
-        path: ~/.nuget/packages
-        # Look to see if there is a cache hit for the corresponding requirements file
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget
-          
-    - run: cd src/ && docker-compose pull
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
 
-    - uses: satackey/action-docker-layer-caching@v0.0.11
-      # Ignore the failure of a step and avoid terminating the job.
-      continue-on-error: true
+      - uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
 
-    - name: Startup integration test infrastructure
-      run: cd src/ && docker network create burgers.network && docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+      - run: cd src/ && docker-compose pull
 
-    - name: Restore dependencies
-      run: cd src && dotnet restore TooBigToFailBurgerShop.sln
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
 
-    - name: Build
-      run: cd src && dotnet build TooBigToFailBurgerShop.sln --no-restore
+      - name: Startup integration test infrastructure
+        run: cd src/ && docker network create burgers.network && docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
-    - name: Integration & Unit tests
-      run: cd src && dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=OpenCover TooBigToFailBurgerShop.sln --no-build --verbosity normal
+      - name: Run database migrations
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet tool restore
+          cd src/services/Ordering/Ordering.StateService && dotnet ef database update
+          cd ../
+          cd Ordering.Infrastructure && dotnet ef database update
 
-    - name: Codecov
-      uses: codecov/codecov-action@v1.2.1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./**coverage.opencover.xml
+      - name: Restore dependencies
+        run: cd src && dotnet restore TooBigToFailBurgerShop.sln
+
+      - name: Build
+        run: cd src && dotnet build TooBigToFailBurgerShop.sln --no-restore
+
+      - name: Integration & Unit tests
+        run: cd src && dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=OpenCover TooBigToFailBurgerShop.sln --no-build --verbosity normal
+
+      - name: Codecov
+        uses: codecov/codecov-action@v1.2.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./**coverage.opencover.xml
