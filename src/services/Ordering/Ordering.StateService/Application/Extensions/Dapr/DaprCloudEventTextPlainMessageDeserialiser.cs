@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Ordering.StateService.Application.Extensions.Dapr
 {
-    public partial class DaprTextPlainMessageDeserialiser : IMessageDeserializer
+    public partial class DaprCloudEventTextPlainMessageDeserialiser : IMessageDeserializer
     {
         private const string MessageSourceType = "com.dapr.event.sent";
 
