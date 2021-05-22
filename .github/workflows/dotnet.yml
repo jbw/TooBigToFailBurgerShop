@@ -32,14 +32,16 @@ jobs:
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
 
-      - name: Run Ordering.Infrastructure database migrations
-        run: cd src/services/Ordering/Ordering.Infrastructure && dotnet ef database update
-
-      - name: Run Ordering.StateService database migrations
-        run: cd src/services/Ordering/Ordering.StateService && dotnet ef database update
-
       - name: Startup integration test infrastructure
         run: cd src/ && docker network create burgers.network && docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+
+      - name: Run database migrations
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet tool restore
+          cd src/services/Ordering/Ordering.StateService && dotnet ef database update
+          cd ../
+          cd Ordering.Infrastructure && dotnet ef database update
 
       - name: Restore dependencies
         run: cd src && dotnet restore TooBigToFailBurgerShop.sln
